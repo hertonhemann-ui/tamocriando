@@ -1,1 +1,1 @@
-["core.js", "brands.js", "templates/abertura.js", "templates/estrutura.js", "templates/enfase.js", "templates/argumento.js", "templates/identidade.js", "templates/transicoes.js"]
+["core.js", "brands.js", "fx.js", "templates/acender.js", "templates/marcar.js", "templates/virar.js", "templates/guiar.js", "templates/apontar.js", "templates/passagem.js"]

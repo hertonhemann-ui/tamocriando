@@ -9,6 +9,7 @@
  *   node tools/render.mjs --previews            # gera também MP4 e GIF de pré-visualização
  *   node tools/render.mjs --sheet               # folhas de contato (revisão rápida)
  *   node tools/render.mjs --catalog             # uma imagem com todas as animações
+ *   node tools/render.mjs --still 2.5 --only marca  # um frame em resolução cheia (com fundo de prévia)
  *   node tools/render.mjs --gif --out docs      # prévias animadas leves (WebP) pro README
  *
  * Precisa de: Node 18+, ffmpeg no PATH e Playwright (npm i -D playwright).
@@ -40,6 +41,7 @@ function parseArgs(argv) {
     else if (k === '--sheet') a.sheet = true;
     else if (k === '--catalog') a.catalog = true;
     else if (k === '--gif') a.gif = true;
+    else if (k === '--still') a.still = Number(next());
     else if (k === '--times') a.times = next().split(',').map(Number);
     else if (k === '--backdrop') a.backdrop = next();
     else if (k === '--keep-frames') a.keepFrames = true;
@@ -124,6 +126,15 @@ async function main() {
         continue;
       }
 
+      if (a.still !== undefined) {
+        const url = await page.evaluate(({ id, o }) => window.tcFrame(id, o), {
+          id: tpl.id, o: { w, h, t: a.still, dur, params: a.params, brand: a.brand, preview: true, backdrop: a.backdrop }
+        });
+        const sdir = path.join(a.out, 'stills'); fs.mkdirSync(sdir, { recursive: true });
+        fs.writeFileSync(path.join(sdir, `${tag}_${a.still}.png`), Buffer.from(url.split(',')[1], 'base64'));
+        console.log('still', path.join(sdir, `${tag}_${a.still}.png`));
+        continue;
+      }
       if (a.gif) {
         const gs = fmt === '16:9' ? 0.3 : 0.25;
         const gw = Math.round(bw * gs / 2) * 2, gh = Math.round(bh * gs / 2) * 2;

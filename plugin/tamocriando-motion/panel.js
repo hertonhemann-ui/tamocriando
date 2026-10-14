@@ -89,6 +89,7 @@
       sel.appendChild(o);
     });
     sel.value = state.brand;
+    sel.hidden = Object.keys(TC.brands).length < 2;
     sel.onchange = function () {
       state.brand = sel.value; store.set('tc.brand', state.brand);
       if (state.id) loadParams(state.id);
@@ -211,7 +212,25 @@
       var lab = document.createElement('span');
       lab.textContent = p.label;
       var input;
-      if (p.type === 'select') {
+      if (p.type === 'curve') {
+        // curvas de entrada/saída: atalhos prontos (o valor guardado é o cubic-bezier)
+        input = document.createElement('select');
+        var cur = (state.params[p.key] || []).join(',');
+        var match = '';
+        Object.keys(TC.curvePresets).forEach(function (k) {
+          var op = document.createElement('option'); op.value = k; op.textContent = TC.curvePresets[k].label;
+          if (TC.curvePresets[k].v.join(',') === cur) match = k;
+          input.appendChild(op);
+        });
+        if (!match) { var cu = document.createElement('option'); cu.value = ''; cu.textContent = 'personalizada'; input.appendChild(cu); }
+        input.value = match;
+        input.addEventListener('change', function () {
+          if (TC.curvePresets[input.value]) { state.params[p.key] = TC.curvePresets[input.value].v.slice(); saveParams(); }
+        });
+        wrap.appendChild(lab); wrap.appendChild(input);
+        form.appendChild(wrap);
+        return;
+      } else if (p.type === 'select') {
         input = document.createElement('select');
         p.options.forEach(function (o) { var op = document.createElement('option'); op.value = o; op.textContent = o; input.appendChild(op); });
       } else if (p.type === 'textarea') {

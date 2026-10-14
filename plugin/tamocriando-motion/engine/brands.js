@@ -1,84 +1,45 @@
 /*
- * Marcas. Os templates nunca usam cor "solta": usam papéis (accent, paper,
- * panel...). Trocar de marca = trocar este bloco. Pra criar a marca de um
- * cliente, copia um preset, troca cores/fontes/assinatura e pronto.
+ * Marca: brasa, papel e tinta.
  *
- * Papéis de cor:
- *   dark        fundo escuro principal
- *   paper       fundo claro (papel)
- *   ink         texto sobre fundo escuro
- *   inkOnPaper  texto/títulos sobre o papel
- *   body        texto corrido sobre o papel
- *   accent      cor de destaque (a "brasa")
- *   accent2     destaque secundário
- *   panel       caixas atrás de texto sobre vídeo
- *   muted       texto apagado / secundário
+ *   brasa  #C8502A  aquilo em que tu acredita (só onde algo precisa marcar)
+ *   papel  #EFE9DF  aquilo que tu pensa
+ *   tinta  #1A1714  aquilo que tu sustenta
+ *   cinza  #9B968E  aquilo que deixa respirar
+ *
+ * glow, hot e crust não são cores da identidade: são a luz e a casca da
+ * própria brasa (o brilho do carvão aceso e a crosta escura em volta).
  */
 (function (root) {
   'use strict';
   var TC = root.TC;
 
-  var FONTS = {
-    display: "'TC Display', 'Anton', Impact, 'Arial Narrow', sans-serif",
-    sans: "'TC Sans', 'Montserrat', 'Helvetica Neue', Arial, sans-serif",
-    mono: "'TC Mono', 'Space Mono', 'Courier New', monospace"
-  };
-
   TC.brands = {
-    'novo-mkt': {
-      name: 'Novo MKT — Herton',
+    herton: {
+      name: 'herton hemann',
       colors: {
-        dark: '#141112',
-        paper: '#EFE8DC',
-        ink: '#F4EDE2',
-        inkOnPaper: '#A43D14',
-        body: '#2A1E1A',
-        accent: '#E2582B',
-        accent2: '#E8A03C',
-        panel: '#3B2838',
-        muted: '#A39A93'
+        ember: '#C8502A',
+        paper: '#EFE9DF',
+        ink: '#1A1714',
+        ash: '#9B968E',
+        glow: '#E06A3E',
+        hot: '#F2A27C',
+        crust: '#2E2420',
+        paperShade: '#E2D9CB'
       },
-      fonts: FONTS,
-      icon: 'bolt',
-      badge: 'flame',
-      sign: {
-        marca: 'NOVO MKT',
-        pre: 'HERTON DO',
-        nome: 'HERTON DO NOVO MKT',
-        cargo: 'ESTRATEGISTA QUE O MERCADO DIGITAL ELIMINOU',
-        slogan: 'O NOVO MKT É SER REAL.',
-        tese: 'A CLAREZA VEM ANTES DO MARKETING.',
-        handle: '@seuperfil'
-      }
-    },
-
-    'universe': {
-      name: 'universe — estúdio',
-      colors: {
-        dark: '#17112A',
-        paper: '#F1EDF9',
-        ink: '#FFFFFF',
-        inkOnPaper: '#5B3FB8',
-        body: '#1E1638',
-        accent: '#8D6BE2',
-        accent2: '#C7B5F7',
-        panel: '#1B1430',
-        muted: '#A99FC4'
+      fonts: {
+        display: "'TC Display', 'Anton', Impact, 'Arial Narrow', sans-serif",
+        sans: "'TC Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif"
       },
-      fonts: FONTS,
-      icon: 'hex',
-      badge: 'hex',
       sign: {
-        marca: 'universe',
-        pre: 'ESTÚDIO',
-        nome: 'UNIVERSE',
-        cargo: 'AUDIOVISUAL COMO POSICIONAMENTO',
-        slogan: 'COMUNICAÇÃO COM SIGNIFICADO.',
-        tese: 'SE NÃO FAZ SENTIDO NO DIAGNÓSTICO, NÃO FAZ SENTIDO NO VÍDEO.',
-        handle: '@universe'
+        nome: 'herton hemann',
+        primeiro: 'herton',
+        sobrenome: 'hemann',
+        cargo: 'estrategista que elimina o cinza e acende a devoção.',
+        destaqueCargo: 'acende a devoção.',
+        handle: ''
       }
     }
   };
 
-  TC.defaultBrand = 'novo-mkt';
+  TC.defaultBrand = 'herton';
 })(typeof window !== 'undefined' ? window : this);

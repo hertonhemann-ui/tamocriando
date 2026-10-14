@@ -58,9 +58,10 @@ const browser = await chromium.launch();
           for (const k of [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1]) {
             try {
               TC.renderFrame(ctx, tpl.id, { w: cv.width, h: cv.height, t: tpl.duration * k, brand });
+              if (k === 0.5 && f === '9:16') new TC.Renderer().render(ctx, tpl.id, { w: cv.width, h: cv.height, t: tpl.duration * k, brand, fx: TC.fxDefaults });
               // texto vazio e números fora da faixa não podem quebrar
               const empty = {};
-              tpl.params.forEach((p) => { empty[p.key] = p.type === 'number' ? 99 : p.type === 'select' ? p.options[0] : ''; });
+              tpl.params.forEach((p) => { if (p.type !== 'curve') empty[p.key] = p.type === 'number' ? 99 : p.type === 'select' ? p.options[0] : ''; });
               TC.renderFrame(ctx, tpl.id, { w: cv.width, h: cv.height, t: tpl.duration * k, brand, params: empty });
             } catch (e) { out.push(`${brand}/${tpl.id}/${f}/t=${k}: ${e.message}`); }
           }
@@ -72,6 +73,15 @@ const browser = await chromium.launch();
   res.errors.length ? res.errors.forEach(bad) : ok(`${res.count} templates × 4 formatos × todas as marcas desenham sem erro (inclusive com campos vazios)`);
   errors.forEach((e) => bad('erro na página: ' + e));
   await page.close();
+}
+
+// 1b. o painel e a galeria listam os scripts do motor à mão: têm que bater com engine/scripts.json
+{
+  const list = JSON.parse(fs.readFileSync(path.join(ROOT, 'plugin/tamocriando-motion/engine/scripts.json'), 'utf8'));
+  const panel = [...fs.readFileSync(path.join(ROOT, 'plugin/tamocriando-motion/index.html'), 'utf8').matchAll(/src="engine\/([^"]+)"/g)].map((m) => m[1]);
+  const gal = [...fs.readFileSync(path.join(ROOT, 'gallery/galeria.html'), 'utf8').matchAll(/src="\.\.\/plugin\/tamocriando-motion\/engine\/([^"]+)"/g)].map((m) => m[1]);
+  JSON.stringify(panel) === JSON.stringify(list) ? ok('index.html do painel carrega os mesmos scripts de engine/scripts.json') : bad('painel carrega ' + panel.join(', ') + ' / esperado ' + list.join(', '));
+  JSON.stringify(gal) === JSON.stringify(list) ? ok('galeria carrega os mesmos scripts de engine/scripts.json') : bad('galeria carrega ' + gal.join(', ') + ' / esperado ' + list.join(', '));
 }
 
 // 2. painel com Premiere simulado
@@ -112,11 +122,14 @@ const browser = await chromium.launch();
   await page.goto(base + '/plugin/tamocriando-motion/index.html');
   await page.waitForFunction(() => document.querySelectorAll('.card').length > 0);
   const cards = await page.locator('.card').count();
-  cards >= 17 ? ok(`painel lista ${cards} animações`) : bad(`painel lista só ${cards} cards`);
+  const nTpl = await page.evaluate(() => TC.list().length);
+  cards === nTpl && nTpl > 0 ? ok(`painel lista as ${cards} animações do motor`) : bad(`painel lista ${cards} cards, motor tem ${nTpl}`);
   const seqText = await page.locator('#seqinfo').textContent();
   seqText.includes('Reels 01') ? ok('painel lê a sequência: ' + seqText) : bad('info da sequência: ' + seqText);
 
-  await page.locator('.card', { hasText: 'Varrida Brasa' }).click();
+  // a animação mais curta (render rápido)
+  const short = await page.evaluate(() => TC.list().slice().sort((a, b) => a.duration - b.duration)[0]);
+  await page.locator('.card', { hasText: short.name }).first().click();
   await page.waitForSelector('#editor:not([hidden])');
   await page.locator('#insert').click();
   await page.waitForFunction(() => /\b(ok|err)\b/.test(document.getElementById('status').className), null, { timeout: 60000 });
@@ -124,15 +137,17 @@ const browser = await chromium.launch();
   const files = await page.evaluate(() => window.__files);
   const calls = await page.evaluate(() => window.__calls.filter((c) => c.startsWith('tc_insert')));
   st.startsWith('Pronto') ? ok('inserção: ' + st) : bad('inserção: ' + st);
-  files.count === 39 ? ok(`render gravou ${files.count} PNGs (1,3s a 29,97 fps) em ${files.dirs.at(-1)}`) : bad(`esperava 39 PNGs, gravou ${files.count}`);
+  const expected = Math.round(short.duration * 30000 / 1001);
+  files.count === expected ? ok(`render de "${short.id}" gravou ${files.count} PNGs (${short.duration}s a 29,97 fps) em ${files.dirs.at(-1)}`) : bad(`esperava ${expected} PNGs de "${short.id}", gravou ${files.count}`);
   calls.length === 1 && calls[0].includes('_00000.png') ? ok('chamou tc_insert com o primeiro frame') : bad('chamada tc_insert: ' + calls.join(' | '));
 
   // edita um texto e confere que a prévia usa o valor novo
   await page.locator('#back').click();
-  await page.locator('.card', { hasText: 'Destaque de Palavra' }).click();
-  await page.locator('#fields input').nth(1).fill('CLAREZA');
-  const p = await page.evaluate(() => window.TCPanel.state.params.destaque);
-  p === 'CLAREZA' ? ok('edição de campo chega na prévia') : bad('param destaque = ' + p);
+  await page.locator('.card').first().click();
+  const firstKey = await page.evaluate(() => TC.templates[window.TCPanel.state.id].params.find((q) => q.type === 'text').key);
+  await page.locator('#fields input[type=text]').first().fill('teste de campo');
+  const p = await page.evaluate((k) => window.TCPanel.state.params[k], firstKey);
+  p === 'teste de campo' ? ok('edição de campo chega na prévia') : bad('param ' + firstKey + ' = ' + p);
   await page.screenshot({ path: path.join(os.tmpdir(), 'tc-panel.png') });
   errors.forEach((e) => bad('erro no painel: ' + e));
   await page.close();
