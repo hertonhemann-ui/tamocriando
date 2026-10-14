@@ -117,8 +117,9 @@ function tc_addVideoTrack(seq) {
  *  frames     quantidade de frames
  *  track      -1 = automático (primeira livre acima da V1), ou índice 0-based
  *  place      true = coloca na timeline; false = só importa pro bin
+ *  atSeconds  (opcional) posição na sequência em segundos; sem isso usa o playhead
  */
-function tc_insert(firstFile, fps, name, frames, track, place, binName, stamp) {
+function tc_insert(firstFile, fps, name, frames, track, place, binName, stamp, atSeconds) {
   try {
     if (!app.project) return tc_err('Nenhum projeto aberto.');
     var seq = app.project.activeSequence;
@@ -137,7 +138,8 @@ function tc_insert(firstFile, fps, name, frames, track, place, binName, stamp) {
 
     var pos = seq.getPlayerPosition();
     var tpf = Number(seq.timebase);
-    var startTicks = Number(pos.ticks);
+    var atSec = (atSeconds === undefined || atSeconds === null || atSeconds < 0) ? pos.seconds : atSeconds;
+    var startTicks = (atSeconds === undefined || atSeconds === null || atSeconds < 0) ? Number(pos.ticks) : Math.round(atSec * TC_TICKS_PER_SECOND);
     var endTicks = startTicks + frames * tpf;
     var idx = track;
     if (idx === undefined || idx === null || idx < 0) {
@@ -151,8 +153,35 @@ function tc_insert(firstFile, fps, name, frames, track, place, binName, stamp) {
       if (idx < 0) return tc_err('Não achei trilha livre acima da V1 nesse trecho. Cria uma trilha de vídeo nova e tenta de novo (o clipe já está no bin).');
     }
     if (idx >= seq.videoTracks.numTracks) return tc_err('A trilha V' + (idx + 1) + ' não existe nessa sequência.');
-    seq.videoTracks[idx].overwriteClip(item, pos.seconds);
-    return tc_ok({ placed: true, track: idx + 1, at: pos.seconds, bin: bin.name });
+    seq.videoTracks[idx].overwriteClip(item, atSec);
+    return tc_ok({ placed: true, track: idx + 1, at: atSec, bin: bin.name });
+  } catch (e) {
+    return tc_err(e);
+  }
+}
+
+/*
+ * Marcadores na sequência (um por animação do plano).
+ *  items   [{ t, dur, name, comment }]  t em segundos a partir do início do vídeo
+ *  offset  segundos em que o vídeo começa na sequência
+ */
+function tc_markers(items, offset) {
+  try {
+    var seq = app.project ? app.project.activeSequence : null;
+    if (!seq) return tc_err('Abre uma sequência na timeline antes.');
+    var n = 0;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var at = (offset || 0) + it.t;
+      var m = seq.markers.createMarker(at);
+      m.name = it.name;
+      m.comments = it.comment || '';
+      try {
+        if (it.dur) { var tm = new Time(); tm.seconds = at + it.dur; m.end = tm; }
+      } catch (e1) { /* versão sem duração de marcador */ }
+      n++;
+    }
+    return tc_ok({ count: n });
   } catch (e) {
     return tc_err(e);
   }

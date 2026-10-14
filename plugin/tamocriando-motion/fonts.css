@@ -2,3 +2,9 @@
 @font-face { font-family: 'TC Display'; src: url('fonts/Anton-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
 @font-face { font-family: 'TC Sans'; src: url('fonts/Inter-VF.ttf') format('truetype'); font-weight: 100 900; font-style: normal; }
 @font-face { font-family: 'TC Sans'; src: url('fonts/Inter-Italic-VF.ttf') format('truetype'); font-weight: 100 900; font-style: italic; }
+@font-face { font-family: 'TC Bebas'; src: url('fonts/BebasNeue-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'TC Instrument'; src: url('fonts/InstrumentSerif-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'TC Instrument'; src: url('fonts/InstrumentSerif-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'TC DM Serif'; src: url('fonts/DMSerifDisplay-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'TC DM Serif'; src: url('fonts/DMSerifDisplay-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'TC Caveat'; src: url('fonts/Caveat-VF.ttf') format('truetype'); font-weight: 400 700; font-style: normal; }

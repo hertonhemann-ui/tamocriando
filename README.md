@@ -2,7 +2,7 @@
 
 Banco de animações da marca **herton hemann** e um painel pro Premiere Pro que coloca a animação, com o teu texto, direto na timeline.
 
-São 20 animações em torno de uma ideia só: **da cinza à brasa**. Elas não explicam o símbolo, só usam ele. Cinza é o morno, o que não marca ninguém. A chama acende e se consome. O que fica é a brasa.
+São 27 animações em torno de uma ideia só: **da cinza à brasa**. Elas não explicam o símbolo, só usam ele. Cinza é o morno, o que não marca ninguém. A chama acende e se consome. O que fica é a brasa.
 
 Tudo parte de uma pergunta: **como o outro entende?** Por isso o texto fica parado o tempo de ler, a brasa aparece só no que importa e o movimento é de chama, suave na chegada e devagar na saída.
 
@@ -11,6 +11,9 @@ Tudo parte de uma pergunta: **como o outro entende?** Por isso o texto fica para
 - **Ver tudo rodando, trocar texto e mexer nas curvas:** abre `gallery/index.html` no navegador.
 - **Instalar no Premiere:** [docs/INSTALAR.md](docs/INSTALAR.md).
 - **Qual animação usar em cada momento do vídeo:** [docs/GUIA.md](docs/GUIA.md).
+- **Montar o plano de animações a partir da transcrição:** [docs/PLANO-DE-ANIMACAO.md](docs/PLANO-DE-ANIMACAO.md).
+- **Referências, engenharia reversa e fontes:** [docs/REFERENCIAS.md](docs/REFERENCIAS.md).
+- **Chama em stop motion com tuas imagens:** [docs/CHAMA-STOP-MOTION.md](docs/CHAMA-STOP-MOTION.md).
 
 ---
 
@@ -61,12 +64,28 @@ Organizadas pelo que fazem com quem assiste.
 | <img src="docs/previews/anotacao_9x16.webp" width="90"> | **Anotação** | Traço de caneta em brasa feito à mão: círculo, sublinhado, seta, xis ou colchete. |
 | <img src="docs/previews/simbolo_9x16.webp" width="90"> | **Símbolo** | Ícone de papel recortado que cai e assenta, em stop motion: máscara, espelho, ímã, etiqueta, digital, ampulheta, chave, lupa, balão, chama, brasa ou cinza. |
 
+### Texto — legenda e destaque
+
+Só tipografia, com uma fonte ou um par (principal + complemento) e seis efeitos de entrada. Dá pra **arrastar o texto na prévia** com o mouse (a roda muda o tamanho).
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/legenda_9x16.webp" width="90"> | **Legenda** | Palavra por palavra no tempo da fala, em grupos de 1 a 8. A palavra importante fica em brasa e a atual dá um pop. Aceita o tempo de cada palavra (o plano preenche). |
+| <img src="docs/previews/destaque_9x16.webp" width="90"> | **Destaque** | Uma frase entra linha por linha (foco, tracking, subida, obturador...) e o trecho que importa troca de cor e de fonte. Pra grifar algo interessante que alguém disse. |
+| <img src="docs/previews/manchete_9x16.webp" width="90"> | **Manchete** | Palavra grande no centro com linhas pequenas de complemento em cima e embaixo, cada camada no seu tempo. |
+
+Efeitos: **pop**, **foco** (desfocado → nítido), **tracking**, **subida**, **obturador** (rastro) e **cinema**. Fontes: Anton, Bebas Neue, Instrument Serif, Inter, DM Serif e Caveat, em 9 combinações. A pesquisa por trás está em [docs/REFERENCIAS.md](docs/REFERENCIAS.md).
+
 ### Passagens — esconder o corte
 
 | | Animação | O que acontece |
 |---|---|---|
 | <img src="docs/previews/queima_9x16.webp" width="90"> | **Queima** | A imagem pega fogo pelos cantos, vira carvão e o carvão se desfaz revelando o próximo clipe. |
 | <img src="docs/previews/sopro_9x16.webp" width="90"> | **Sopro** | Uma rajada de fumaça e cinza atravessa a tela. Mais leve que a queima. |
+| <img src="docs/previews/clarao_9x16.webp" width="90"> | **Clarão** | Vazamento de luz quente que estoura no corte. De brasa a pêssego, sem amarelo. |
+| <img src="docs/previews/varrida_9x16.webp" width="90"> | **Varrida** | Cortina de tinta com linhas de velocidade atravessa a tela como um giro de câmera. |
+| <img src="docs/previews/rasgo_9x16.webp" width="90"> | **Rasgo** | Folha de papel puxada pela tela com borda rasgada, fibras e sombra. |
+| <img src="docs/previews/fatias_9x16.webp" width="90"> | **Fatias** | Faixas de tinta fecham a tela uma depois da outra e saem na mesma ordem. |
 
 Todas funcionam em 9:16, 16:9, 1:1 e 4:5, em qualquer resolução e frame rate. As que vão por cima do vídeo saem com transparência.
 
@@ -85,13 +104,20 @@ Todas funcionam em 9:16, 16:9, 1:1 e 4:5, em qualquer resolução e frame rate. 
 | apagar | sai devagar e acelera no fim, como chama que se consome (o padrão de saída) |
 | linear | velocidade constante |
 
-**Câmera.** O render passa por um pós-processamento que dá jeito de filmado:
+**Câmera.** O render passa por um pós-processamento que dá jeito de filmado, e cada animação guarda o seu ajuste:
 
 - **desfoque de movimento**: o que se mexe rápido borra como num obturador de 180°;
+- **desfoque de borda**: as bordas saem de foco e o miolo fica nítido, como lente de cinema;
 - **aberração cromática**: vermelho e azul se separam um pouco, mais forte nas bordas e só onde tem movimento;
-- **lente**: distorção de barril bem sutil.
+- **lente**: distorção de barril bem sutil;
+- **turbulência**: o quadro treme a 12 por segundo, como papel na brisa (o *turbulent displace* do After Effects);
+- **ruído**: grão de filme que muda a cada quadro, só onde tem imagem.
 
-Tudo isso é detalhe. Os padrões (180°, aberração 35, lente 20) foram calibrados pra quase não se notar parado e dar vida no movimento.
+Atalhos prontos: **padrão**, **cinema** (borda desfocada + grão), **tremido**, **sujo** e **limpo**. No painel fica em *Câmera*; no render em lote são as flags `--edge`, `--displace`, `--noise` ou `--fx-preset cinema`.
+
+## Plano a partir da transcrição
+
+Entrega a transcrição do vídeo (SRT, VTT ou texto com tempos) e recebe um plano: cada animação com o segundo em que entra, o texto que leva e o porquê, mais propostas de animações que o banco ainda não tem. O painel tem a aba **Plano** pra pôr marcadores na timeline ou inserir tudo nos tempos certos. Como funciona e como usar: [docs/PLANO-DE-ANIMACAO.md](docs/PLANO-DE-ANIMACAO.md).
 
 ---
 
@@ -100,15 +126,20 @@ Tudo isso é detalhe. Os padrões (180°, aberração 35, lente 20) foram calibr
 ```
 plugin/tamocriando-motion/      ← pasta que vai pro Premiere
   engine/core.js                ← motor: curvas, texto, chama, brasa, cinza, fagulha, papel, máscaras de queima
-  engine/fx.js                  ← câmera: desfoque de movimento, aberração, lente (WebGL)
+  engine/fx.js                  ← câmera: desfoque de movimento e de borda, aberração, lente, turbulência, ruído (WebGL)
+  engine/sinais.json            ← pra cada animação: que sinais na fala pedem ela e quando evitar
+  engine/flame-frames.js        ← quadros da chama em stop motion (vazio = poses geradas por código)
   engine/brands.js              ← marca (cores, fontes, assinatura)
-  engine/templates/*.js         ← as 20 animações, um arquivo por grupo
+  engine/templates/*.js         ← as 27 animações, um arquivo por grupo
   ui/curve-editor.js            ← editor de curvas (painel e galeria)
+  ui/drag-stage.js              ← arrastar o texto na prévia
   index.html, panel.js/.css     ← painel
   host/premiere.jsx             ← ponte com o Premiere (importa e coloca no playhead)
-  fonts/                        ← Anton e Inter (OFL)
+  fonts/                        ← Anton, Inter, Bebas Neue, Instrument Serif, DM Serif Display, Caveat (OFL)
 gallery/                        ← galeria pra navegador
 tools/render.mjs                ← render em lote (MOV com alpha, prévias)
+tools/plano.mjs                 ← transcrição → plano: ler, prompt, validar, storyboard
+tools/importar-chama.mjs        ← importa quadros de chama (ChatGPT, desenho, vídeo)
 tools/smoke-test.mjs            ← teste de tudo sem precisar do Premiere
 install/                        ← instaladores Windows e Mac
 docs/                           ← guia, instalação, catálogo
@@ -126,6 +157,7 @@ npm run render                                    # tudo, 9:16 e 16:9, ProRes 44
 node tools/render.mjs --only nome --formats 16:9 --params '{"nome":"ana souza","cargo":"fundadora da guapa"}'
 node tools/render.mjs --codec png                 # QuickTime PNG: bem menor que ProRes, também com alpha
 node tools/render.mjs --fps 25 --formats 1:1      # outro frame rate / formato
+node tools/render.mjs --fx-preset cinema          # câmera com borda desfocada e grão (ou --edge 50 --noise 20)
 node tools/render.mjs --aberration 20 --lens 0    # câmera mais discreta (--no-fx desliga tudo)
 node tools/render.mjs --catalog                   # imagem com todas
 ```
@@ -148,7 +180,7 @@ Com mais de uma marca, aparece um seletor no painel e na galeria.
 TC.register({
   id: 'minha-animacao',
   name: 'Minha Animação',
-  category: 'marcar',                // acender, marcar, virar, guiar, apontar, passagem
+  category: 'marcar',                // acender, marcar, virar, guiar, apontar, texto, passagem
   duration: 4,
   params: [{ key: 'texto', label: 'Texto', type: 'text', default: 'olá' }],
   description: 'O que ela faz.',
@@ -163,7 +195,7 @@ TC.register({
 });
 ```
 
-Coloca num arquivo de `engine/templates/`, adiciona em `engine/scripts.json`, no `index.html` do painel e em `gallery/galeria.html`, e roda `node tools/smoke-test.mjs`.
+Coloca num arquivo de `engine/templates/`, adiciona em `engine/scripts.json`, no `index.html` do painel e em `gallery/galeria.html`, escreve a entrada dela em `engine/sinais.json` (o teste cobra) e roda `node tools/smoke-test.mjs`. Com `drag: { x: 'px', y: 'py' }` na definição, o texto passa a poder ser arrastado na prévia.
 
 ## Testes
 

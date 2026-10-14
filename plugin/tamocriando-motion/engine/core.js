@@ -409,18 +409,110 @@
     return { x: (hash2(f, 1, 3) - 0.5) * 2 * d, y: (hash2(f, 2, 3) - 0.5) * 2 * d };
   };
 
+  /*
+   * Chama em stop motion: em vez de deformar um desenho só, cada quadro é uma pose
+   * diferente (como chama recortada em papel, feita à mão, passando a 8 quadros por segundo).
+   *
+   * Dois jeitos, o motor escolhe sozinho:
+   *  1. se existirem quadros importados (engine/flame-frames.js, feito por tools/importar-chama.mjs
+   *     a partir de imagens geradas por IA ou desenhadas), usa esses, na ordem;
+   *  2. senão, gera 8 poses por código (uma língua central e 2 ou 3 laterais, cada pose com
+   *     inclinação, altura e largura próprias) e toca numa ordem que nunca repete a vizinha.
+   */
+  var STOP_FPS = 8;
+  TC.flameFrames = [];          // máscaras importadas (canvas), preenchidas por TC.loadFlameFrames
+  TC.flameData = TC.flameData || [];
+
+  TC.loadFlameFrames = function () {
+    var list = TC.flameData || [];
+    if (!list.length || typeof Image === 'undefined') return Promise.resolve(0);
+    return Promise.all(list.map(function (src) {
+      return new Promise(function (res) {
+        var im = new Image();
+        im.onload = function () {
+          var cv = makeCanvas(im.width, im.height); cv.getContext('2d').drawImage(im, 0, 0); res(cv);
+        };
+        im.onerror = function () { res(null); };
+        im.src = src;
+      });
+    })).then(function (arr) {
+      TC.flameFrames = arr.filter(Boolean);
+      return TC.flameFrames.length;
+    });
+  };
+
+  function lick(c, bx, by, wd, ht, lean) {
+    c.moveTo(bx - wd / 2, by);
+    c.bezierCurveTo(bx - wd / 2, by - ht * 0.35, bx - wd * 0.28 + lean * 0.4, by - ht * 0.72, bx + lean, by - ht);
+    c.bezierCurveTo(bx + wd * 0.22 + lean * 0.3, by - ht * 0.64, bx + wd / 2, by - ht * 0.34, bx + wd / 2, by);
+    c.bezierCurveTo(bx + wd / 2, by + wd * 0.5, bx - wd / 2, by + wd * 0.5, bx - wd / 2, by);
+    c.closePath();
+  }
+  var stopPoses = null;
+  function makeStopPoses() {
+    var r = rng(404), out = [];
+    for (var i = 0; i < 8; i++) {
+      var pose = { main: { bx: (r() - 0.5) * 0.06, wd: 0.42 + r() * 0.12, ht: 0.8 + r() * 0.1, lean: (r() - 0.5) * 0.3 }, side: [], inner: { lean: (r() - 0.5) * 0.12, ht: 0.38 + r() * 0.12 } };
+      var n = 2 + (r() > 0.55 ? 1 : 0), dir = r() > 0.5 ? 1 : -1;
+      for (var k = 0; k < n; k++) {
+        var sgn = k === 0 ? dir : k === 1 ? -dir : (r() > 0.5 ? 1 : -1);
+        pose.side.push({ bx: sgn * (0.13 + r() * 0.1), wd: 0.2 + r() * 0.1, ht: 0.3 + r() * 0.34, lean: sgn * (0.02 + r() * 0.14) });
+      }
+      out.push(pose);
+    }
+    return out;
+  }
+  function drawStopFlame(c, color, t, o) {
+    var f = Math.floor(t * STOP_FPS + 1e-6), jr = rng(f * 7 + 3);
+    var jx = (jr() - 0.5) * 0.03, jy = (jr() - 0.5) * 0.02, jrot = (jr() - 0.5) * 0.05;
+    c.translate(jx, jy); c.rotate(jrot);
+    var frames = TC.flameFrames;
+    if (frames.length >= 3) {
+      var m = frames[f % frames.length], asp = m.width / m.height;
+      var tmp = makeCanvas(m.width, m.height), tc = tmp.getContext('2d');
+      tc.drawImage(m, 0, 0); tc.globalCompositeOperation = 'source-in'; tc.fillStyle = color; tc.fillRect(0, 0, m.width, m.height);
+      c.drawImage(tmp, -0.5 * asp, -0.5, asp, 1);
+      return;
+    }
+    if (!stopPoses) stopPoses = makeStopPoses();
+    var ps = stopPoses[(f * 3) % 8];
+    c.fillStyle = color;
+    c.beginPath();
+    var by = 0.34;
+    lick(c, ps.main.bx, by, ps.main.wd, ps.main.ht, ps.main.lean);
+    ps.side.forEach(function (sd) { lick(c, sd.bx, by + 0.02, sd.wd, sd.ht, sd.lean); });
+    c.fill('nonzero');
+    // miolo mais claro, também diferente em cada pose
+    c.save();
+    c.globalAlpha *= 0.55;
+    c.fillStyle = TC.mixHex(color, '#EFE9DF', 0.38);
+    c.beginPath();
+    lick(c, ps.main.bx + ps.inner.lean * 0.3, by + 0.01, ps.main.wd * 0.4, ps.inner.ht, ps.inner.lean);
+    c.fill();
+    c.restore();
+  }
+
   // a chama da marca
   SP.flame = function (x, y, size, color, o) {
     o = o || {};
     var c = this.c;
+    var t = o.t === undefined ? this.t : o.t;
+    var mode = o.mode || (this.p && this.p.chama) || 'suave';
     c.save();
     c.translate(x, y);
     if (o.rot) c.rotate(o.rot);
     c.scale(size * (o.sx || 1), size * (o.sy || 1));
-    c.beginPath();
-    flamePath(c, { t: o.t === undefined ? this.t : o.t, flicker: o.flicker || 0, height: o.height });
-    c.fillStyle = color;
-    c.fill();
+    if (mode === 'stop motion' && o.flicker) {
+      // altura (acendendo/apagando) escala a pose inteira, ancorada na base
+      var hg = o.height === undefined ? 1 : o.height;
+      if (hg !== 1) { c.translate(0, 0.5); c.scale(0.55 + 0.45 * hg, hg); c.translate(0, -0.5); }
+      drawStopFlame(c, color, t, o);
+    } else {
+      c.beginPath();
+      flamePath(c, { t: t, flicker: o.flicker || 0, height: o.height });
+      c.fillStyle = color;
+      c.fill();
+    }
     c.restore();
   };
 
@@ -895,6 +987,7 @@
     { id: 'virar', name: 'Virar', hint: 'mudar a percepção' },
     { id: 'guiar', name: 'Guiar', hint: 'mostrar onde a pessoa está' },
     { id: 'apontar', name: 'Apontar', hint: 'quem fala, o que olhar' },
+    { id: 'texto', name: 'Texto', hint: 'legenda e destaque de trecho' },
     { id: 'passagem', name: 'Passagens', hint: 'esconder o corte' }
   ];
   var MOTION_PARAMS = [
@@ -989,12 +1082,47 @@
     '4:5': { w: 1080, h: 1350, label: 'Retrato 4:5 (feed)' }
   };
 
+  // famílias extras (as que o nome "TC ..." vem do fonts.css; o resto é reserva)
+  TC.fontFamilies = {
+    anton: "'TC Display','Anton',Impact,'Arial Narrow',sans-serif",
+    inter: "'TC Sans','Inter',-apple-system,'Segoe UI',Arial,sans-serif",
+    bebas: "'TC Bebas','Bebas Neue',Impact,'Arial Narrow',sans-serif",
+    instrument: "'TC Instrument','Instrument Serif',Georgia,'Times New Roman',serif",
+    dmserif: "'TC DM Serif','DM Serif Display',Georgia,'Times New Roman',serif",
+    caveat: "'TC Caveat','Caveat','Segoe Script',cursive"
+  };
+  /*
+   * Fontes dos templates de texto: uma só, ou um par (principal + complemento).
+   * mw/cw = peso, mi/ci = itálico (cada família só tem os pesos que existem de verdade,
+   * senão o navegador inventa negrito).
+   */
+  TC.fontPairs = {
+    'Anton': { main: 'anton', mw: 400, comp: 'inter', cw: 500 },
+    'Bebas Neue': { main: 'bebas', mw: 400, comp: 'inter', cw: 500 },
+    'Instrument Serif': { main: 'instrument', mw: 400, comp: 'instrument', cw: 400, ci: true },
+    'Inter': { main: 'inter', mw: 800, comp: 'inter', cw: 500 },
+    'Bebas + Instrument itálico': { main: 'bebas', mw: 400, comp: 'instrument', cw: 400, ci: true },
+    'Anton + Inter': { main: 'anton', mw: 400, comp: 'inter', cw: 500 },
+    'Instrument + Inter': { main: 'instrument', mw: 400, comp: 'inter', cw: 500 },
+    'DM Serif + Inter': { main: 'dmserif', mw: 400, comp: 'inter', cw: 500 },
+    'Inter + Caveat (manuscrito)': { main: 'inter', mw: 800, comp: 'caveat', cw: 600 }
+  };
+  TC.fontPairNames = Object.keys(TC.fontPairs);
+  // aplica um par num Stage: depois disso S.font('main'|'comp', ...) usa as famílias dele
+  TC.applyFontPair = function (S, name) {
+    var pr = TC.fontPairs[name] || TC.fontPairs['Anton + Inter'];
+    S.fonts = Object.assign({}, S.fonts, { main: TC.fontFamilies[pr.main], comp: TC.fontFamilies[pr.comp] });
+    return pr;
+  };
+
   TC.loadFonts = function (brand) {
     if (typeof document === 'undefined' || !document.fonts) return Promise.resolve();
     brand = brand || TC.brands[TC.defaultBrand];
     var f = brand.fonts;
     var specs = ['400 40px ' + f.display, '400 40px ' + f.sans, '500 40px ' + f.sans, '600 40px ' + f.sans,
-      '700 40px ' + f.sans, '800 40px ' + f.sans, 'italic 500 40px ' + f.sans, 'italic 700 40px ' + f.sans];
+      '700 40px ' + f.sans, '800 40px ' + f.sans, 'italic 500 40px ' + f.sans, 'italic 700 40px ' + f.sans,
+      '400 40px ' + TC.fontFamilies.bebas, '400 40px ' + TC.fontFamilies.instrument, 'italic 400 40px ' + TC.fontFamilies.instrument,
+      '400 40px ' + TC.fontFamilies.dmserif, 'italic 400 40px ' + TC.fontFamilies.dmserif, '600 40px ' + TC.fontFamilies.caveat];
     return Promise.all(specs.map(function (s) {
       return document.fonts.load(s, 'aãçéíóú AÇÃ').catch(function () { return null; });
     })).then(function () { return document.fonts.ready; }).then(function () { clearTextCache(); });

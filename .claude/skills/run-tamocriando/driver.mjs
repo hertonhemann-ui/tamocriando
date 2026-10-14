@@ -70,8 +70,10 @@ function cepMock(seqInfo) {
       if (script.startsWith('tc_info')) r = Object.assign({ ok: true }, seqInfo);
       else if (script.startsWith('tc_insert')) {
         const place = /,\s*true\s*,/.test(script);
-        r = place ? { ok: true, placed: true, track: 2, at: seqInfo.playhead, bin: 'Tamo Criando Motion' } : { ok: true, placed: false, bin: 'Tamo Criando Motion' };
-      } else if (script.startsWith('tc_reveal')) r = { ok: true };
+        const at = /"\s*,\s*(-?\d+(?:\.\d+)?)\)$/.exec(script);
+        r = place ? { ok: true, placed: true, track: 2, at: at ? Number(at[1]) : seqInfo.playhead, bin: 'Tamo Criando Motion' } : { ok: true, placed: false, bin: 'Tamo Criando Motion' };
+      } else if (script.startsWith('tc_markers')) r = { ok: true, count: (script.match(/"name"/g) || []).length };
+      else if (script.startsWith('tc_reveal')) r = { ok: true };
       setTimeout(() => cb(JSON.stringify(r)), 5);
     },
     getHostEnvironment() { return JSON.stringify({ appSkinInfo: { panelBackgroundColor: { color: { red: 35, green: 35, blue: 35 } } } }); }
@@ -235,30 +237,34 @@ const COMMANDS = {
   },
 
   // "frame <id> [t] [WxH] [fx] [k=v ...]": um frame do motor, sem UI.
-  // fx liga desfoque de movimento + aberração + lente (TC.Renderer).
+  // fx liga o pós-processamento (TC.Renderer); fx:<preset> escolhe um de TC.fxPresets (padrão, cinema, tremido, sujo, limpo);
+  // fxo=blur:0,aberration:35,edge:50 liga só o que tu listar (escala do painel, 0 a 100).
   async frame(arg) {
     if (current !== 'render') await COMMANDS.open('render');
     const parts = (arg || '').split(/\s+/).filter(Boolean);
     const id = parts.shift();
     if (!id) throw new Error('uso: frame <id> [t] [WxH] [fx] [chave=valor]');
-    let t = 1, w = 1080, h = 1920, fx = false;
+    let t = 1, w = 1080, h = 1920, fx = false, fxo = null;
     const params = {};
     for (const p of parts) {
       if (/^\d+x\d+$/.test(p)) { [w, h] = p.split('x').map(Number); }
-      else if (p === 'fx') fx = true;
+      else if (p === 'fx') fx = 'padrão';
+      else if (p.startsWith('fx:')) fx = p.slice(3);
+      else if (p.startsWith('fxo=')) { fx = 'custom'; fxo = Object.fromEntries(p.slice(4).split(',').map((kv) => kv.split(':')).map(([k, v]) => [k, Number(v)])); }
       else if (p.includes('=')) { const [k, ...v] = p.split('='); params[k] = v.join('=').replace(/_/g, ' '); }
       else t = Number(p);
     }
-    const r = await page.evaluate(({ id, t, w, h, fx, params }) => {
+    const r = await page.evaluate(({ id, t, w, h, fx, fxo, params }) => {
       if (!TC.templates[id]) throw new Error('template não existe: ' + id + ' (veja "list")');
       const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
       const o = { w, h, t, params, preview: true };
       let gl = null;
-      if (fx) { const R = new TC.Renderer(); R.render(cv.getContext('2d'), id, Object.assign(o, { fx: TC.fxDefaults })); gl = R.hasGL(); }
+      if (fx) { const R = new TC.Renderer(); R.render(cv.getContext('2d'), id, Object.assign(o, { fx: TC.fxFromUI(fxo || (TC.fxPresets[fx] || TC.fxPresets['padrão']).v, 6, 30) })); gl = R.hasGL(); }
       else TC.renderFrame(cv.getContext('2d'), id, o);
       return { url: cv.toDataURL('image/png'), gl };
-    }, { id, t, w, h, fx, params });
-    const f = path.join(FRAMES, `${id}_${w}x${h}_t${t}${fx ? '_fx' : ''}.png`);
+    }, { id, t, w, h, fx, fxo, params });
+    const ptag = Object.keys(params).length ? '_' + Object.entries(params).map(([k, v]) => k + '=' + v).join('_').replace(/[^\w=+-]+/g, '-') : '';
+    const f = path.join(FRAMES, `${id}${ptag}_${w}x${h}_t${t}${fx ? '_fx' + (fx === 'padrão' ? '' : '-' + (fxo ? Object.entries(fxo).map(([k, v]) => k.slice(0, 2) + v).join('_') : fx)) : ''}.png`);
     fs.writeFileSync(f, Buffer.from(r.url.split(',')[1], 'base64'));
     log('frame:', f, fx ? (r.gl ? '(fx com WebGL: desfoque + aberração + lente)' : '(fx SEM WebGL: só desfoque de movimento)') : '');
   },
@@ -269,6 +275,27 @@ const COMMANDS = {
     browser = page = server = null;
   },
 
+  // espera um texto aparecer num elemento: wait-text <css> <trecho>
+  async 'wait-text'(arg) {
+    need();
+    const i = (arg || '').indexOf(' ');
+    const sel = (arg || '').slice(0, i), frag = (arg || '').slice(i + 1);
+    await page.waitForFunction(([s, f]) => (document.querySelector(s)?.textContent || '').includes(f), [sel, frag], { timeout: 600000 });
+    log('wait-text', sel, JSON.stringify(frag), '-> OK');
+  },
+  // arrasta com o mouse a partir do centro de um elemento: drag <css> <dx> <dy>
+  async drag(arg) {
+    need();
+    const [sel, dx, dy] = (arg || '').split(/\s+/);
+    const box = await page.locator(sel).first().boundingBox();
+    if (!box) throw new Error('elemento sem caixa: ' + sel);
+    const x = box.x + box.width / 2, y = box.y + box.height / 2;
+    await page.mouse.move(x, y); await page.mouse.down();
+    await page.mouse.move(x + Number(dx) / 2, y + Number(dy) / 2, { steps: 4 });
+    await page.mouse.move(x + Number(dx), y + Number(dy), { steps: 4 });
+    await page.mouse.up();
+    log('drag', sel, dx, dy);
+  },
   help() {
     log([
       'open panel|gallery|render   abre a página (panel = painel do Premiere com host simulado)',
@@ -276,8 +303,10 @@ const COMMANDS = {
       'ss [nome]                   screenshot em ' + SHOTS,
       'pick <id>                   abre o editor da animação (ids: comando list)',
       'click <css> | click-text <texto>',
+      'drag <css> <dx> <dy>        arrasta com o mouse a partir do centro do elemento (px)',
       'fill <css> >> <n> | <valor> preenche o n-ésimo campo',
       'select <css> >> <n> | <valor>',
+      'wait-text <css> <trecho>    espera o texto aparecer no elemento (ex.: #plan-status inseridas)',
       'wait <css> | wait-status (painel: espera render+importação) | sleep <ms>',
       'text [css] | eval <js> | errors',
       'calls                       chamadas ExtendScript feitas pelo painel',

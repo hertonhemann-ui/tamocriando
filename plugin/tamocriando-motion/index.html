@@ -18,7 +18,7 @@
 
   <div class="seqbar">
     <span id="seqinfo">Procurando sequência…</span>
-    <button id="refresh" class="icon" title="Atualizar info da sequência">↻</button>
+    <span class="bar-btns"><button id="open-plan" class="ghost" title="Plano de animações a partir da transcrição">Plano</button><button id="refresh" class="icon" title="Atualizar info da sequência">↻</button></span>
   </div>
 
   <main>
@@ -27,12 +27,41 @@
       <div id="grid" class="grid"></div>
     </section>
 
+    <section id="plan" hidden>
+      <div class="ed-head">
+        <button id="plan-back" class="ghost">← Banco</button>
+        <h2>Plano de animações</h2>
+      </div>
+      <p class="desc">O plano é o que o Claude devolve depois de ler a transcrição do vídeo: cada animação com o tempo em que entra e o texto que leva. Cola o JSON aqui ou abre o arquivo.</p>
+      <label class="field"><span>Abrir arquivo do plano</span><input type="file" id="plan-file" accept=".json,application/json"></label>
+      <label class="field"><span>Ou cola o plano</span><textarea id="plan-json" rows="5" placeholder='{"versao":1,"cues":[...]}'></textarea></label>
+      <div class="actions"><button id="plan-load">Ler plano</button></div>
+      <ul id="plan-list" class="plan-list"></ul>
+      <div id="plan-novas" hidden>
+        <h3 class="mini">O banco ainda não tem</h3>
+        <ul id="plan-novas-list" class="plan-novas"></ul>
+        <p class="hint">São propostas de animação nova. Pede pro Claude criar as que fizerem sentido.</p>
+      </div>
+      <div id="plan-actions" hidden>
+        <div class="grid2">
+          <label class="field"><span>Início do vídeo na sequência (s)</span><input type="number" id="plan-offset" step="0.1" min="0" value="0"></label>
+          <div class="field"><span>&nbsp;</span><button id="plan-playhead" class="ghost">Usar o playhead</button></div>
+        </div>
+        <div class="actions">
+          <button id="plan-markers">Só pôr marcadores na timeline</button>
+          <button id="plan-insert" class="primary">Inserir as marcadas nos tempos do plano</button>
+        </div>
+      </div>
+      <p class="status" id="plan-status"></p>
+    </section>
+
     <section id="editor" hidden>
       <div class="ed-head">
         <button id="back" class="ghost">← Banco</button>
         <h2 id="ed-title"></h2>
       </div>
       <div class="stage-wrap"><canvas id="stage"></canvas></div>
+      <p class="hint" id="drag-hint" hidden>Arrasta o texto na prévia pra mudar de lugar. A roda do mouse muda o tamanho.</p>
       <div class="transport">
         <button id="play" class="icon" title="Play/pausa">❚❚</button>
         <input type="range" id="scrub" min="0" max="1000" value="0">
@@ -54,6 +83,7 @@
 
       <details class="group">
         <summary>Câmera</summary>
+        <label class="field"><span>Atalho</span><select id="fx-preset"></select></label>
         <div class="grid2">
           <label class="field"><span>Desfoque de movimento</span>
             <select id="fx-blur">
@@ -63,10 +93,13 @@
               <option value="0.75">sonho (270°)</option>
             </select>
           </label>
+          <label class="field"><span>Desfoque de borda <b id="fx-edge-v"></b></span><input type="range" id="fx-edge" min="0" max="100"></label>
           <label class="field"><span>Aberração <b id="fx-ab-v"></b></span><input type="range" id="fx-ab" min="0" max="100"></label>
           <label class="field"><span>Lente <b id="fx-lens-v"></b></span><input type="range" id="fx-lens" min="0" max="100"></label>
+          <label class="field"><span>Turbulência <b id="fx-disp-v"></b></span><input type="range" id="fx-disp" min="0" max="100"></label>
+          <label class="field"><span>Ruído <b id="fx-noise-v"></b></span><input type="range" id="fx-noise" min="0" max="100"></label>
         </div>
-        <p class="hint">Vale pra prévia e pro render. A aberração só aparece onde alguma coisa está se mexendo.</p>
+        <p class="hint">Vale pra prévia e pro render desta animação. Desfoque de borda deixa só o miolo nítido, como lente de cinema. Turbulência faz o quadro tremer em 12 por segundo. A aberração só aparece onde alguma coisa está se mexendo.</p>
       </details>
 
       <div class="grid2">
@@ -106,6 +139,7 @@
   </main>
 
   <script src="engine/core.js"></script>
+  <script src="engine/flame-frames.js"></script>
   <script src="engine/brands.js"></script>
   <script src="engine/fx.js"></script>
   <script src="engine/templates/acender.js"></script>
@@ -113,8 +147,10 @@
   <script src="engine/templates/virar.js"></script>
   <script src="engine/templates/guiar.js"></script>
   <script src="engine/templates/apontar.js"></script>
+  <script src="engine/templates/texto.js"></script>
   <script src="engine/templates/passagem.js"></script>
   <script src="ui/curve-editor.js"></script>
+  <script src="ui/drag-stage.js"></script>
   <script src="panel.js"></script>
 </body>
 </html>

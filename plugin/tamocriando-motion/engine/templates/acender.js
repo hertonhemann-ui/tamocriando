@@ -27,6 +27,7 @@
     description: 'O nome começa apagado, coberto de cinza. Um sopro leva a cinza embora, a brasa aparece por baixo, a chama acende e a frase entra.',
     uso: 'Abertura de vídeo longo, aula ou série. Em Reels o gancho vem antes de qualquer vinheta: aqui a pessoa ainda não decidiu ficar.',
     params: [
+      { key: 'chama', label: 'Chama', type: 'select', options: ['stop motion', 'suave'], default: 'stop motion' },
       { key: 'linha1', label: 'Linha 1', type: 'text', fromBrand: 'primeiro', default: 'herton' },
       { key: 'linha2', label: 'Linha 2 (em brasa)', type: 'text', fromBrand: 'sobrenome', default: 'hemann' },
       { key: 'frase', label: 'Frase', type: 'text', fromBrand: 'cargo', default: 'estrategista que elimina o cinza e acende a devoção.' },
@@ -198,6 +199,7 @@
     description: 'A chama acende sobre uma brasa, o nome entra, e no fim a chama se consome sozinha. O que fica na tela é a brasa respirando.',
     uso: 'Fim do vídeo. Sem "segue, salva, comenta": quem chegou até aqui decide sozinho. A última imagem é a brasa, não um pedido.',
     params: [
+      { key: 'chama', label: 'Chama', type: 'select', options: ['stop motion', 'suave'], default: 'stop motion' },
       { key: 'nome', label: 'Nome', type: 'text', fromBrand: 'nome', default: 'herton hemann' },
       { key: 'frase', label: 'Frase final (opcional)', type: 'text', default: 'o morno não marca ninguém.' },
       { key: 'destaque', label: 'Palavra da frase em brasa', type: 'text', default: 'marca' },

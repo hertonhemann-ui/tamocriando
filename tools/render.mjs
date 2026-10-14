@@ -16,6 +16,10 @@
  *   --blur 0.5         desfoque de movimento, fração do frame (0.5 = obturador 180°, 0 desliga)
  *   --aberration 35    aberração cromática de 0 a 100 (só onde algo se mexe)
  *   --lens 20          distorção de lente de 0 a 100
+ *   --edge 50          desfoque de borda (olho de lente) de 0 a 100
+ *   --displace 30      turbulência (quadro tremendo a 12 por segundo) de 0 a 100
+ *   --noise 25         ruído de filme de 0 a 100
+ *   --fx-preset cinema atalho pronto: padrão, cinema, tremido, sujo, limpo (as flags acima não valem junto)
  *   --samples 6        instantes por frame no desfoque
  *   --no-fx            desliga tudo (frame cru do motor)
  *
@@ -32,7 +36,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function parseArgs(argv) {
   const a = { formats: ['9:16', '16:9'], fps: 30, codec: 'prores', out: path.join(ROOT, 'renders'), brand: undefined, scale: 1,
-    fx: { blur: 0.5, aberration: 35, lens: 20, samples: 6 }, useFx: true };
+    fx: { blur: 0.5, aberration: 35, lens: 20, displace: 0, noise: 0, edge: 0, samples: 6 }, useFx: true };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
     const next = () => argv[++i];
@@ -56,6 +60,10 @@ function parseArgs(argv) {
     else if (k === '--blur') a.fx.blur = Number(next());
     else if (k === '--aberration') a.fx.aberration = Number(next());
     else if (k === '--lens') a.fx.lens = Number(next());
+    else if (k === '--displace') a.fx.displace = Number(next());
+    else if (k === '--noise') a.fx.noise = Number(next());
+    else if (k === '--edge') a.fx.edge = Number(next());
+    else if (k === '--fx-preset') a.fxPreset = next();
     else if (k === '--samples') a.fx.samples = Number(next());
     else if (k === '--no-fx') a.useFx = false;
     else if (k === '-h' || k === '--help') { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('*/')[0]); process.exit(0); }
@@ -93,7 +101,8 @@ const CODECS = {
 async function main() {
   const a = parseArgs(process.argv);
   // o que a página recebe: mesmas escalas do painel (aberração e lente em 0..1)
-  const fxFor = (fps) => (a.useFx ? { blur: a.fx.blur, samples: a.fx.samples, fps, aberration: a.fx.aberration / 100, lens: a.fx.lens / 100 } : undefined);
+  // preset (cinema, tremido, sujo, limpo...) vem do motor; as flags soltas valem por cima dele
+  const fxFor = (fps) => (a.useFx ? { ui: a.fx, preset: a.fxPreset, fps } : undefined);
   let chromium;
   try { ({ chromium } = await import('playwright')); }
   catch { throw new Error('Playwright não encontrado. Roda: npm i -D playwright'); }

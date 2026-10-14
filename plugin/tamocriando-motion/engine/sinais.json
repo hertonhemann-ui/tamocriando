@@ -1,0 +1,186 @@
+{
+  "versao": 1,
+  "comoLer": "Para cada animação: o que a pessoa precisa sentir (momento), que sinais na fala pedem ela (sinais), quando NÃO usar (evita) e uma dica de preenchimento (dica). Quem planeja lê a transcrição procurando esses sinais, não palavras exatas.",
+  "momentos": {
+    "reconhecimento": "a pessoa se vê no que está sendo descrito",
+    "alivio": "entende que o problema tem nome e não é falta de esforço",
+    "indignacao": "percebe quanto custa continuar morno",
+    "esperanca": "vê que tem caminho e onde está nele",
+    "identidade": "reconhece quem quer ser",
+    "determinacao": "sai com uma coisa só na cabeça"
+  },
+  "regrasGerais": {
+    "leituraSegPorPalavra": 0.3,
+    "leituraBaseSeg": 1.0,
+    "maxChamativasPorMinuto": 8,
+    "maxSimultaneas": 2,
+    "umaBrasaPorTela": true,
+    "abrirReelsSemVinheta": true,
+    "finalSemPedido": true,
+    "respiroAposPergunta": 1.5
+  },
+  "animacoes": {
+    "acender": {
+      "momento": "determinacao",
+      "sinais": ["abertura de aula, série ou vídeo longo", "apresentação do tema do episódio"],
+      "evita": ["Reels de até 60 s (o gancho vem antes de qualquer vinheta)", "meio do vídeo"],
+      "dica": "frase de baixo = posicionamento em uma linha"
+    },
+    "assinatura": {
+      "momento": "determinacao",
+      "sinais": ["última frase do vídeo", "despedida sem pedido ('é isso', 'até a próxima')"],
+      "evita": ["qualquer lugar que não seja o fim", "vídeo que termina com pedido de segue/salva (a assinatura contradiz o pedido)"],
+      "dica": "fica de 4 a 6 s depois da última fala"
+    },
+    "fundo-vivo": {
+      "momento": "reconhecimento",
+      "sinais": ["trecho lido em off sem imagem", "citação longa", "pausa dramática"],
+      "evita": ["quando já tem imagem de rosto na tela"],
+      "dica": "serve de base pra Destaque ou Tese por cima"
+    },
+    "marca": {
+      "momento": "identidade",
+      "sinais": ["a palavra que a pessoa deve levar embora", "palavra repetida e enfatizada na fala"],
+      "evita": ["mais de uma por vídeo", "frases (é uma palavra só)"],
+      "dica": "deixa 1,5 s de silêncio depois do impacto"
+    },
+    "palavra-acesa": {
+      "momento": "reconhecimento",
+      "sinais": ["frase de efeito curta com uma palavra central", "tese em até 5 palavras ('o morno não marca ninguém')"],
+      "evita": ["frase longa", "quando a palavra central não é a mais importante"],
+      "dica": "linha1 + destaque + linha2 = a frase inteira; destaque = a palavra que vira brasa"
+    },
+    "tese": {
+      "momento": "alivio",
+      "sinais": ["afirmação conclusiva pra print ('a verdade é que...')", "definição que resume o argumento"],
+      "evita": ["frase com mais de 12 palavras", "pergunta"],
+      "dica": "destaque = a palavra que deve ficar em brasa; tema papel/tinta/brasa conforme o clima do trecho"
+    },
+    "numero": {
+      "momento": "esperanca",
+      "sinais": ["estatística, resultado, prazo ou quantidade dita em voz alta", "'3 passos', 'em 90 dias', '4 de cada 5'"],
+      "evita": ["número sem contexto na legenda"],
+      "dica": "valor + total quando for proporção; legenda diz de onde vem o número"
+    },
+    "cinza-brasa": {
+      "momento": "indignacao",
+      "sinais": ["contraste de duas palavras: 'não é X, é Y', 'em vez de X, Y'", "o que a pessoa larga vs o que ela quer ser"],
+      "evita": ["contraste de frases longas (use Virada ou De → Pra)"],
+      "dica": "a primeira palavra é a cinza, a segunda é a brasa; sincroniza a segunda com a fala"
+    },
+    "virada": {
+      "momento": "indignacao",
+      "sinais": ["crença do mercado desmontada: 'te disseram que..., só que...'", "mito seguido de contra-argumento"],
+      "evita": ["quando não há uma crença clara sendo quebrada"],
+      "dica": "a queima começa no 'só que...'"
+    },
+    "fluxo": {
+      "momento": "esperanca",
+      "sinais": ["caminho de A pra B: 'de X pra Y', 'sair de... chegar em...'", "transformação em duas palavras"],
+      "evita": ["mais de dois estados"],
+      "dica": "palavra fria à esquerda, quente à direita, com uma legenda curta de cada lado"
+    },
+    "pergunta": {
+      "momento": "reconhecimento",
+      "sinais": ["pergunta retórica: 'e se...?', 'quanto te custa...?'", "gancho em forma de pergunta"],
+      "evita": ["cortar logo depois (a pessoa precisa de respiro pra responder por dentro)"],
+      "dica": "mantém a pergunta no ar até 1,5 s depois do fim da fala"
+    },
+    "trilha-brasa": {
+      "momento": "esperanca",
+      "sinais": ["enumera etapas do método: 'primeiro..., depois...'", "'estamos na etapa 3'"],
+      "evita": ["lista de dicas soltas (use Contador ou Lista)"],
+      "dica": "etapas = as mesmas do método em todos os vídeos; ativa = etapa da vez"
+    },
+    "capitulo": {
+      "momento": "esperanca",
+      "sinais": ["mudança de parte em vídeo de mais de 1 minuto: 'agora vamos pra parte 2'"],
+      "evita": ["vídeo curto (Reels)"],
+      "dica": "numero + titulo; entra junto com a mudança de assunto"
+    },
+    "contador": {
+      "momento": "esperanca",
+      "sinais": ["lista numerada: 'dica 3', 'o segundo motivo'", "sequência de itens com total conhecido"],
+      "evita": ["lista sem total"],
+      "dica": "aparece no começo de cada item e fica durante ele"
+    },
+    "lista": {
+      "momento": "esperanca",
+      "sinais": ["enumeração rápida de itens curtos ('não se força, não performa, não busca atalho')"],
+      "evita": ["item com mais de 4 palavras"],
+      "dica": "um item por frase falada; duração = tempo da fala + 1 s"
+    },
+    "nome": {
+      "momento": "alivio",
+      "sinais": ["apresentação de quem fala (primeiros segundos)", "entrada de convidado ou cliente"],
+      "evita": ["repetir mais de uma vez por pessoa"],
+      "dica": "entra quando a pessoa já quer saber quem está falando, não no segundo 0"
+    },
+    "anotacao": {
+      "momento": "alivio",
+      "sinais": ["'olha aqui', 'repara nisso', referência a algo na tela", "print, número ou rosto que precisa ser apontado"],
+      "evita": ["quando não há nada visível pra apontar"],
+      "dica": "x, y, largura e altura em % do quadro; arrasta na prévia pra posicionar"
+    },
+    "simbolo": {
+      "momento": "reconhecimento",
+      "sinais": ["metáfora com objeto: máscara (performar), espelho (reconhecer), ímã (atrair), ampulheta (tempo), chave (solução), lupa (olhar de perto), balão (fala), etiqueta (virar commodity), digital (identidade)"],
+      "evita": ["dois símbolos ao mesmo tempo", "símbolo que ninguém entenderia sem explicação"],
+      "dica": "o texto embaixo é a ideia em até 6 palavras"
+    },
+    "legenda": {
+      "momento": "reconhecimento",
+      "sinais": ["fala corrida em vídeo de rosto, principalmente Reels", "trechos em que nenhuma outra animação ocupa o centro"],
+      "evita": ["ao mesmo tempo que Palavra Acesa, Destaque ou Manchete na mesma região"],
+      "dica": "preenche 'tempos' com o início de cada palavra (o plano calcula a partir da transcrição); destaque = 1 palavra por frase"
+    },
+    "destaque": {
+      "momento": "alivio",
+      "sinais": ["trecho interessante dito por alguém (definição, ironia, frase pra print)", "citação de convidado"],
+      "evita": ["mais de um por 20 s"],
+      "dica": "rótulo pequeno ('repara nisso') + trecho em destaque; efeito 'foco' pra frase calma, 'tracking' pra definição"
+    },
+    "manchete": {
+      "momento": "identidade",
+      "sinais": ["capa de uma ideia: a palavra principal com complemento ao redor", "abertura de capítulo com palavra forte"],
+      "evita": ["frase longa na palavra grande"],
+      "dica": "linha1 e linha3 completam a palavra grande ('o que fica é a / MARCA / não o barulho.')"
+    },
+    "queima": {
+      "momento": "indignacao",
+      "sinais": ["virada forte de assunto", "fim de uma ideia que a pessoa quer deixar pra trás"],
+      "evita": ["troca de cena sem mudança de assunto (use Sopro)"],
+      "dica": "o meio da passagem cai exatamente no corte"
+    },
+    "sopro": {
+      "momento": "esperanca",
+      "sinais": ["troca de cena dentro do mesmo assunto", "antes de revelar algo escondido"],
+      "evita": ["cortes a cada poucos segundos (vira tique)"],
+      "dica": "o meio da passagem cai no corte"
+    },
+    "clarao": {
+      "momento": "esperanca",
+      "sinais": ["respiro quente depois de uma frase forte", "passagem do problema pra solução"],
+      "evita": ["trecho sombrio ou de indignação"],
+      "dica": "o estouro cai no corte; cor 'brasa' por padrão"
+    },
+    "varrida": {
+      "momento": "determinacao",
+      "sinais": ["troca com energia, ritmo rápido", "salto entre cenários ou locações"],
+      "evita": ["trecho calmo e reflexivo"],
+      "dica": "direção igual à do movimento dos dois clipes; combina com desfoque de movimento"
+    },
+    "rasgo": {
+      "momento": "indignacao",
+      "sinais": ["ruptura física: 'rasga isso', 'esquece o que te disseram'", "passar da teoria pra prática"],
+      "evita": ["clima leve de dica rápida"],
+      "dica": "papel por padrão; 'tinta' em vídeo escuro"
+    },
+    "fatias": {
+      "momento": "esperanca",
+      "sinais": ["troca de tópico em pauta organizada: 'primeiro ponto..., segundo ponto...'"],
+      "evita": ["vídeo emocional (fica seco demais)"],
+      "dica": "7 faixas horizontais por padrão"
+    }
+  }
+}

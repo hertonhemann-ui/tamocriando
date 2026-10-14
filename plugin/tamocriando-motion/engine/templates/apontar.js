@@ -16,6 +16,7 @@
     description: 'A chama acende ao lado do nome em minúsculas e a frase de posicionamento entra embaixo, com o trecho que importa em brasa. Na saída a chama se apaga.',
     uso: 'Primeiros segundos de quem fala: tu, cliente, convidado. Credencial em uma linha, sem currículo.',
     params: [
+      { key: 'chama', label: 'Chama', type: 'select', options: ['stop motion', 'suave'], default: 'stop motion' },
       { key: 'nome', label: 'Nome', type: 'text', fromBrand: 'nome', default: 'herton hemann' },
       { key: 'cargo', label: 'Frase de baixo', type: 'text', fromBrand: 'cargo', default: 'estrategista que elimina o cinza e acende a devoção.' },
       { key: 'destaque', label: 'Trecho em brasa', type: 'text', fromBrand: 'destaqueCargo', default: 'acende a devoção.' },
@@ -96,6 +97,7 @@
   // ------------------------------------------------------------------
   TC.register({
     id: 'anotacao',
+    drag: { x: 'x', y: 'y' },
     name: 'Anotação',
     category: 'apontar',
     duration: 3.5,
@@ -282,6 +284,7 @@
 
   TC.register({
     id: 'simbolo',
+    drag: { x: 'x', y: 'y', size: 'tamanho' },
     name: 'Símbolo',
     category: 'apontar',
     duration: 3.5,

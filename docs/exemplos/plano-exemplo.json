@@ -1,0 +1,305 @@
+{
+  "versao": 1,
+  "video": {
+    "titulo": "o morno não marca ninguém",
+    "duracao": 63.3,
+    "formato": "9:16",
+    "estilo": "reels",
+    "cortes": [
+      21.9,
+      31.9,
+      47.8
+    ]
+  },
+  "cenas": [
+    {
+      "t": 0,
+      "fim": 13,
+      "momento": "reconhecimento",
+      "resumo": "pergunta que faz a pessoa se ver e a imagem da cinza"
+    },
+    {
+      "t": 13,
+      "fim": 22,
+      "momento": "indignacao",
+      "resumo": "o que te venderam e o que sobra de verdade"
+    },
+    {
+      "t": 22,
+      "fim": 32,
+      "momento": "alivio",
+      "resumo": "a pergunta do morno e a tese em cinco palavras"
+    },
+    {
+      "t": 32,
+      "fim": 48,
+      "momento": "esperanca",
+      "resumo": "prova e caminho"
+    },
+    {
+      "t": 48,
+      "fim": 63.3,
+      "momento": "determinacao",
+      "resumo": "o fogo acaba em si, a brasa fica"
+    }
+  ],
+  "cues": [
+    {
+      "id": "c01",
+      "t": 0.2,
+      "dur": 4.7,
+      "animacao": "pergunta",
+      "params": {
+        "pergunta": "quanto te custa não fazer o que tu ama?",
+        "destaque": "te custa",
+        "respiro": "sim"
+      },
+      "fala": "Quanto te custa não fazer o que tu ama?",
+      "sinal": "pergunta retórica de abertura",
+      "porque": "gancho em forma de pergunta; a animação segura 1,5 s depois da fala pra pessoa responder por dentro",
+      "confianca": 0.95,
+      "alternativas": [
+        "palavra-acesa"
+      ]
+    },
+    {
+      "id": "c02",
+      "t": 4.9,
+      "dur": 7.7,
+      "animacao": "legenda",
+      "params": {
+        "texto": "Eu pergunto porque quase todo mundo que me procura chega coberto de cinza. Faz tudo certo, posta todo dia, e ninguém lembra de quem é.",
+        "estilo": "frase",
+        "porTela": 3,
+        "atual": "pop",
+        "efeito": "pop",
+        "py": 66,
+        "tempos": "0.00,0.19,0.65,1.03,1.35,1.63,1.96,2.19,2.38,2.80,3.12,3.54,3.73,4.10,4.35,4.65,5.05,5.40,5.70,6.00,6.15,6.60,7.00,7.20,7.50",
+        "destaque": "cinza"
+      },
+      "fala": "Eu pergunto porque quase todo mundo que me procura chega coberto de cinza. Faz tudo certo, posta todo dia, e ninguém lembra de quem é.",
+      "sinal": "fala corrida de rosto, sem outra animação no centro",
+      "porque": "a única palavra em brasa é cinza, que o vídeo inteiro vai retomar; palavras no tempo da voz",
+      "confianca": 0.8,
+      "alternativas": []
+    },
+    {
+      "id": "c03",
+      "t": 12.9,
+      "dur": 4.8,
+      "animacao": "virada",
+      "params": {
+        "rotuloA": "TE VENDERAM",
+        "a": "disciplina resolve.",
+        "rotuloB": "O QUE É",
+        "b": "disciplina forçada é o que sobra quando a devoção foi embora.",
+        "origem": "canto"
+      },
+      "fala": "Te venderam que disciplina resolve. Só que disciplina forçada é o que sobra quando a devoção foi embora.",
+      "sinal": "crença do mercado seguida de 'só que...'",
+      "porque": "a queima começa no \"só que\" (≈ 15 s) e desmonta a crença",
+      "confianca": 0.9,
+      "alternativas": [
+        "cinza-brasa"
+      ]
+    },
+    {
+      "id": "c04",
+      "t": 17.7,
+      "dur": 4.5,
+      "animacao": "lista",
+      "params": {
+        "titulo": "QUEM AMA O QUE FAZ",
+        "itens": "não precisa se forçar\nnão performa\nnão busca atalho",
+        "marcador": "brasa",
+        "fundo": "painel"
+      },
+      "fala": "Quem ama o que faz não precisa se forçar, não performa, não busca atalho.",
+      "sinal": "enumeração de três itens curtos",
+      "porque": "cada item entra no ritmo da fala e o marcador acende junto",
+      "confianca": 0.9,
+      "alternativas": [
+        "legenda"
+      ]
+    },
+    {
+      "id": "c05",
+      "t": 27.4,
+      "dur": 3.9,
+      "animacao": "palavra-acesa",
+      "params": {
+        "linha1": "o morno",
+        "destaque": "não marca",
+        "linha2": "ninguém.",
+        "posicao": "baixo"
+      },
+      "fala": "Porque o morno não marca ninguém.",
+      "sinal": "frase de efeito curta com palavra central",
+      "porque": "é a tese do vídeo em cinco palavras; a palavra esquenta enquanto a voz termina a frase",
+      "confianca": 0.92,
+      "alternativas": [
+        "tese"
+      ]
+    },
+    {
+      "id": "c06",
+      "t": 31.1,
+      "dur": 1.6,
+      "animacao": "queima",
+      "params": {
+        "origem": "cantos"
+      },
+      "fala": "",
+      "sinal": "virada de assunto no corte de 31,9 s",
+      "porque": "sai da tese e entra na prova; o meio da queima cai no corte",
+      "confianca": 0.7,
+      "alternativas": [
+        "sopro"
+      ]
+    },
+    {
+      "id": "c07",
+      "t": 32.4,
+      "dur": 5,
+      "animacao": "numero",
+      "params": {
+        "valor": "4",
+        "total": "5",
+        "rotulo": "dos meus atendimentos: 4 de cada 5 entendem na hora.",
+        "posicao": "centro"
+      },
+      "fala": "quatro de cada cinco pessoas entendem o que tu faz na hora",
+      "sinal": "estatística falada",
+      "porque": "o número vem com a fonte na legenda (dos meus atendimentos), senão é enfeite",
+      "confianca": 0.95,
+      "alternativas": []
+    },
+    {
+      "id": "c08",
+      "t": 37.8,
+      "dur": 6,
+      "animacao": "trilha-brasa",
+      "params": {
+        "etapas": "raio-x, a frase, o filtro, o eixo, antes e depois",
+        "ativa": 1,
+        "posicao": "topo"
+      },
+      "fala": "o meu processo começa no raio-x, depois a frase, o filtro, o eixo, e só no fim o antes e depois",
+      "sinal": "enumera as etapas do método",
+      "porque": "mostra o caminho inteiro uma vez; nos próximos vídeos a mesma trilha volta com outra etapa acesa",
+      "confianca": 0.9,
+      "alternativas": [
+        "lista"
+      ]
+    },
+    {
+      "id": "c09",
+      "t": 47.2,
+      "dur": 1.2,
+      "animacao": "rasgo",
+      "params": {
+        "papel": "tinta",
+        "lado": "esquerda"
+      },
+      "fala": "",
+      "sinal": "virada de ideia no corte de 47,8 s",
+      "porque": "sai do método e entra no fechamento; papel rasga como quem larga a explicação",
+      "confianca": 0.65,
+      "alternativas": [
+        "clarao"
+      ]
+    },
+    {
+      "id": "c10",
+      "t": 48.4,
+      "dur": 4.4,
+      "animacao": "manchete",
+      "params": {
+        "linha1": "o fogo acaba em si.",
+        "linha2": "brasa",
+        "linha3": "é o que fica.",
+        "fonte": "Bebas + Instrument itálico",
+        "efeito": "foco",
+        "corGrande": "brasa"
+      },
+      "fala": "O fogo é a vida, mas ele acaba em si. O que fica é a brasa.",
+      "sinal": "palavra forte com complemento ao redor",
+      "porque": "a palavra grande é a que o vídeo quer que fique; a única em brasa nesse trecho",
+      "confianca": 0.85,
+      "alternativas": [
+        "tese"
+      ]
+    },
+    {
+      "id": "c11",
+      "t": 53.4,
+      "dur": 3.8,
+      "animacao": "legenda",
+      "params": {
+        "texto": "E a brasa é o que tu não consegue não mostrar.",
+        "estilo": "frase",
+        "porTela": 4,
+        "atual": "pop",
+        "efeito": "foco",
+        "py": 52,
+        "tempos": "0.10,0.28,0.46,0.88,1.07,1.25,1.55,1.79,2.09,2.69,3.00",
+        "destaque": "brasa"
+      },
+      "fala": "E a brasa é o que tu não consegue não mostrar.",
+      "sinal": "última frase da fala",
+      "porque": "a frase pra print entra como legenda calma (efeito foco) em vez de outra cartela, pra deixar a assinatura limpa",
+      "confianca": 0.75,
+      "alternativas": [
+        "tese",
+        "destaque"
+      ]
+    },
+    {
+      "id": "c12",
+      "t": 57.3,
+      "dur": 6,
+      "animacao": "assinatura",
+      "params": {
+        "chama": "stop motion"
+      },
+      "fala": "",
+      "sinal": "fim do vídeo sem pedido",
+      "porque": "fecha com a brasa respirando; a fala terminou sem pedir segue/salva/comenta",
+      "confianca": 0.95,
+      "alternativas": []
+    }
+  ],
+  "novas": [
+    {
+      "id": "n01",
+      "t": 22.2,
+      "dur": 3.2,
+      "nome": "Termômetro",
+      "fala": "De zero a dez, o quanto tu tá morno hoje?",
+      "prioridade": "alta",
+      "porque": "a fala pede uma escala e nenhuma animação do banco mostra uma posição entre dois extremos",
+      "descricao": "barra vertical que vai do cinza à brasa; um marcador sobe até o ponto dito e a barra esquenta até ali",
+      "baseEm": "numero",
+      "campos": [
+        "valor (0 a 10)",
+        "extremo de baixo",
+        "extremo de cima"
+      ]
+    },
+    {
+      "id": "n02",
+      "t": 25.5,
+      "dur": 1.9,
+      "nome": "Pausa de resposta",
+      "fala": "(silêncio de 2 s depois da pergunta)",
+      "prioridade": "média",
+      "porque": "o vídeo deixa 2 s de silêncio de propósito e a tela fica vazia; sem sinal, a pessoa acha que travou",
+      "descricao": "a imagem escurece de leve e uma brasa pequena respira no canto, com o rótulo \"responde por dentro\" que some sozinho",
+      "baseEm": "pergunta",
+      "campos": [
+        "rótulo",
+        "canto"
+      ]
+    }
+  ]
+}

@@ -89,9 +89,11 @@ Outputs (override with `TC_OUT=...`): screenshots `/tmp/tamocriando-run/shots/`,
 | `seq 1080x1920 29.97` / `seq none` | fake active sequence; set **before** `open panel` (default 540×960 @ 29.97) |
 | `pick <id>` | open the editor for a template id (panel or gallery) |
 | `list` | template ids, categories, durations |
-| `frame <id> [t] [WxH] [fx] [key=value]` | one engine frame on the preview backdrop; `fx` = motion blur + chromatic aberration + lens; `_` in values becomes a space |
+| `frame <id> [t] [WxH] [fx] [key=value]` | one engine frame on the preview backdrop; `fx` = default camera, `fx:cinema` (or `tremido`, `sujo`, `limpo`) = a preset, `fxo=blur:0,edge:60` = only what you list (0-100); `_` in values becomes a space; the output file name carries the params |
 | `fill <css> >> <n> \| <text>` / `select <css> >> <n> \| <value>` | set the n-th matching field |
 | `click <css>` / `click-text <text>` | DOM click (exact text wins over substring) |
+| `drag <css> <dx> <dy>` | real mouse drag from the element's center (used for the drag-to-move text on `#stage` / `#ed-cv`) |
+| `wait-text <css> <fragment>` | waits until the element's text contains the fragment (use `#plan-status inseridas` for plan inserts; `wait-status` only watches `#status`) |
 | `wait <css>` / `wait-status` / `sleep <ms>` | `wait-status` waits for the panel's render+import to finish (`#status` gets `ok`/`err`) |
 | `calls` | ExtendScript calls the panel made (`tc_info`, `tc_insert`) |
 | `files` / `save on\|off` | PNG count/bytes the panel wrote; `save on` also writes them to disk |
@@ -122,7 +124,7 @@ node tools/render.mjs --sheet --only virada --formats 16:9 --out /tmp/tamocriand
 node tools/render.mjs --only contador --formats 9:16 --codec png --out /tmp/tamocriando-run/render   # MOV (png, rgba), 150 frames, ~25 s with fx
 ```
 
-Renders go through the same camera post-processing as the panel by default (`--blur 0.5 --aberration 35 --lens 20 --samples 6`); `--no-fx` gives raw engine frames (the `contador` MOV drops from ~25 s to ~5 s). Other flags (`--catalog`, `--gif`, `--params '{json}'`, `--fps`, `--times a,b,c`) are in the header of `tools/render.mjs`.
+Renders go through the same camera post-processing as the panel by default (`--blur 0.5 --aberration 35 --lens 20 --samples 6`); `--no-fx` gives raw engine frames (the `contador` MOV drops from ~25 s to ~5 s). Camera flags also include `--edge`, `--displace`, `--noise` (0-100) and `--fx-preset padrão|cinema|tremido|sujo|limpo`. Other flags (`--catalog`, `--gif`, `--params '{json}'`, `--fps`, `--times a,b,c`) are in the header of `tools/render.mjs`.
 
 ## Run (human path)
 
@@ -156,3 +158,18 @@ Expected: every line `ok` and `tudo certo` — all templates × 4 formats (raw a
 - **`status [status err]: Abre uma sequência na timeline antes.`**: the fake Premiere has no sequence (`seq none`). Expected; use `seq 1080x1920 29.97` before `open panel`, or click `#importOnly`.
 - **`status [status err]: Cannot read properties of undefined (reading 'duration')`**: `#insert`/`#importOnly` clicked with no editor open. `pick <id>` first.
 - **`[página] Failed to load resource: … 404` from `tools/render.mjs`** (or 404 lines in `errors`): `fonts.css` or a script list points to a file that no longer exists (hit after swapping fonts). Fix the reference.
+
+## Plan from a transcript, and the flame frames
+
+```bash
+node tools/plano.mjs ler docs/exemplos/transcricao-exemplo.srt --out /tmp/tr.json
+node tools/plano.mjs validar docs/exemplos/plano-exemplo.json --transcricao /tmp/tr.json   # exit 1 on errors
+node tools/plano.mjs storyboard docs/exemplos/plano-exemplo.json --transcricao /tmp/tr.json --out /tmp/sb.html
+node tools/importar-chama.mjs <grade.png> --grade 4x3 --previa /tmp/chama.png                 # then: node tools/importar-chama.mjs --limpar
+```
+
+Panel plan tab, end to end (fake Premiere): `click #open-plan`, put the JSON in `#plan-json`, `click #plan-load`, `fill #plan-offset >> 0 | 10`, `click #plan-insert`, `wait-text #plan-status inseridas`, `calls` (the `tc_insert` calls end with the placement second).
+
+Gotchas learned here:
+- Chromium text-input `fill` of long JSON is fine; to set the textarea from the driver use `eval document.querySelector('#plan-json').value = ...`.
+- After a test import of flame frames always run `node tools/importar-chama.mjs --limpar` before committing, or the repo ships your test frames.

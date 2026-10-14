@@ -1,1 +1,13 @@
-["core.js", "brands.js", "fx.js", "templates/acender.js", "templates/marcar.js", "templates/virar.js", "templates/guiar.js", "templates/apontar.js", "templates/passagem.js"]
+[
+  "core.js",
+  "flame-frames.js",
+  "brands.js",
+  "fx.js",
+  "templates/acender.js",
+  "templates/marcar.js",
+  "templates/virar.js",
+  "templates/guiar.js",
+  "templates/apontar.js",
+  "templates/texto.js",
+  "templates/passagem.js"
+]

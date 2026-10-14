@@ -21,7 +21,7 @@ Quem assiste passa por seis momentos, nessa ordem. Cada animação foi feita pra
 | **5. Identidade** | Reconhece quem quer ser | Marca · Cartela Tese | Uma Marca por vídeo. É a palavra que tu quer que fique. |
 | **6. Determinação** | Sai com uma coisa só na cabeça | Assinatura · Acender | A Assinatura fecha sem pedido. Quem foi marcado lembra de quem marcou. |
 
-Em qualquer momento: **Queima** e **Sopro** pra esconder o corte, **Contador** pra listas longas, **Fundo Vivo** atrás de texto lido em off.
+Em qualquer momento: **Queima, Sopro, Clarão, Varrida, Rasgo e Fatias** pra esconder o corte, **Contador** pra listas longas, **Fundo Vivo** atrás de texto lido em off.
 
 ### Por que a Trilha da Brasa é a peça mais importante do banco
 
@@ -51,6 +51,18 @@ Cada etapa tem um ícone que esquenta: cinza, sopro, brasa, chama, marca. A pess
 
 ---
 
+## Texto: legenda e destaque
+
+- **Legenda** é pra fala corrida. Em modo frase (3 palavras por tela), a palavra atual dá um pop e **uma** palavra por frase fica em brasa. Em Reels de rosto ela pode ficar o vídeo todo; nos trechos em que uma Palavra Acesa ou um Destaque ocupa o centro, ela sai.
+- **Destaque** é pra grifar uma coisa que alguém disse e que vale ler duas vezes. Dura de 4 a 5 s. Com par de fontes, o trecho vira o complemento (por exemplo itálico serifado no meio de letras condensadas).
+- **Manchete** é pra palavra que fica, com um complemento em cima e embaixo.
+- Escolha do efeito: **foco** pra frase calma, **tracking** pra definição, **pop** pra fala acelerada, **subida** pra lista de frases, **obturador** pra energia, **cinema** pra citação.
+- Qualquer texto da prévia pode ser **arrastado** com o mouse. Mantém dentro dos 12% a 80% de altura no 9:16.
+
+## Do vídeo ao plano
+
+Se tu já tem a transcrição, pula a escolha na mão: o plano diz onde cada animação entra. Veja [PLANO-DE-ANIMACAO.md](PLANO-DE-ANIMACAO.md). Vale como primeiro rascunho: tu revisa o storyboard, desmarca o que não quer e insere o resto.
+
 ## Curvas: quando mexer
 
 O padrão (entrada **suave**, saída **apagar**) serve pra quase tudo. Mexe quando o sentido pedir:
@@ -64,7 +76,12 @@ O padrão (entrada **suave**, saída **apagar**) serve pra quase tudo. Mexe quan
 
 Regra de bolso: curva em pé é rápido, deitada é devagar. Entrada rápida chama atenção; saída lenta deixa a coisa na memória.
 
-## Câmera: quando desligar
+## Câmera: quando usar cada coisa
+
+- **Cinema** (borda desfocada + grão leve): vídeo de rosto, pra dar profundidade sem mexer na imagem. Se o teu vídeo já tem vinheta ou desfoque de fundo, baixa a borda.
+- **Tremido**: stop motion, colagem, trecho em que o texto tem que parecer feito à mão.
+- **Sujo**: clima de fita velha, bom pra indignação. Nunca no fechamento.
+- **Limpo**: quando a animação vai pra outro editor ou se mistura com outros efeitos.
 
 O desfoque de movimento, a aberração e a lente são detalhe. Parado, quase não se vê nada. Desliga (ou baixa) quando:
 

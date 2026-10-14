@@ -24,7 +24,7 @@
         });
       }, Promise.resolve());
     })
-    .then(function () { return TC.loadFonts(); })
+    .then(function () { return Promise.all([TC.loadFonts(), TC.loadFlameFrames()]); })
     .then(function () { return TC.list().map(function (t) { return { id: t.id, name: t.name, duration: t.duration, thumb: t.thumb, category: t.category }; }); });
 
   var cv = document.getElementById('cv');
@@ -33,7 +33,12 @@
 
   // com o.fx passa pelo pós-processamento (desfoque, aberração, lente), igual ao painel
   function draw(c, id, o) {
-    if (o.fx) { R = R || new TC.Renderer(); R.render(c, id, o); }
+    if (o.fx) {
+      R = R || new TC.Renderer();
+      // o.fx do node vem como { ui, preset, fps }: converte aqui pra escala do motor
+      var ui = o.fx.preset && TC.fxPresets[o.fx.preset] ? TC.fxPresets[o.fx.preset].v : o.fx.ui;
+      R.render(c, id, Object.assign({}, o, { fx: TC.fxFromUI(ui, (o.fx.ui && o.fx.ui.samples) || 6, o.fx.fps || 30) }));
+    }
     else TC.renderFrame(c, id, o);
   }
 

@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Serif+Display:ital@0;1&family=Caveat:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
 <style>
 /* Layout: a ordem em que o outro sente (régua no topo), o banco por intenção, editor lateral com prévia viva */
 :root {
@@ -188,7 +188,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     </div>
     <figure class="hero" style="margin:0">
       <canvas id="hero" aria-label="Prévia ao vivo da animação Assinatura"></canvas>
-      <figcaption class="cap">assinatura · obturador 180° · aberração 35 · lente 20</figcaption>
+      <figcaption class="cap">assinatura · obturador 180° · aberração 35 · lente 20 · tudo isso é ajustável</figcaption>
     </figure>
   </header>
 
@@ -273,6 +273,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     </div>
     <h2 id="ed-name"></h2>
     <p class="small" id="ed-desc"></p>
+    <p class="hint" id="ed-drag" hidden>Arrasta o texto na prévia pra mudar de lugar. A roda do mouse muda o tamanho.</p>
     <div class="transport">
       <button type="button" class="x" id="ed-play" aria-label="Pausar">❚❚</button>
       <input type="range" id="ed-scrub" min="0" max="1000" value="0" aria-label="Posição na animação">
@@ -287,6 +288,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     </details>
     <details class="group" id="ed-cam">
       <summary>câmera</summary>
+      <label class="field"><span>Atalho</span><select id="fx-preset"></select></label>
       <div class="grid2">
         <label class="field"><span>Desfoque de movimento</span>
           <select id="fx-blur">
@@ -296,10 +298,13 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
             <option value="0.75">sonho (270°)</option>
           </select>
         </label>
+        <label class="field"><span>Desfoque de borda <b id="fx-edge-v"></b></span><input type="range" id="fx-edge" min="0" max="100"></label>
         <label class="field"><span>Aberração <b id="fx-ab-v"></b></span><input type="range" id="fx-ab" min="0" max="100"></label>
         <label class="field"><span>Lente <b id="fx-lens-v"></b></span><input type="range" id="fx-lens" min="0" max="100"></label>
+        <label class="field"><span>Turbulência <b id="fx-disp-v"></b></span><input type="range" id="fx-disp" min="0" max="100"></label>
+        <label class="field"><span>Ruído <b id="fx-noise-v"></b></span><input type="range" id="fx-noise" min="0" max="100"></label>
       </div>
-      <p class="small">Vale pra prévia e pro render do plugin. A aberração só aparece onde alguma coisa está se mexendo.</p>
+      <p class="small">Vale pra prévia e pro render do plugin, por animação. Desfoque de borda deixa só o miolo nítido, como lente de cinema. Turbulência faz o quadro tremer em 12 por segundo.</p>
     </details>
     <p class="hint" id="ed-hint"></p>
     <button type="button" class="x" id="ed-reset" style="align-self:flex-start">Voltar ao padrão</button>
@@ -308,6 +313,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
 
 <!-- @engine:start -->
 <script src="../plugin/tamocriando-motion/engine/core.js"></script>
+<script src="../plugin/tamocriando-motion/engine/flame-frames.js"></script>
 <script src="../plugin/tamocriando-motion/engine/brands.js"></script>
 <script src="../plugin/tamocriando-motion/engine/fx.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/acender.js"></script>
@@ -315,8 +321,10 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
 <script src="../plugin/tamocriando-motion/engine/templates/virar.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/guiar.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/apontar.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/texto.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/passagem.js"></script>
 <script src="../plugin/tamocriando-motion/ui/curve-editor.js"></script>
+<script src="../plugin/tamocriando-motion/ui/drag-stage.js"></script>
 <!-- @engine:end -->
 <script>
 (function () {
@@ -332,7 +340,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     brand: store.get('g.brand', TC.defaultBrand),
     bd: store.get('g.bd', 'video'),
     motion: reduce ? 'off' : store.get('g.motion', 'on'),
-    fx: store.get('g.fx', { blur: TC.fxDefaults.blur, aberration: Math.round(TC.fxDefaults.aberration * 100), lens: Math.round(TC.fxDefaults.lens * 100) }),
+    fx: Object.assign({}, TC.fxUIDefaults, store.get('g.fx', {})),
     params: {},
     edit: null
   };
@@ -345,17 +353,18 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     virar: 'Mostram a mudança acontecendo: o que era cinza e passa a ser brasa.',
     guiar: 'Dizem pra pessoa onde ela está no raciocínio e quanto ainda falta.',
     apontar: 'Mostram quem está falando e pra onde olhar dentro do quadro.',
+    texto: 'Legenda de Reels e destaque de trecho. Uma fonte ou um par, seis efeitos de entrada (pop, foco, tracking, subida, obturador, cinema) e dá pra arrastar o texto na prévia.',
     passagem: 'Escondem o corte entre dois clipes. O meio da passagem cai em cima do corte.'
   };
   var BEATS = [
-    { t: 'reconhecimento', q: 'Ele se vê no que tu está descrevendo.', ids: ['pergunta', 'palavra-acesa', 'simbolo'] },
-    { t: 'alívio', q: 'Entende que o problema tem nome e não é falta de esforço.', ids: ['tese', 'anotacao', 'nome'] },
+    { t: 'reconhecimento', q: 'Ele se vê no que tu está descrevendo.', ids: ['pergunta', 'palavra-acesa', 'simbolo', 'legenda'] },
+    { t: 'alívio', q: 'Entende que o problema tem nome e não é falta de esforço.', ids: ['tese', 'anotacao', 'nome', 'destaque'] },
     { t: 'indignação', q: 'Percebe quanto custa continuar morno.', ids: ['virada', 'cinza-brasa'] },
     { t: 'esperança', q: 'Vê que tem caminho e onde ele está nesse caminho.', ids: ['trilha-brasa', 'fluxo', 'lista', 'capitulo', 'numero'] },
-    { t: 'identidade', q: 'Reconhece quem ele quer ser.', ids: ['marca', 'tese'] },
+    { t: 'identidade', q: 'Reconhece quem ele quer ser.', ids: ['marca', 'manchete', 'tese'] },
     { t: 'determinação', q: 'Sai com uma coisa só na cabeça, e vai.', ids: ['assinatura', 'acender'] }
   ];
-  var ANYWHERE = ['queima', 'sopro', 'contador', 'fundo-vivo'];
+  var ANYWHERE = ['queima', 'sopro', 'clarao', 'varrida', 'rasgo', 'fatias', 'contador', 'fundo-vivo'];
 
   function paramsFor(id) {
     var p = TC.defaults(id, TC.brands[S.brand]);
@@ -363,9 +372,7 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     if (saved) for (var k in saved) if (k in p && saved[k] !== null && saved[k] !== undefined) p[k] = saved[k];
     return p;
   }
-  function fxFor(samples) {
-    return { blur: Number(S.fx.blur) || 0, samples: samples, fps: 30, aberration: (Number(S.fx.aberration) || 0) / 100, lens: (Number(S.fx.lens) || 0) / 100 };
-  }
+  function fxFor(samples) { return TC.fxFromUI(S.fx, samples, 30); }
   function fmtS(n, d) { return Number(n).toFixed(d === undefined ? 1 : d).replace('.', ','); }
 
   // ---------- controles ----------
@@ -507,6 +514,9 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     $('ed-play').textContent = '❚❚';
     $('ed-dur').value = ed.dur; $('ed-dur').min = tpl.minDur;
     buildFields(id);
+    $('ed-drag').hidden = !tpl.drag;
+    S.fx = Object.assign({}, TC.fxUIDefaults, store.get('g.fx', {}), store.get('g.fx.' + id, {}));
+    syncFx();
     showHint();
     $('editor').hidden = false;
     document.body.style.overflow = 'hidden';
@@ -577,22 +587,43 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
     cv.style.width = Math.round(w) + 'px'; cv.style.height = Math.round(h) + 'px';
     cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   }
+  var FX_KEYS = [['blur', 'fx-blur'], ['edge', 'fx-edge'], ['aberration', 'fx-ab'], ['lens', 'fx-lens'], ['displace', 'fx-disp'], ['noise', 'fx-noise']];
+  function syncFx() {
+    FX_KEYS.forEach(function (kv) {
+      var el = $(kv[1]), v = S.fx[kv[0]];
+      if (kv[0] === 'blur') { el.value = String(v); if (el.value === '') el.value = '0.5'; }
+      else { el.value = v; var lab = $(kv[1] + '-v'); if (lab) lab.textContent = Number(v) === 0 ? 'desligado' : v; }
+    });
+    var cur = JSON.stringify(FX_KEYS.map(function (kv) { return Number(S.fx[kv[0]]); })), match = '';
+    Object.keys(TC.fxPresets).forEach(function (k) {
+      var pv = TC.fxPresets[k].v;
+      if (JSON.stringify(FX_KEYS.map(function (kv) { return pv[kv[0]]; })) === cur) match = k;
+    });
+    $('fx-preset').value = match;
+  }
+  function saveFx() {
+    if (S.edit) store.set('g.fx.' + S.edit, S.fx);
+    store.set('g.fx', S.fx);
+    syncFx();
+  }
   function wireFx() {
-    var blur = $('fx-blur'), ab = $('fx-ab'), lens = $('fx-lens');
-    function show() {
-      $('fx-ab-v').textContent = ab.value === '0' ? 'desligada' : ab.value;
-      $('fx-lens-v').textContent = lens.value === '0' ? 'desligada' : lens.value;
-    }
-    function put() {
-      S.fx = { blur: Number(blur.value), aberration: Number(ab.value), lens: Number(lens.value) };
-      store.set('g.fx', S.fx);
-      show();
-    }
-    blur.value = String(S.fx.blur);
-    if (blur.value === '') blur.value = String(TC.fxDefaults.blur);
-    ab.value = S.fx.aberration; lens.value = S.fx.lens;
-    blur.onchange = put; ab.oninput = put; lens.oninput = put;
-    show();
+    var sel = $('fx-preset');
+    sel.innerHTML = '<option value="">personalizado</option>';
+    Object.keys(TC.fxPresets).forEach(function (k) {
+      var o = document.createElement('option'); o.value = k; o.textContent = TC.fxPresets[k].label; sel.appendChild(o);
+    });
+    FX_KEYS.forEach(function (kv) {
+      $(kv[1]).oninput = $(kv[1]).onchange = function () {
+        FX_KEYS.forEach(function (k2) { S.fx[k2[0]] = Number($(k2[1]).value); });
+        saveFx();
+      };
+    });
+    sel.onchange = function () {
+      if (!TC.fxPresets[sel.value]) return;
+      S.fx = Object.assign({}, TC.fxPresets[sel.value].v);
+      saveFx();
+    };
+    syncFx();
   }
 
   // ---------- loop ----------
@@ -624,6 +655,11 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
   }
 
   function wire() {
+    TC.attachDrag($('ed-cv'), {
+      tpl: function () { return S.edit ? TC.templates[S.edit] : null; },
+      params: function () { return S.params; },
+      set: function (k, v) { S.params[k] = v; save(); var el = $('f-' + k); if (el) el.value = v; }
+    });
     seg('fmt', 'fmt', resizeAll);
     seg('bd', 'bd', resizeAll);
     seg('motion', 'motion', function () { tiles.forEach(function (t) { drawTile(t, TC.templates[t.id].thumb); }); });
@@ -651,6 +687,8 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
       var id = S.edit;
       store.set('g.p.' + S.brand + '.' + id, null);
       store.set('g.d.' + id, null);
+      store.set('g.fx.' + id, null);
+      S.fx = Object.assign({}, TC.fxUIDefaults); syncFx();
       S.params = paramsFor(id);
       ed.dur = TC.templates[id].duration; $('ed-dur').value = ed.dur;
       buildFields(id); showHint();
@@ -664,6 +702,6 @@ footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line);
   buildBank();
   wire();
   resizeAll();
-  TC.loadFonts(TC.brands[S.brand]).then(function () { hero.start = performance.now(); resizeAll(); requestAnimationFrame(loop); });
+  Promise.all([TC.loadFonts(TC.brands[S.brand]), TC.loadFlameFrames()]).then(function () { hero.start = performance.now(); resizeAll(); requestAnimationFrame(loop); });
 })();
 </script>

@@ -1,0 +1,929 @@
+{
+  "duracao": 57,
+  "palavrasTotal": 180,
+  "palavrasPorSegundo": 3.16,
+  "segmentos": [
+    {
+      "t": 0.2,
+      "fim": 3.4,
+      "texto": "Quanto te custa não fazer o que tu ama?",
+      "i": 1
+    },
+    {
+      "t": 4.9,
+      "fim": 9,
+      "texto": "Eu pergunto porque quase todo mundo que me procura chega coberto de cinza.",
+      "i": 2
+    },
+    {
+      "t": 9,
+      "fim": 12.6,
+      "texto": "Faz tudo certo, posta todo dia, e ninguém lembra de quem é.",
+      "i": 3
+    },
+    {
+      "t": 13.2,
+      "fim": 17.3,
+      "texto": "Te venderam que disciplina resolve. Só que disciplina forçada é o que sobra quando a devoção foi embora.",
+      "i": 4
+    },
+    {
+      "t": 17.7,
+      "fim": 21.6,
+      "texto": "Quem ama o que faz não precisa se forçar, não performa, não busca atalho.",
+      "i": 5
+    },
+    {
+      "t": 22.2,
+      "fim": 25.4,
+      "texto": "De zero a dez, o quanto tu tá morno hoje?",
+      "i": 6
+    },
+    {
+      "t": 27.5,
+      "fim": 31.3,
+      "texto": "Porque o morno não marca ninguém. Nem quem faz, nem quem assiste.",
+      "i": 7
+    },
+    {
+      "t": 32.3,
+      "fim": 37.3,
+      "texto": "Nos meus atendimentos, quatro de cada cinco pessoas entendem o que tu faz na hora, quando tu para de explicar e começa a mostrar.",
+      "i": 8
+    },
+    {
+      "t": 37.9,
+      "fim": 43,
+      "texto": "É por isso que o meu processo começa no raio-x, depois a frase, o filtro, o eixo, e só no fim o antes e depois.",
+      "i": 9
+    },
+    {
+      "t": 43.6,
+      "fim": 47.5,
+      "texto": "Primeiro tu descobre o que é cinza. Depois tu para de apagar o que é brasa.",
+      "i": 10
+    },
+    {
+      "t": 48.3,
+      "fim": 52.5,
+      "texto": "O fogo é a vida, mas ele acaba em si. O que fica é a brasa.",
+      "i": 11
+    },
+    {
+      "t": 53.5,
+      "fim": 57,
+      "texto": "E a brasa é o que tu não consegue não mostrar.",
+      "i": 12
+    }
+  ],
+  "frases": [
+    {
+      "i": 1,
+      "t": 0.2,
+      "fim": 3.4,
+      "texto": "Quanto te custa não fazer o que tu ama?",
+      "palavras": [
+        {
+          "p": "Quanto",
+          "t": 0.2
+        },
+        {
+          "p": "te",
+          "t": 0.72
+        },
+        {
+          "p": "custa",
+          "t": 0.98
+        },
+        {
+          "p": "não",
+          "t": 1.44
+        },
+        {
+          "p": "fazer",
+          "t": 1.77
+        },
+        {
+          "p": "o",
+          "t": 2.22
+        },
+        {
+          "p": "que",
+          "t": 2.42
+        },
+        {
+          "p": "tu",
+          "t": 2.75
+        },
+        {
+          "p": "ama?",
+          "t": 3.01
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "t": 4.9,
+      "fim": 9,
+      "texto": "Eu pergunto porque quase todo mundo que me procura chega coberto de cinza.",
+      "palavras": [
+        {
+          "p": "Eu",
+          "t": 4.9
+        },
+        {
+          "p": "pergunto",
+          "t": 5.09
+        },
+        {
+          "p": "porque",
+          "t": 5.55
+        },
+        {
+          "p": "quase",
+          "t": 5.93
+        },
+        {
+          "p": "todo",
+          "t": 6.25
+        },
+        {
+          "p": "mundo",
+          "t": 6.53
+        },
+        {
+          "p": "que",
+          "t": 6.86
+        },
+        {
+          "p": "me",
+          "t": 7.09
+        },
+        {
+          "p": "procura",
+          "t": 7.28
+        },
+        {
+          "p": "chega",
+          "t": 7.7
+        },
+        {
+          "p": "coberto",
+          "t": 8.02
+        },
+        {
+          "p": "de",
+          "t": 8.44
+        },
+        {
+          "p": "cinza.",
+          "t": 8.63
+        }
+      ]
+    },
+    {
+      "i": 3,
+      "t": 9,
+      "fim": 12.6,
+      "texto": "Faz tudo certo, posta todo dia, e ninguém lembra de quem é.",
+      "palavras": [
+        {
+          "p": "Faz",
+          "t": 9
+        },
+        {
+          "p": "tudo",
+          "t": 9.25
+        },
+        {
+          "p": "certo,",
+          "t": 9.55
+        },
+        {
+          "p": "posta",
+          "t": 9.95
+        },
+        {
+          "p": "todo",
+          "t": 10.3
+        },
+        {
+          "p": "dia,",
+          "t": 10.6
+        },
+        {
+          "p": "e",
+          "t": 10.9
+        },
+        {
+          "p": "ninguém",
+          "t": 11.05
+        },
+        {
+          "p": "lembra",
+          "t": 11.5
+        },
+        {
+          "p": "de",
+          "t": 11.9
+        },
+        {
+          "p": "quem",
+          "t": 12.1
+        },
+        {
+          "p": "é.",
+          "t": 12.4
+        }
+      ]
+    },
+    {
+      "i": 4,
+      "t": 13.2,
+      "fim": 14.57,
+      "texto": "Te venderam que disciplina resolve.",
+      "palavras": [
+        {
+          "p": "Te",
+          "t": 13.2
+        },
+        {
+          "p": "venderam",
+          "t": 13.33
+        },
+        {
+          "p": "que",
+          "t": 13.67
+        },
+        {
+          "p": "disciplina",
+          "t": 13.83
+        },
+        {
+          "p": "resolve.",
+          "t": 14.23
+        }
+      ]
+    },
+    {
+      "i": 5,
+      "t": 14.57,
+      "fim": 17.3,
+      "texto": "Só que disciplina forçada é o que sobra quando a devoção foi embora.",
+      "palavras": [
+        {
+          "p": "Só",
+          "t": 14.57
+        },
+        {
+          "p": "que",
+          "t": 14.7
+        },
+        {
+          "p": "disciplina",
+          "t": 14.87
+        },
+        {
+          "p": "forçada",
+          "t": 15.27
+        },
+        {
+          "p": "é",
+          "t": 15.57
+        },
+        {
+          "p": "o",
+          "t": 15.67
+        },
+        {
+          "p": "que",
+          "t": 15.77
+        },
+        {
+          "p": "sobra",
+          "t": 15.93
+        },
+        {
+          "p": "quando",
+          "t": 16.17
+        },
+        {
+          "p": "a",
+          "t": 16.43
+        },
+        {
+          "p": "devoção",
+          "t": 16.53
+        },
+        {
+          "p": "foi",
+          "t": 16.83
+        },
+        {
+          "p": "embora.",
+          "t": 17
+        }
+      ]
+    },
+    {
+      "i": 6,
+      "t": 17.7,
+      "fim": 21.6,
+      "texto": "Quem ama o que faz não precisa se forçar, não performa, não busca atalho.",
+      "palavras": [
+        {
+          "p": "Quem",
+          "t": 17.7
+        },
+        {
+          "p": "ama",
+          "t": 17.97
+        },
+        {
+          "p": "o",
+          "t": 18.19
+        },
+        {
+          "p": "que",
+          "t": 18.32
+        },
+        {
+          "p": "faz",
+          "t": 18.54
+        },
+        {
+          "p": "não",
+          "t": 18.76
+        },
+        {
+          "p": "precisa",
+          "t": 18.99
+        },
+        {
+          "p": "se",
+          "t": 19.38
+        },
+        {
+          "p": "forçar,",
+          "t": 19.56
+        },
+        {
+          "p": "não",
+          "t": 19.96
+        },
+        {
+          "p": "performa,",
+          "t": 20.18
+        },
+        {
+          "p": "não",
+          "t": 20.67
+        },
+        {
+          "p": "busca",
+          "t": 20.89
+        },
+        {
+          "p": "atalho.",
+          "t": 21.2
+        }
+      ]
+    },
+    {
+      "i": 7,
+      "t": 22.2,
+      "fim": 25.4,
+      "texto": "De zero a dez, o quanto tu tá morno hoje?",
+      "palavras": [
+        {
+          "p": "De",
+          "t": 22.2
+        },
+        {
+          "p": "zero",
+          "t": 22.45
+        },
+        {
+          "p": "a",
+          "t": 22.82
+        },
+        {
+          "p": "dez,",
+          "t": 23
+        },
+        {
+          "p": "o",
+          "t": 23.37
+        },
+        {
+          "p": "quanto",
+          "t": 23.55
+        },
+        {
+          "p": "tu",
+          "t": 24.05
+        },
+        {
+          "p": "tá",
+          "t": 24.29
+        },
+        {
+          "p": "morno",
+          "t": 24.54
+        },
+        {
+          "p": "hoje?",
+          "t": 24.97
+        }
+      ]
+    },
+    {
+      "i": 8,
+      "t": 27.5,
+      "fim": 29.45,
+      "texto": "Porque o morno não marca ninguém.",
+      "palavras": [
+        {
+          "p": "Porque",
+          "t": 27.5
+        },
+        {
+          "p": "o",
+          "t": 27.89
+        },
+        {
+          "p": "morno",
+          "t": 28.04
+        },
+        {
+          "p": "não",
+          "t": 28.38
+        },
+        {
+          "p": "marca",
+          "t": 28.62
+        },
+        {
+          "p": "ninguém.",
+          "t": 28.96
+        }
+      ]
+    },
+    {
+      "i": 9,
+      "t": 29.45,
+      "fim": 31.3,
+      "texto": "Nem quem faz, nem quem assiste.",
+      "palavras": [
+        {
+          "p": "Nem",
+          "t": 29.45
+        },
+        {
+          "p": "quem",
+          "t": 29.69
+        },
+        {
+          "p": "faz,",
+          "t": 29.98
+        },
+        {
+          "p": "nem",
+          "t": 30.28
+        },
+        {
+          "p": "quem",
+          "t": 30.52
+        },
+        {
+          "p": "assiste.",
+          "t": 30.81
+        }
+      ]
+    },
+    {
+      "i": 10,
+      "t": 32.3,
+      "fim": 37.3,
+      "texto": "Nos meus atendimentos, quatro de cada cinco pessoas entendem o que tu faz na hora, quando tu para de explicar e começa a mostrar.",
+      "palavras": [
+        {
+          "p": "Nos",
+          "t": 32.3
+        },
+        {
+          "p": "meus",
+          "t": 32.46
+        },
+        {
+          "p": "atendimentos,",
+          "t": 32.66
+        },
+        {
+          "p": "quatro",
+          "t": 33.14
+        },
+        {
+          "p": "de",
+          "t": 33.4
+        },
+        {
+          "p": "cada",
+          "t": 33.53
+        },
+        {
+          "p": "cinco",
+          "t": 33.73
+        },
+        {
+          "p": "pessoas",
+          "t": 33.96
+        },
+        {
+          "p": "entendem",
+          "t": 34.25
+        },
+        {
+          "p": "o",
+          "t": 34.57
+        },
+        {
+          "p": "que",
+          "t": 34.67
+        },
+        {
+          "p": "tu",
+          "t": 34.83
+        },
+        {
+          "p": "faz",
+          "t": 34.96
+        },
+        {
+          "p": "na",
+          "t": 35.12
+        },
+        {
+          "p": "hora,",
+          "t": 35.25
+        },
+        {
+          "p": "quando",
+          "t": 35.48
+        },
+        {
+          "p": "tu",
+          "t": 35.74
+        },
+        {
+          "p": "para",
+          "t": 35.87
+        },
+        {
+          "p": "de",
+          "t": 36.07
+        },
+        {
+          "p": "explicar",
+          "t": 36.2
+        },
+        {
+          "p": "e",
+          "t": 36.52
+        },
+        {
+          "p": "começa",
+          "t": 36.62
+        },
+        {
+          "p": "a",
+          "t": 36.88
+        },
+        {
+          "p": "mostrar.",
+          "t": 36.98
+        }
+      ]
+    },
+    {
+      "i": 11,
+      "t": 37.9,
+      "fim": 43,
+      "texto": "É por isso que o meu processo começa no raio-x, depois a frase, o filtro, o eixo, e só no fim o antes e depois.",
+      "palavras": [
+        {
+          "p": "É",
+          "t": 37.9
+        },
+        {
+          "p": "por",
+          "t": 38.01
+        },
+        {
+          "p": "isso",
+          "t": 38.2
+        },
+        {
+          "p": "que",
+          "t": 38.42
+        },
+        {
+          "p": "o",
+          "t": 38.61
+        },
+        {
+          "p": "meu",
+          "t": 38.72
+        },
+        {
+          "p": "processo",
+          "t": 38.91
+        },
+        {
+          "p": "começa",
+          "t": 39.28
+        },
+        {
+          "p": "no",
+          "t": 39.58
+        },
+        {
+          "p": "raio-x,",
+          "t": 39.72
+        },
+        {
+          "p": "depois",
+          "t": 40.06
+        },
+        {
+          "p": "a",
+          "t": 40.36
+        },
+        {
+          "p": "frase,",
+          "t": 40.47
+        },
+        {
+          "p": "o",
+          "t": 40.77
+        },
+        {
+          "p": "filtro,",
+          "t": 40.88
+        },
+        {
+          "p": "o",
+          "t": 41.21
+        },
+        {
+          "p": "eixo,",
+          "t": 41.32
+        },
+        {
+          "p": "e",
+          "t": 41.59
+        },
+        {
+          "p": "só",
+          "t": 41.7
+        },
+        {
+          "p": "no",
+          "t": 41.85
+        },
+        {
+          "p": "fim",
+          "t": 41.99
+        },
+        {
+          "p": "o",
+          "t": 42.18
+        },
+        {
+          "p": "antes",
+          "t": 42.29
+        },
+        {
+          "p": "e",
+          "t": 42.55
+        },
+        {
+          "p": "depois.",
+          "t": 42.66
+        }
+      ]
+    },
+    {
+      "i": 12,
+      "t": 43.6,
+      "fim": 45.42,
+      "texto": "Primeiro tu descobre o que é cinza.",
+      "palavras": [
+        {
+          "p": "Primeiro",
+          "t": 43.6
+        },
+        {
+          "p": "tu",
+          "t": 44.02
+        },
+        {
+          "p": "descobre",
+          "t": 44.19
+        },
+        {
+          "p": "o",
+          "t": 44.62
+        },
+        {
+          "p": "que",
+          "t": 44.74
+        },
+        {
+          "p": "é",
+          "t": 44.96
+        },
+        {
+          "p": "cinza.",
+          "t": 45.08
+        }
+      ]
+    },
+    {
+      "i": 13,
+      "t": 45.42,
+      "fim": 47.5,
+      "texto": "Depois tu para de apagar o que é brasa.",
+      "palavras": [
+        {
+          "p": "Depois",
+          "t": 45.42
+        },
+        {
+          "p": "tu",
+          "t": 45.76
+        },
+        {
+          "p": "para",
+          "t": 45.93
+        },
+        {
+          "p": "de",
+          "t": 46.19
+        },
+        {
+          "p": "apagar",
+          "t": 46.36
+        },
+        {
+          "p": "o",
+          "t": 46.69
+        },
+        {
+          "p": "que",
+          "t": 46.82
+        },
+        {
+          "p": "é",
+          "t": 47.03
+        },
+        {
+          "p": "brasa.",
+          "t": 47.16
+        }
+      ]
+    },
+    {
+      "i": 14,
+      "t": 48.3,
+      "fim": 50.95,
+      "texto": "O fogo é a vida, mas ele acaba em si.",
+      "palavras": [
+        {
+          "p": "O",
+          "t": 48.3
+        },
+        {
+          "p": "fogo",
+          "t": 48.47
+        },
+        {
+          "p": "é",
+          "t": 48.8
+        },
+        {
+          "p": "a",
+          "t": 48.96
+        },
+        {
+          "p": "vida,",
+          "t": 49.13
+        },
+        {
+          "p": "mas",
+          "t": 49.52
+        },
+        {
+          "p": "ele",
+          "t": 49.79
+        },
+        {
+          "p": "acaba",
+          "t": 50.07
+        },
+        {
+          "p": "em",
+          "t": 50.46
+        },
+        {
+          "p": "si.",
+          "t": 50.68
+        }
+      ]
+    },
+    {
+      "i": 15,
+      "t": 50.95,
+      "fim": 52.5,
+      "texto": "O que fica é a brasa.",
+      "palavras": [
+        {
+          "p": "O",
+          "t": 50.95
+        },
+        {
+          "p": "que",
+          "t": 51.12
+        },
+        {
+          "p": "fica",
+          "t": 51.39
+        },
+        {
+          "p": "é",
+          "t": 51.73
+        },
+        {
+          "p": "a",
+          "t": 51.89
+        },
+        {
+          "p": "brasa.",
+          "t": 52.06
+        }
+      ]
+    },
+    {
+      "i": 16,
+      "t": 53.5,
+      "fim": 57,
+      "texto": "E a brasa é o que tu não consegue não mostrar.",
+      "palavras": [
+        {
+          "p": "E",
+          "t": 53.5
+        },
+        {
+          "p": "a",
+          "t": 53.68
+        },
+        {
+          "p": "brasa",
+          "t": 53.86
+        },
+        {
+          "p": "é",
+          "t": 54.28
+        },
+        {
+          "p": "o",
+          "t": 54.47
+        },
+        {
+          "p": "que",
+          "t": 54.65
+        },
+        {
+          "p": "tu",
+          "t": 54.95
+        },
+        {
+          "p": "não",
+          "t": 55.19
+        },
+        {
+          "p": "consegue",
+          "t": 55.49
+        },
+        {
+          "p": "não",
+          "t": 56.09
+        },
+        {
+          "p": "mostrar.",
+          "t": 56.4
+        }
+      ]
+    }
+  ]
+}
