@@ -10,8 +10,8 @@
 <body>
   <header class="top">
     <div class="mark">
-      <svg viewBox="-0.5 -0.5 1 1" aria-hidden="true"><path d="M0.10 -0.50 L-0.38 0.08 L-0.04 0.08 L-0.14 0.50 L0.38 -0.10 L0.04 -0.10 L0.18 -0.50 Z"/></svg>
-      <span>Tamo Criando <b>Motion</b></span>
+      <canvas id="mark" width="32" height="32" aria-hidden="true"></canvas>
+      <span>tamo criando <b>motion</b></span>
     </div>
     <select id="brand" title="Marca"></select>
   </header>
@@ -46,6 +46,29 @@
 
       <form id="fields" autocomplete="off"></form>
 
+      <details class="group" open>
+        <summary>Movimento</summary>
+        <p class="hint">Entrada é como as coisas chegam, saída é como vão embora. Curva em pé = rápido, deitada = devagar. Arrasta as bolinhas.</p>
+        <div id="curves" class="curves"></div>
+      </details>
+
+      <details class="group">
+        <summary>Câmera</summary>
+        <div class="grid2">
+          <label class="field"><span>Desfoque de movimento</span>
+            <select id="fx-blur">
+              <option value="0">desligado</option>
+              <option value="0.25">leve (90°)</option>
+              <option value="0.5">cinema (180°)</option>
+              <option value="0.75">sonho (270°)</option>
+            </select>
+          </label>
+          <label class="field"><span>Aberração <b id="fx-ab-v"></b></span><input type="range" id="fx-ab" min="0" max="100"></label>
+          <label class="field"><span>Lente <b id="fx-lens-v"></b></span><input type="range" id="fx-lens" min="0" max="100"></label>
+        </div>
+        <p class="hint">Vale pra prévia e pro render. A aberração só aparece onde alguma coisa está se mexendo.</p>
+      </details>
+
       <div class="grid2">
         <label class="field"><span>Duração (s)</span><input type="number" id="dur" step="0.1" min="0.5"></label>
         <label class="field"><span>Formato</span>
@@ -78,7 +101,7 @@
       </div>
       <div class="progress" id="progress" hidden><div class="bar" id="bar"></div></div>
       <p class="status" id="status"></p>
-      <button id="reset" class="link">Restaurar textos padrão</button>
+      <button id="reset" class="link">Restaurar padrão desta animação</button>
     </section>
   </main>
 
@@ -91,6 +114,7 @@
   <script src="engine/templates/guiar.js"></script>
   <script src="engine/templates/apontar.js"></script>
   <script src="engine/templates/passagem.js"></script>
+  <script src="ui/curve-editor.js"></script>
   <script src="panel.js"></script>
 </body>
 </html>

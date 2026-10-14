@@ -29,11 +29,18 @@
 
   var cv = document.getElementById('cv');
   var ctx = cv.getContext('2d');
+  var R = null;
+
+  // com o.fx passa pelo pós-processamento (desfoque, aberração, lente), igual ao painel
+  function draw(c, id, o) {
+    if (o.fx) { R = R || new TC.Renderer(); R.render(c, id, o); }
+    else TC.renderFrame(c, id, o);
+  }
 
   // um frame -> dataURL PNG (com alpha)
   window.tcFrame = function (id, o) {
     if (cv.width !== o.w || cv.height !== o.h) { cv.width = o.w; cv.height = o.h; }
-    TC.renderFrame(ctx, id, o);
+    draw(ctx, id, o);
     return cv.toDataURL('image/png');
   };
 
@@ -51,7 +58,7 @@
     times.forEach(function (t, i) {
       fc.setTransform(1, 0, 0, 1, 0, 0);
       fc.clearRect(0, 0, fw, fh);
-      TC.renderFrame(fc, id, { w: fw, h: fh, t: t, dur: o.dur, params: o.params, brand: o.brand, preview: true, backdrop: o.backdrop });
+      draw(fc, id, { w: fw, h: fh, t: t, dur: o.dur, params: o.params, brand: o.brand, preview: true, backdrop: o.backdrop, fx: o.fx });
       var x = 8 + (i % cols) * (fw + 8), y = 8 + Math.floor(i / cols) * (fh + 28);
       sc.drawImage(frame, x, y);
       sc.fillStyle = '#ddd'; sc.font = '14px monospace';
@@ -70,7 +77,7 @@
     var sheet = document.createElement('canvas');
     sheet.width = cols * fw + (cols + 1) * gap; sheet.height = rows * (fh + labelH + gap) + gap;
     var sc = sheet.getContext('2d');
-    sc.fillStyle = '#17141a'; sc.fillRect(0, 0, sheet.width, sheet.height);
+    sc.fillStyle = '#1A1714'; sc.fillRect(0, 0, sheet.width, sheet.height);
     var frame = document.createElement('canvas'); frame.width = fw; frame.height = fh;
     var fc = frame.getContext('2d');
     ids.forEach(function (id, i) {
@@ -79,9 +86,9 @@
       TC.renderFrame(fc, id, { w: fw, h: fh, t: tpl.thumb, brand: brand, preview: true });
       var x = gap + (i % cols) * (fw + gap), y = gap + Math.floor(i / cols) * (fh + labelH + gap);
       sc.drawImage(frame, x, y);
-      sc.fillStyle = '#efe8dc'; sc.font = '600 17px "TC Sans", sans-serif';
+      sc.fillStyle = '#EFE9DF'; sc.font = '600 17px "TC Sans", sans-serif';
       sc.fillText(tpl.name, x, y + fh + 23);
-      sc.fillStyle = '#a39a93'; sc.font = '13px "TC Mono", monospace';
+      sc.fillStyle = '#9B968E'; sc.font = '13px "TC Sans", sans-serif';
       sc.textAlign = 'right'; sc.fillText(id, x + fw, y + fh + 23); sc.textAlign = 'left';
     });
     return sheet.toDataURL('image/png');

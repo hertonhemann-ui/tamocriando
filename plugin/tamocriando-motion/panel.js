@@ -1,6 +1,7 @@
 /*
- * Painel do Premiere: escolhe a animação, edita o texto, renderiza PNG com
- * alpha direto na pasta do projeto e manda o Premiere importar no playhead.
+ * Painel do Premiere: escolhe a animação, edita o texto e as curvas,
+ * renderiza PNG com alpha (já com o "jeito de câmera") direto na pasta do
+ * projeto e manda o Premiere importar no playhead.
  */
 (function () {
   'use strict';
@@ -31,9 +32,26 @@
     t: 0,
     clock: 0,
     busy: false,
-    hover: null
+    hover: null,
+    // câmera: desfoque (fração do frame), aberração e lente (0 a 100)
+    fx: store.get('tc.fx', { blur: TC.fxDefaults.blur, aberration: Math.round(TC.fxDefaults.aberration * 100), lens: Math.round(TC.fxDefaults.lens * 100) })
   };
   if (!TC.brands[state.brand]) state.brand = TC.defaultBrand;
+
+  // dois renderizadores: um pra prévia (leve), outro pro render final
+  var previewR = new TC.Renderer(), exportR = new TC.Renderer();
+  var curveEds = [];
+
+  function fxFor(samples, fps) {
+    return {
+      blur: Number(state.fx.blur) || 0,
+      samples: samples,
+      fps: fps,
+      aberration: (Number(state.fx.aberration) || 0) / 100,
+      lens: (Number(state.fx.lens) || 0) / 100
+    };
+  }
+  function seqFps() { return (state.seq && state.seq.hasSequence && state.seq.fps) || 30; }
 
   // ------------------------------------------------------------------
   // ponte com o ExtendScript
@@ -92,6 +110,7 @@
     sel.hidden = Object.keys(TC.brands).length < 2;
     sel.onchange = function () {
       state.brand = sel.value; store.set('tc.brand', state.brand);
+      drawMark();
       if (state.id) loadParams(state.id);
       drawThumbs();
       if (state.id) buildFields();
@@ -206,31 +225,18 @@
     var tpl = TC.templates[state.id];
     var form = $('fields');
     form.innerHTML = '';
+    curveEds.forEach(function (ed) { ed.destroy(); });
+    curveEds = [];
+    var box = $('curves');
+    box.innerHTML = '';
     tpl.params.forEach(function (p) {
+      if (p.type === 'curve') { buildCurve(box, p); return; }
       var wrap = document.createElement('label');
       wrap.className = 'field';
       var lab = document.createElement('span');
       lab.textContent = p.label;
       var input;
-      if (p.type === 'curve') {
-        // curvas de entrada/saída: atalhos prontos (o valor guardado é o cubic-bezier)
-        input = document.createElement('select');
-        var cur = (state.params[p.key] || []).join(',');
-        var match = '';
-        Object.keys(TC.curvePresets).forEach(function (k) {
-          var op = document.createElement('option'); op.value = k; op.textContent = TC.curvePresets[k].label;
-          if (TC.curvePresets[k].v.join(',') === cur) match = k;
-          input.appendChild(op);
-        });
-        if (!match) { var cu = document.createElement('option'); cu.value = ''; cu.textContent = 'personalizada'; input.appendChild(cu); }
-        input.value = match;
-        input.addEventListener('change', function () {
-          if (TC.curvePresets[input.value]) { state.params[p.key] = TC.curvePresets[input.value].v.slice(); saveParams(); }
-        });
-        wrap.appendChild(lab); wrap.appendChild(input);
-        form.appendChild(wrap);
-        return;
-      } else if (p.type === 'select') {
+      if (p.type === 'select') {
         input = document.createElement('select');
         p.options.forEach(function (o) { var op = document.createElement('option'); op.value = o; op.textContent = o; input.appendChild(op); });
       } else if (p.type === 'textarea') {
@@ -242,19 +248,34 @@
         if (p.max !== undefined) input.max = p.max;
       }
       input.value = state.params[p.key] === undefined ? '' : state.params[p.key];
-      input.addEventListener('input', function () {
+      var put = function () {
         state.params[p.key] = p.type === 'number' ? Number(input.value) : input.value;
         saveParams();
-      });
-      input.addEventListener('change', function () {
-        state.params[p.key] = p.type === 'number' ? Number(input.value) : input.value;
-        saveParams();
-      });
+      };
+      input.addEventListener('input', put);
+      input.addEventListener('change', put);
       wrap.appendChild(lab); wrap.appendChild(input);
       form.appendChild(wrap);
     });
+    $('curves').parentNode.hidden = !curveEds.length;
     $('dur').value = state.dur;
     $('dur').min = tpl.minDur;
+  }
+
+  // curva de entrada/saída: editor com alças (o valor guardado é o cubic-bezier)
+  function buildCurve(box, p) {
+    var wrap = document.createElement('div');
+    wrap.className = 'field';
+    var lab = document.createElement('span');
+    lab.textContent = p.label;
+    wrap.appendChild(lab);
+    box.appendChild(wrap);
+    var ed = new TC.CurveEditor(wrap, {
+      value: state.params[p.key],
+      onChange: function (v) { state.params[p.key] = v; saveParams(); }
+    });
+    ed.key = p.key;
+    curveEds.push(ed);
   }
 
   function sizeStage() {
@@ -265,7 +286,7 @@
     var maxH = Math.max(220, window.innerHeight * 0.5);
     var cssW = maxW, cssH = cssW * d.h / d.w;
     if (cssH > maxH) { cssH = maxH; cssW = cssH * d.w / d.h; }
-    var dpr = window.devicePixelRatio || 1;
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1); // prévia leve; o render sai no tamanho real
     cv.style.width = Math.round(cssW) + 'px';
     cv.style.height = Math.round(cssH) + 'px';
     cv.width = Math.round(cssW * dpr);
@@ -283,6 +304,7 @@
   // ------------------------------------------------------------------
   function frame(now) {
     requestAnimationFrame(frame);
+    if (state.busy) return; // durante o render a prévia fica parada
     if (state.id && !$('editor').hidden) {
       var dur = currentDur();
       if (state.playing) {
@@ -291,9 +313,10 @@
         $('scrub').value = Math.round(Math.min(1, state.t / dur) * 1000);
       }
       var cv = $('stage');
-      TC.renderFrame(cv.getContext('2d'), state.id, {
+      previewR.render(cv.getContext('2d'), state.id, {
         w: cv.width, h: cv.height, t: Math.min(state.t, dur), dur: dur,
-        params: state.params, brand: state.brand, preview: true, backdrop: state.bd
+        params: state.params, brand: state.brand, preview: true, backdrop: state.bd,
+        fx: fxFor(3, seqFps())
       });
       $('time').textContent = fmtNum(Math.min(state.t, dur), 1) + 's';
     } else if (state.hover) {
@@ -368,9 +391,9 @@
       progress(0);
 
       function step() {
-        var until = performance.now() + 40;
+        var until = performance.now() + 60;
         while (i < frames && performance.now() < until) {
-          TC.renderFrame(ctx, tpl.id, { w: d.w, h: d.h, t: i / fps, dur: dur, params: state.params, brand: state.brand });
+          exportR.render(ctx, tpl.id, { w: d.w, h: d.h, t: i / fps, dur: dur, params: state.params, brand: state.brand, fx: fxFor(TC.fxDefaults.samples, fps) });
           var b64 = cv.toDataURL('image/png').slice('data:image/png;base64,'.length);
           fs.writeFileSync(path.join(outDir, stamp + '_' + pad5(i) + '.png'), Buf.from(b64, 'base64'));
           i++;
@@ -431,8 +454,43 @@
       store.set('tc.d.' + state.id, null);
       loadParams(state.id); buildFields();
     };
+    wireFx();
     window.addEventListener('resize', function () { if (state.id) sizeStage(); else drawThumbs(); });
     window.addEventListener('focus', function () { refreshSeq(); });
+  }
+
+  function wireFx() {
+    var blur = $('fx-blur'), ab = $('fx-ab'), lens = $('fx-lens');
+    function show() {
+      $('fx-ab-v').textContent = ab.value === '0' ? 'desligada' : ab.value;
+      $('fx-lens-v').textContent = lens.value === '0' ? 'desligada' : lens.value;
+    }
+    function put() {
+      state.fx = { blur: Number(blur.value), aberration: Number(ab.value), lens: Number(lens.value) };
+      store.set('tc.fx', state.fx);
+      show();
+    }
+    blur.value = String(state.fx.blur);
+    if (blur.value === '') blur.value = String(TC.fxDefaults.blur);
+    ab.value = state.fx.aberration; lens.value = state.fx.lens;
+    blur.onchange = put; ab.oninput = put; lens.oninput = put;
+    show();
+  }
+
+  // a chama no canto do painel
+  function drawMark() {
+    var cv = $('mark');
+    if (!cv) return;
+    var c = cv.getContext('2d');
+    c.clearRect(0, 0, cv.width, cv.height);
+    c.save();
+    c.translate(cv.width / 2, cv.height / 2);
+    c.scale(cv.height * 0.92, cv.height * 0.92);
+    c.beginPath();
+    TC.flamePath(c, {});
+    c.fillStyle = TC.brands[state.brand].colors.ember;
+    c.fill();
+    c.restore();
   }
 
   // tema do Premiere (cor de fundo do painel)
@@ -448,6 +506,7 @@
 
   TC.loadFonts(TC.brands[state.brand]).then(function () {
     applyHostSkin();
+    drawMark();
     buildBrands();
     buildCats();
     wire();
@@ -457,5 +516,5 @@
   });
 
   // pra testes automatizados
-  window.TCPanel = { state: state, openEditor: openEditor, render: render, refreshSeq: refreshSeq };
+  window.TCPanel = { state: state, openEditor: openEditor, render: render, refreshSeq: refreshSeq, curves: function () { return curveEds; } };
 })();

@@ -11,155 +11,194 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,400..900;1,400..900&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
 <style>
-/* Layout: régua de roteiro no topo, banco em grade por categoria, editor em painel lateral */
+/* Layout: a ordem em que o outro sente (régua no topo), o banco por intenção, editor lateral com prévia viva */
 :root {
-  --paper: #EFE8DC;
-  --paper-2: #E6DDCE;
-  --ink: #241A17;
-  --ink-soft: #6E615A;
-  --rust: #A43D14;
-  --brasa: #E2582B;
-  --ambar: #B9741C;
-  --line: #D6CBBA;
-  --card: #F6F1E8;
-  --shade: rgba(36, 26, 23, 0.08);
+  --bg: #EFE9DF;          /* papel: cor do pensamento */
+  --surface: #E6DED1;
+  --fg: #1A1714;          /* tinta: cor da convicção */
+  --soft: #5F5952;
+  --ash: #9B968E;         /* cinza: cor do intervalo */
+  --line: #D3C9BA;
+  --ember: #C8502A;       /* brasa: só onde tem algo importante */
+  --ember-ink: #A9411F;
+  --on-ember: #EFE9DF;
+  --scrim: rgba(26, 23, 20, 0.74);
   --display: 'Anton', 'TC Display', Impact, 'Arial Narrow', sans-serif;
-  --body: 'Montserrat', 'TC Sans', 'Helvetica Neue', Arial, sans-serif;
-  --mono: 'Space Mono', 'TC Mono', 'Courier New', monospace;
+  --body: 'Inter', 'TC Sans', -apple-system, 'Segoe UI', Arial, sans-serif;
+  --tc-curve-accent: #C8502A;
+  --tc-curve-line: #D3C9BA;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #141112; --paper-2: #1D191A; --ink: #F1EADF; --ink-soft: #A39A93; --rust: #F08A5D;
-    --brasa: #E2582B; --ambar: #E8A03C; --line: #332D2E; --card: #1A1617; --shade: rgba(0,0,0,0.35);
+    --bg: #1A1714; --surface: #24201C; --fg: #EFE9DF; --soft: #ABA59D; --ash: #6F6A63;
+    --line: #36312C; --ember: #C8502A; --ember-ink: #E06A3E; --on-ember: #EFE9DF; --scrim: rgba(8, 7, 6, 0.78);
+    --tc-curve-line: #36312C;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #141112; --paper-2: #1D191A; --ink: #F1EADF; --ink-soft: #A39A93; --rust: #F08A5D;
-  --brasa: #E2582B; --ambar: #E8A03C; --line: #332D2E; --card: #1A1617; --shade: rgba(0,0,0,0.35);
+  --bg: #1A1714; --surface: #24201C; --fg: #EFE9DF; --soft: #ABA59D; --ash: #6F6A63;
+  --line: #36312C; --ember: #C8502A; --ember-ink: #E06A3E; --on-ember: #EFE9DF; --scrim: rgba(8, 7, 6, 0.78);
+  --tc-curve-line: #36312C;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
-  background: var(--paper); color: var(--ink);
+  background: var(--bg); color: var(--fg);
   font: 15px/1.6 var(--body);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 0 64px;
+  padding-block: 0 72px;
+  -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
-h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0.005em; text-wrap: balance; margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+h1, h2 { font-family: var(--display); font-weight: 400; text-transform: lowercase; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+h3 { margin: 0; }
 p { margin: 0; }
-.label { font: 700 11px/1.3 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--rust); }
+.label { font: 600 10.5px/1.3 var(--body); letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
+.label.hot { color: var(--ember-ink); }
 button, select, input, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--brasa); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
 
 /* topo */
-header.top { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: end; padding-top: 40px; }
-header.top h1 { font-size: clamp(52px, 9vw, 112px); line-height: 0.92; text-transform: uppercase; }
-header.top h1 em { font-style: normal; color: var(--brasa); }
-.intro { display: flex; flex-direction: column; gap: 14px; max-width: 46ch; }
-.intro p { color: var(--ink-soft); }
-.intro strong { color: var(--ink); }
-.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; padding: 14px 0; border-block: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--paper); z-index: 4; }
-.ctl { display: flex; flex-direction: column; gap: 4px; }
-.ctl > span { font: 700 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--card); }
-.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
-.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-.ctl select { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
-.controls .spacer { flex: 1; }
-.count { font: 700 12px var(--mono); color: var(--ink-soft); }
+header.top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: center; padding-top: 44px; }
+.lead { display: flex; flex-direction: column; gap: 18px; max-width: 60ch; }
+.lead h1 { font-size: clamp(56px, 9.5vw, 128px); line-height: 0.9; }
+.lead h1 em { font-style: normal; color: var(--ember); }
+.lead p { color: var(--soft); font-size: 16px; }
+.lead p b { color: var(--fg); font-weight: 600; }
+.hero { display: flex; flex-direction: column; gap: 8px; width: min(300px, 70vw); }
+.hero canvas { display: block; width: 100%; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 6px; background: #1A1714; }
+.hero .cap { font-size: 11.5px; color: var(--soft); font-variant-numeric: tabular-nums; }
 
-/* régua do roteiro */
-.roteiro { display: flex; flex-direction: column; gap: 18px; }
-.roteiro-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: end; }
-.roteiro-head h2 { font-size: clamp(32px, 4.6vw, 48px); text-transform: uppercase; }
-.roteiro-head p { color: var(--ink-soft); max-width: 52ch; }
-.beats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; border-top: 3px solid var(--ink); }
-.beat { padding: 14px 14px 16px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: end; padding: 12px 0; border-block: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 4; }
+.ctl { display: flex; flex-direction: column; gap: 5px; }
+.ctl > span { font: 600 10px var(--body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--soft); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--soft); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.controls .spacer { flex: 1; }
+.count { font-size: 12px; color: var(--soft); font-variant-numeric: tabular-nums; }
+
+/* régua: a ordem em que o outro sente */
+.regua { display: flex; flex-direction: column; gap: 20px; }
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; align-items: end; }
+.sec-head h2 { font-size: clamp(36px, 5vw, 56px); line-height: 0.95; }
+.sec-head p { color: var(--soft); max-width: 54ch; }
+.beats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 2px solid var(--fg); }
+.beat { padding: 14px 14px 18px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .beat:last-child { border-right: 0; }
-.beat .n { font: 700 11px var(--mono); color: var(--brasa); letter-spacing: 0.1em; }
-.beat h3 { font-size: 24px; text-transform: uppercase; line-height: 1; }
-.beat .q { font-size: 13px; color: var(--ink-soft); min-height: 3.2em; }
-.beat ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.beat li button { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: underline; text-decoration-color: var(--brasa); text-underline-offset: 3px; }
-.beat li button:hover { color: var(--brasa); }
+.beat .n { font-size: 12px; font-weight: 600; color: var(--ash); font-variant-numeric: tabular-nums; }
+.beat h3 { font: 400 26px/1 var(--display); text-transform: lowercase; }
+.beat .q { font-size: 13px; color: var(--soft); min-height: 3.3em; }
+.beat ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.beat li button { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--fg); text-decoration: underline; text-decoration-color: var(--ash); text-underline-offset: 3px; }
+.beat li button:hover { color: var(--ember-ink); text-decoration-color: var(--ember); }
+.beat:last-child .n { color: var(--ember-ink); }
+.anywhere { font-size: 13.5px; color: var(--soft); }
+.anywhere button { border: 0; background: none; padding: 0; cursor: pointer; font-weight: 600; color: var(--fg); text-decoration: underline; text-decoration-color: var(--ash); text-underline-offset: 3px; }
 
 /* banco */
 .cat { display: flex; flex-direction: column; gap: 18px; }
-.cat-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-.cat-head h2 { font-size: 34px; text-transform: uppercase; }
-.cat-head p { color: var(--ink-soft); font-size: 14px; }
-.grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.cat-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.cat-head h2 { font-size: 40px; line-height: 1; }
+.cat-head p { color: var(--soft); font-size: 14px; max-width: 60ch; }
+.grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
 .grid.wide { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
-.item { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.shot { position: relative; border-radius: 10px; overflow: hidden; background: #111; cursor: pointer; border: 0; padding: 0; display: block; width: 100%; box-shadow: 0 1px 0 var(--shade); }
+.item { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.shot { position: relative; border-radius: 6px; overflow: hidden; background: #1A1714; cursor: pointer; border: 0; padding: 0; display: block; width: 100%; }
 .shot canvas { display: block; width: 100%; height: auto; }
-.shot .edit { position: absolute; right: 8px; bottom: 8px; font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; background: var(--brasa); color: #fff; padding: 5px 9px; border-radius: 999px; opacity: 0; transition: opacity .15s; }
+.shot .edit { position: absolute; right: 8px; bottom: 8px; font: 600 10px var(--body); letter-spacing: 0.16em; text-transform: uppercase; background: var(--ember); color: var(--on-ember); padding: 5px 10px; border-radius: 999px; opacity: 0; transition: opacity .15s; }
 .shot:hover .edit, .shot:focus-visible .edit { opacity: 1; }
-.item h3 { font: 800 16px/1.25 var(--body); }
-.item .desc { font-size: 13.5px; color: var(--ink-soft); }
-.item .uso { font-size: 13px; border-left: 2px solid var(--brasa); padding-left: 10px; }
-.item .uso b { font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); display: block; }
+.item h3 { font: 700 16px/1.25 var(--body); }
+.item .desc { font-size: 13.5px; color: var(--soft); }
+.item .uso { font-size: 13px; }
+.item .uso b { font: 600 10px var(--body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ember-ink); display: block; margin-bottom: 2px; }
 
-/* editor */
-.editor { position: fixed; inset: 0; z-index: 10; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 100%); background: rgba(10, 8, 8, 0.72); }
-.editor[hidden] { display: none !important; }
-.ed-stage { display: flex; align-items: center; justify-content: center; padding: 24px; min-width: 0; }
-.ed-stage canvas { max-width: 100%; max-height: calc(100vh - 140px); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-.ed-side { background: var(--paper); overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 28px 20px; display: flex; flex-direction: column; gap: 14px; }
-.ed-side h2 { font-size: 34px; text-transform: uppercase; line-height: 1; }
-.ed-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.x { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 700; font-size: 13px; }
-.transport { display: flex; gap: 10px; align-items: center; }
-.transport input { flex: 1; accent-color: var(--brasa); }
-.transport .t { font: 700 12px var(--mono); color: var(--ink-soft); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
-.fields { display: flex; flex-direction: column; gap: 10px; }
-.field { display: flex; flex-direction: column; gap: 4px; }
-.field > span { font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
-.field input, .field select, .field textarea { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 8px 10px; font-size: 14px; width: 100%; }
-.field textarea { min-height: 70px; resize: vertical; }
-.hint { font-size: 13px; color: var(--ink-soft); background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
-.hint code { font: 12px var(--mono); }
+/* regras */
+.regras { display: flex; flex-direction: column; gap: 22px; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; margin: 0; }
+.rules div { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 12px; min-width: 0; }
+.rules dt { font: 400 24px/1.05 var(--display); text-transform: lowercase; }
+.rules dd { margin: 0; color: var(--soft); font-size: 14px; }
 
 /* instalação */
-.install { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; border-top: 3px solid var(--ink); padding-top: 22px; }
-.install h2 { font-size: clamp(32px, 4.6vw, 48px); text-transform: uppercase; line-height: 1; }
-.install .lead { color: var(--ink-soft); margin-top: 10px; }
+.install { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; border-top: 2px solid var(--fg); padding-top: 22px; }
+.install h2 { font-size: clamp(36px, 5vw, 56px); line-height: 0.95; }
+.install .lead2 { color: var(--soft); margin-top: 12px; max-width: 48ch; }
 .steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
-.steps li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
-.steps li::before { content: counter(s, decimal-leading-zero); font: 700 13px var(--mono); color: var(--brasa); padding-top: 2px; }
-.steps code, .install code { font: 12.5px var(--mono); background: var(--paper-2); padding: 1px 6px; border-radius: 4px; word-break: break-word; }
-footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; }
+.steps li::before { content: counter(s); font: 400 22px/1 var(--display); color: var(--ash); padding-top: 1px; }
+.steps code, .install code { font: 12.5px ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; background: var(--surface); padding: 1px 6px; border-radius: 4px; word-break: break-word; }
+footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+/* editor */
+.editor { position: fixed; inset: 0; z-index: 10; display: grid; grid-template-columns: minmax(0, 1fr) min(440px, 100%); background: var(--scrim); }
+.ed-stage { display: flex; align-items: center; justify-content: center; padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); min-width: 0; }
+.ed-stage canvas { max-width: 100%; border-radius: 6px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5); }
+.ed-side { background: var(--bg); overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) calc(32px + env(safe-area-inset-bottom, 0px)) 20px; display: flex; flex-direction: column; gap: 14px; }
+.ed-side h2 { font-size: 40px; line-height: 0.95; }
+.ed-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.x { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 600; font-size: 13px; }
+.transport { display: flex; gap: 10px; align-items: center; }
+.transport input { flex: 1; accent-color: var(--ember); min-width: 0; }
+.transport .t { font-size: 12px; color: var(--soft); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+.fields { display: flex; flex-direction: column; gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field > span { font: 600 10px var(--body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--soft); }
+.field > span b { color: var(--fg); letter-spacing: 0; text-transform: none; font-weight: 600; }
+.field input:not([type=range]), .field select, .field textarea { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 10px; font-size: 14px; width: 100%; }
+.field input[type=range] { accent-color: var(--ember); width: 100%; }
+.field textarea { min-height: 70px; resize: vertical; }
+.group { border-top: 1px solid var(--line); padding-top: 10px; }
+.group > :not(summary) { margin-top: 10px; }
+.group > summary { cursor: pointer; font: 400 22px/1 var(--display); text-transform: lowercase; list-style-position: inside; }
+.group[open] > summary { margin-bottom: 4px; }
+.group .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.group .curves { display: flex; flex-direction: column; gap: 16px; }
+.small { font-size: 13px; color: var(--soft); }
+.hint { font-size: 13px; color: var(--soft); background: var(--surface); border-radius: 6px; padding: 10px 12px; }
+.hint code { font: 12px ui-monospace, Menlo, Consolas, monospace; }
+.tc-curve-out { color: var(--soft); }
 
 @media (max-width: 900px) {
   header.top, .install { grid-template-columns: minmax(0, 1fr); }
+  .hero { width: min(260px, 64vw); }
   .beats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .beat:nth-child(2n) { border-right: 0; }
   .beat { border-bottom: 1px solid var(--line); }
+  .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .editor { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
   .ed-stage { padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px; }
-  .ed-stage canvas { max-height: 42vh; }
 }
 @media (max-width: 480px) {
   .controls { position: static; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .grid.wide { grid-template-columns: minmax(0, 1fr); }
   .item .desc { display: none; }
+  .rules { grid-template-columns: minmax(0, 1fr); }
+  .group .grid2 { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shot .edit { transition: none; }
 }
 </style>
 
 <div class="wrap">
   <header class="top">
-    <h1>Banco de <em>animações</em> da marca</h1>
-    <div class="intro">
-      <span class="label">Tamo Criando Motion · 17 animações</span>
-      <p><strong>Animação aqui é sinalização, não enfeite.</strong> Cada peça tem uma função no roteiro: segurar a atenção, mostrar onde a pessoa está no raciocínio, fixar a frase que importa. Tudo sai com a tua fonte, a tua cor e o teu texto, direto na timeline do Premiere.</p>
-      <p>Clica em qualquer animação pra editar o texto e ver ao vivo.</p>
+    <div class="lead">
+      <span class="label hot" id="kicker">tamo criando motion</span>
+      <h1>animação que <em>marca</em> o outro.</h1>
+      <p><b>Tudo aqui começa em como o outro entende.</b> O texto fica parado o tempo de ler, a brasa aparece só no que importa, e o movimento é de chama: chega suave e vai embora devagar.</p>
+      <p>Clica em qualquer animação pra trocar o texto, mexer nas curvas e ver ao vivo. O plugin do Premiere usa exatamente o mesmo motor.</p>
     </div>
+    <figure class="hero" style="margin:0">
+      <canvas id="hero" aria-label="Prévia ao vivo da animação Assinatura"></canvas>
+      <figcaption class="cap">assinatura · obturador 180° · aberração 35 · lente 20</figcaption>
+    </figure>
   </header>
 
   <div class="controls" role="toolbar" aria-label="Opções de visualização">
@@ -168,51 +207,68 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
         <button type="button" data-v="9:16" aria-pressed="true">9:16</button>
         <button type="button" data-v="16:9" aria-pressed="false">16:9</button>
         <button type="button" data-v="1:1" aria-pressed="false">1:1</button>
+        <button type="button" data-v="4:5" aria-pressed="false">4:5</button>
       </div>
     </div>
-    <label class="ctl"><span>Marca</span><select id="brand"></select></label>
     <div class="ctl"><span>Fundo</span>
       <div class="seg" id="bd">
         <button type="button" data-v="video" aria-pressed="true">Vídeo</button>
-        <button type="button" data-v="checker" aria-pressed="false">Alpha</button>
+        <button type="button" data-v="checker" aria-pressed="false">Transparência</button>
       </div>
     </div>
-    <div class="ctl"><span>Movimento</span>
+    <div class="ctl"><span>Cards</span>
       <div class="seg" id="motion">
         <button type="button" data-v="on" aria-pressed="true">Rodando</button>
-        <button type="button" data-v="off" aria-pressed="false">Parado</button>
+        <button type="button" data-v="off" aria-pressed="false">Parados</button>
       </div>
     </div>
+    <label class="ctl" id="brand-wrap"><span>Marca</span><select id="brand"></select></label>
     <span class="spacer"></span>
     <span class="count" id="count"></span>
   </div>
 
-  <section class="roteiro" aria-labelledby="rt">
-    <div class="roteiro-head">
-      <h2 id="rt">Onde cada uma entra no roteiro</h2>
-      <p>Um vídeo bem estruturado tem momentos previsíveis. A animação certa em cada um funciona como placa de estrada: a pessoa sabe onde está e pra onde vai.</p>
+  <section class="regua" aria-labelledby="rt">
+    <div class="sec-head">
+      <h2 id="rt">na ordem em que o outro sente</h2>
+      <p>Quem assiste passa por esses seis momentos, nessa ordem. Cada animação foi feita pra um deles. Usar a certa no momento certo é o que faz a pessoa sair lembrando.</p>
     </div>
     <div class="beats" id="beats"></div>
+    <p class="anywhere" id="anywhere"></p>
   </section>
 
-  <div id="bank" class="wrap" style="gap:56px"></div>
+  <div id="bank" class="wrap" style="gap:64px"></div>
+
+  <section class="regras" aria-labelledby="rg">
+    <div class="sec-head">
+      <h2 id="rg">antes de pôr na timeline</h2>
+      <p>Seis cuidados que decidem se a animação ajuda o outro a entender ou só enfeita.</p>
+    </div>
+    <dl class="rules">
+      <div><dt>tempo de leitura</dt><dd>Conta uns 0,3 s por palavra com o texto parado na tela, mais 1 s pro olho achar onde ler. Se a frase cresceu, aumenta a duração.</dd></div>
+      <div><dt>uma brasa por tela</dt><dd>Só uma palavra acesa de cada vez. Quando tudo brilha, o olho não sabe pra onde ir e nada fica.</dd></div>
+      <div><dt>zona segura</dt><dd>No 9:16, deixa o texto entre 12% e 80% da altura. Em cima e embaixo ficam o nome do perfil, a legenda e os botões do app.</dd></div>
+      <div><dt>o corte fica no meio</dt><dd>Nas passagens, o meio da animação cai em cima do corte entre os dois clipes. O painel avisa o segundo exato.</dd></div>
+      <div><dt>final sem pedido</dt><dd>A assinatura fecha sem “segue”, sem “comenta”. Quem foi marcado lembra de quem marcou.</dd></div>
+      <div><dt>texto que observa</dt><dd>As frases padrão descrevem o que a pessoa vive. Quem se reconhece chega na conclusão sozinho, e aí ela é dele.</dd></div>
+    </dl>
+  </section>
 
   <section class="install" aria-labelledby="inst">
     <div>
-      <span class="label">Plugin pro Premiere</span>
-      <h2 id="inst">Do banco pra timeline em um clique</h2>
-      <p class="lead">O painel renderiza a animação com o teu texto em PNG com transparência, no tamanho e frame rate da sequência aberta, salva ao lado do projeto e coloca no playhead, na primeira trilha livre acima da V1.</p>
+      <span class="label">plugin pro premiere</span>
+      <h2 id="inst">do banco pra timeline em um clique</h2>
+      <p class="lead2">O painel renderiza a animação com o teu texto em PNG com transparência, no tamanho e no frame rate da sequência aberta, já com o desfoque de câmera e a aberração. Salva ao lado do projeto e coloca no playhead, na primeira trilha livre acima da V1.</p>
     </div>
     <ol class="steps">
-      <li><span>Baixa o repositório <code>tamocriando</code> (botão Code › Download ZIP no GitHub) e descompacta.</span></li>
+      <li><span>Baixa o repositório <code>tamocriando</code> (Code › Download ZIP no GitHub) e descompacta.</span></li>
       <li><span>Windows: dois cliques em <code>install/instalar-windows.bat</code>. Mac: dois cliques em <code>install/instalar-mac.command</code>.</span></li>
       <li><span>Fecha e abre o Premiere. O painel fica em <code>Janela › Extensões › Tamo Criando Motion</code>.</span></li>
-      <li><span>Posiciona o playhead, escolhe a animação, ajusta o texto e clica em <b>Inserir no playhead</b>. Os PNGs ficam em <code>TamoCriando_Motion/</code> ao lado do .prproj; não apaga essa pasta enquanto usar o projeto.</span></li>
+      <li><span>Posiciona o playhead, escolhe a animação, ajusta texto, curvas e câmera e clica em <b>Inserir no playhead</b>. Os PNGs ficam em <code>TamoCriando_Motion/</code> ao lado do .prproj; não apaga essa pasta enquanto usar o projeto.</span></li>
     </ol>
   </section>
 
   <footer>
-    <span>Fontes: Anton, Montserrat e Space Mono (licença OFL), as mesmas famílias dos teus posts.</span>
+    <span>Fontes: Anton e Inter (licença OFL). Cores: brasa, papel, tinta e cinza.</span>
     <span id="ver"></span>
   </footer>
 </div>
@@ -221,11 +277,11 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
   <div class="ed-stage"><canvas id="ed-cv"></canvas></div>
   <div class="ed-side">
     <div class="ed-top">
-      <span class="label" id="ed-cat"></span>
+      <span class="label hot" id="ed-cat"></span>
       <button type="button" class="x" id="ed-close">Fechar</button>
     </div>
     <h2 id="ed-name"></h2>
-    <p class="desc" id="ed-desc" style="color:var(--ink-soft);font-size:14px"></p>
+    <p class="small" id="ed-desc"></p>
     <div class="transport">
       <button type="button" class="x" id="ed-play" aria-label="Pausar">❚❚</button>
       <input type="range" id="ed-scrub" min="0" max="1000" value="0" aria-label="Posição na animação">
@@ -233,7 +289,29 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
     </div>
     <div class="fields" id="ed-fields"></div>
     <label class="field"><span>Duração (segundos)</span><input type="number" id="ed-dur" step="0.1" min="0.5"></label>
+    <details class="group" id="ed-motion" open>
+      <summary>movimento</summary>
+      <p class="small">Entrada é como as coisas chegam, saída é como vão embora. Curva em pé é rápido, deitada é devagar. Arrasta as bolinhas ou escolhe um atalho.</p>
+      <div class="curves" id="ed-curves"></div>
+    </details>
+    <details class="group" id="ed-cam">
+      <summary>câmera</summary>
+      <div class="grid2">
+        <label class="field"><span>Desfoque de movimento</span>
+          <select id="fx-blur">
+            <option value="0">desligado</option>
+            <option value="0.25">leve (90°)</option>
+            <option value="0.5">cinema (180°)</option>
+            <option value="0.75">sonho (270°)</option>
+          </select>
+        </label>
+        <label class="field"><span>Aberração <b id="fx-ab-v"></b></span><input type="range" id="fx-ab" min="0" max="100"></label>
+        <label class="field"><span>Lente <b id="fx-lens-v"></b></span><input type="range" id="fx-lens" min="0" max="100"></label>
+      </div>
+      <p class="small">Vale pra prévia e pro render do plugin. A aberração só aparece onde alguma coisa está se mexendo.</p>
+    </details>
     <p class="hint" id="ed-hint"></p>
+    <button type="button" class="x" id="ed-reset" style="align-self:flex-start">Voltar ao padrão</button>
   </div>
 </div>
 
@@ -247,6 +325,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
 <script src="../plugin/tamocriando-motion/engine/templates/guiar.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/apontar.js"></script>
 <script src="../plugin/tamocriando-motion/engine/templates/passagem.js"></script>
+<script src="../plugin/tamocriando-motion/ui/curve-editor.js"></script>
 <!-- @engine:end -->
 <script>
 (function () {
@@ -254,7 +333,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
   var $ = function (id) { return document.getElementById(id); };
   var store = {
     get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    set: function (k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var S = {
@@ -262,34 +341,41 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
     brand: store.get('g.brand', TC.defaultBrand),
     bd: store.get('g.bd', 'video'),
     motion: reduce ? 'off' : store.get('g.motion', 'on'),
+    fx: store.get('g.fx', { blur: TC.fxDefaults.blur, aberration: Math.round(TC.fxDefaults.aberration * 100), lens: Math.round(TC.fxDefaults.lens * 100) }),
     params: {},
     edit: null
   };
   if (!TC.brands[S.brand]) S.brand = TC.defaultBrand;
+  if (!TC.formats[S.fmt]) S.fmt = '9:16';
 
   var CAT_TEXT = {
-    abertura: 'Abrem e fecham o vídeo. Primeira e última impressão da marca.',
-    estrutura: 'Mostram onde a pessoa está dentro do raciocínio.',
-    enfase: 'Fixam a frase, o número ou a lista que precisa ficar.',
-    argumento: 'Estruturas de raciocínio: comparar, desmontar, sequenciar, perguntar.',
-    identidade: 'Quem está falando, com nome e credencial.',
-    transicao: 'Escondem o corte entre dois clipes. O meio da transição cai no corte.'
+    acender: 'Abrem e fecham o vídeo. O nome chega devagar, do jeito que uma brasa pega.',
+    marcar: 'Fixam a frase, a palavra ou o número que precisa ficar na cabeça de quem assiste.',
+    virar: 'Mostram a mudança acontecendo: o que era cinza e passa a ser brasa.',
+    guiar: 'Dizem pra pessoa onde ela está no raciocínio e quanto ainda falta.',
+    apontar: 'Mostram quem está falando e pra onde olhar dentro do quadro.',
+    passagem: 'Escondem o corte entre dois clipes. O meio da passagem cai em cima do corte.'
   };
   var BEATS = [
-    { n: '0–3s', t: 'Gancho', q: 'A frase ou pergunta que trava o dedo.', ids: ['pergunta', 'destaque-palavra', 'intro-clareza'] },
-    { n: 'Contexto', t: 'Quem fala', q: 'Credencial rápida, sem currículo.', ids: ['lower-third', 'intro-brasa'] },
-    { n: 'Mapa', t: 'Onde estamos', q: 'O público vê o todo antes da parte.', ids: ['metodo-trilha', 'capitulo', 'contador'] },
-    { n: 'Miolo', t: 'Argumento', q: 'Organizar o raciocínio em blocos que se lembram.', ids: ['fluxo', 'comparativo', 'lista', 'mito-verdade'] },
-    { n: 'Prova', t: 'Prova e tese', q: 'Número de cliente e a frase pra print.', ids: ['numero', 'tese'] },
-    { n: 'Final', t: 'Fechamento', q: 'Uma ação só. Duas dividem a atenção.', ids: ['outro-cta', 'transicao-brasa', 'transicao-blocos'] }
+    { t: 'reconhecimento', q: 'Ele se vê no que tu está descrevendo.', ids: ['pergunta', 'palavra-acesa', 'simbolo'] },
+    { t: 'alívio', q: 'Entende que o problema tem nome e não é falta de esforço.', ids: ['tese', 'anotacao', 'nome'] },
+    { t: 'indignação', q: 'Percebe quanto custa continuar morno.', ids: ['virada', 'cinza-brasa'] },
+    { t: 'esperança', q: 'Vê que tem caminho e onde ele está nesse caminho.', ids: ['trilha-brasa', 'fluxo', 'lista', 'capitulo', 'numero'] },
+    { t: 'identidade', q: 'Reconhece quem ele quer ser.', ids: ['marca', 'tese'] },
+    { t: 'determinação', q: 'Sai com uma coisa só na cabeça, e vai.', ids: ['assinatura', 'acender'] }
   ];
+  var ANYWHERE = ['queima', 'sopro', 'contador', 'fundo-vivo'];
 
   function paramsFor(id) {
     var p = TC.defaults(id, TC.brands[S.brand]);
     var saved = store.get('g.p.' + S.brand + '.' + id, null);
-    if (saved) for (var k in saved) if (k in p) p[k] = saved[k];
+    if (saved) for (var k in saved) if (k in p && saved[k] !== null && saved[k] !== undefined) p[k] = saved[k];
     return p;
   }
+  function fxFor(samples) {
+    return { blur: Number(S.fx.blur) || 0, samples: samples, fps: 30, aberration: (Number(S.fx.aberration) || 0) / 100, lens: (Number(S.fx.lens) || 0) / 100 };
+  }
+  function fmtS(n, d) { return Number(n).toFixed(d === undefined ? 1 : d).replace('.', ','); }
 
   // ---------- controles ----------
   function seg(id, key, after) {
@@ -299,7 +385,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       b.onclick = function () {
         S[key] = b.dataset.v; store.set('g.' + key, S[key]);
         Array.prototype.forEach.call(el.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-        after && after();
+        if (after) after();
       };
     });
   }
@@ -309,27 +395,37 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       var o = document.createElement('option'); o.value = k; o.textContent = TC.brands[k].name; sel.appendChild(o);
     });
     sel.value = S.brand;
+    $('brand-wrap').hidden = Object.keys(TC.brands).length < 2;
     sel.onchange = function () { S.brand = sel.value; store.set('g.brand', S.brand); resizeAll(); };
   }
 
   // ---------- régua ----------
+  function linkTo(id) {
+    var bt = document.createElement('button');
+    bt.type = 'button'; bt.textContent = TC.templates[id].name;
+    bt.onclick = function () { openEditor(id); };
+    return bt;
+  }
   function buildBeats() {
     var host = $('beats');
     BEATS.forEach(function (b, i) {
       var d = document.createElement('div'); d.className = 'beat';
       d.innerHTML = '<span class="n"></span><h3></h3><p class="q"></p><ul></ul>';
-      d.querySelector('.n').textContent = String(i + 1).padStart(2, '0') + ' · ' + b.n;
+      d.querySelector('.n').textContent = String(i + 1).padStart(2, '0');
       d.querySelector('h3').textContent = b.t;
       d.querySelector('.q').textContent = b.q;
       var ul = d.querySelector('ul');
       b.ids.forEach(function (id) {
         if (!TC.templates[id]) return;
-        var li = document.createElement('li'); var bt = document.createElement('button');
-        bt.type = 'button'; bt.textContent = TC.templates[id].name;
-        bt.onclick = function () { openEditor(id); };
-        li.appendChild(bt); ul.appendChild(li);
+        var li = document.createElement('li'); li.appendChild(linkTo(id)); ul.appendChild(li);
       });
       host.appendChild(d);
+    });
+    var any = $('anywhere');
+    any.appendChild(document.createTextNode('Em qualquer momento: '));
+    ANYWHERE.filter(function (id) { return TC.templates[id]; }).forEach(function (id, i, arr) {
+      any.appendChild(linkTo(id));
+      any.appendChild(document.createTextNode(i < arr.length - 2 ? ', ' : i === arr.length - 2 ? ' e ' : '.'));
     });
   }
 
@@ -343,7 +439,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       var sec = document.createElement('section'); sec.className = 'cat';
       sec.innerHTML = '<div class="cat-head"><h2></h2><p></p></div><div class="grid"></div>';
       sec.querySelector('h2').textContent = cat.name;
-      sec.querySelector('p').textContent = CAT_TEXT[cat.id] || '';
+      sec.querySelector('p').textContent = CAT_TEXT[cat.id] || cat.hint || '';
       var grid = sec.querySelector('.grid');
       list.forEach(function (tpl) {
         var it = document.createElement('article'); it.className = 'item';
@@ -354,17 +450,22 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
         it.querySelector('.shot').setAttribute('aria-label', 'Editar ' + tpl.name);
         it.querySelector('.shot').onclick = function () { openEditor(tpl.id); };
         grid.appendChild(it);
-        tiles.push({ id: tpl.id, cv: it.querySelector('canvas'), grid: grid, visible: false, offset: Math.random() * 3 });
+        tiles.push({ id: tpl.id, cv: it.querySelector('canvas'), visible: false, offset: Math.random() * 3 });
       });
       bank.appendChild(sec);
     });
     $('count').textContent = TC.list().length + ' animações';
+    $('kicker').textContent = 'tamo criando motion · ' + TC.list().length + ' animações';
     $('ver').textContent = 'Motor v' + TC.version;
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { tiles.forEach(function (t) { if (t.cv === e.target) t.visible = e.isIntersecting; }); });
+        entries.forEach(function (e) {
+          tiles.forEach(function (t) { if (t.cv === e.target) t.visible = e.isIntersecting; });
+          if (e.target === $('hero')) hero.visible = e.isIntersecting;
+        });
       }, { rootMargin: '100px' });
       tiles.forEach(function (t) { io.observe(t.cv); });
+      io.observe($('hero'));
     } else tiles.forEach(function (t) { t.visible = true; });
   }
 
@@ -382,27 +483,75 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
   function resizeAll() {
     document.querySelectorAll('.grid').forEach(function (g) { g.classList.toggle('wide', S.fmt === '16:9'); });
     tiles.forEach(function (t) { sizeTile(t); drawTile(t, TC.templates[t.id].thumb); });
+    sizeHero();
     if (S.edit) sizeEditor();
   }
 
+  // ---------- abertura: a assinatura rodando com o jeito de câmera ----------
+  var hero = { id: 'assinatura', r: new TC.Renderer(), visible: true, start: 0 };
+  function sizeHero() {
+    var cv = $('hero');
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    var w = Math.round((cv.clientWidth || 300) * dpr);
+    cv.width = w; cv.height = Math.round(w * 16 / 9);
+    drawHero(reduce ? TC.templates[hero.id].duration * 0.85 : 0);
+  }
+  function drawHero(t) {
+    var cv = $('hero');
+    if (!TC.templates[hero.id]) return;
+    hero.r.render(cv.getContext('2d'), hero.id, { w: cv.width, h: cv.height, t: t, params: TC.defaults(hero.id, TC.brands[S.brand]), brand: S.brand, preview: true, backdrop: 'video', fx: fxFor(3) });
+  }
+
   // ---------- editor ----------
-  var ed = { playing: true, clock: 0, t: 0, dur: 4 };
+  var ed = { playing: true, clock: 0, t: 0, dur: 4, r: new TC.Renderer(), curves: [] };
   function openEditor(id) {
     var tpl = TC.templates[id];
     S.edit = id;
     S.params = paramsFor(id);
-    ed.dur = tpl.duration; ed.playing = true; ed.clock = performance.now();
+    ed.dur = store.get('g.d.' + id, tpl.duration); ed.playing = true; ed.clock = performance.now();
     $('ed-name').textContent = tpl.name;
     var cat = TC.categories.filter(function (c) { return c.id === tpl.category; })[0];
     $('ed-cat').textContent = cat ? cat.name : '';
     $('ed-desc').textContent = tpl.uso;
     $('ed-play').textContent = '❚❚';
     $('ed-dur').value = ed.dur; $('ed-dur').min = tpl.minDur;
+    buildFields(id);
+    showHint();
+    $('editor').hidden = false;
+    document.body.style.overflow = 'hidden';
+    sizeEditor();
+    $('ed-close').focus();
+  }
+  function showHint() {
+    var tpl = TC.templates[S.edit];
+    var dur = Math.max(tpl.minDur, Number(ed.dur) || tpl.duration);
+    var where = tpl.cut ? 'Põe a passagem de forma que o ponto ' + fmtS(tpl.cut * dur, 2) + 's caia em cima do corte entre os clipes.'
+      : tpl.full ? 'Ocupa a tela toda: vai numa trilha acima do vídeo, sozinha.'
+      : 'Sai com transparência: vai numa trilha acima do vídeo.';
     $('ed-hint').innerHTML = '';
-    var hint = 'No painel do Premiere: <code>' + tpl.name + '</code>. ' + (tpl.cut ? 'Põe a transição de forma que o ponto ' + (tpl.cut * tpl.duration).toFixed(2).replace('.', ',') + 's caia em cima do corte entre os clipes.' : (tpl.full ? 'Ocupa a tela toda e sai revelando o vídeo de baixo.' : 'Sai com transparência: vai numa trilha acima do vídeo.'));
-    $('ed-hint').innerHTML = hint;
+    $('ed-hint').appendChild(document.createTextNode('No painel do Premiere: '));
+    var c = document.createElement('code'); c.textContent = tpl.name; $('ed-hint').appendChild(c);
+    $('ed-hint').appendChild(document.createTextNode('. ' + where));
+  }
+  function save() {
+    store.set('g.p.' + S.brand + '.' + S.edit, S.params);
+    var id = S.edit;
+    tiles.forEach(function (t) { if (t.id === id) drawTile(t, TC.templates[id].thumb); });
+  }
+  function buildFields(id) {
+    var tpl = TC.templates[id];
     var host = $('ed-fields'); host.innerHTML = '';
+    ed.curves.forEach(function (c) { c.destroy(); });
+    ed.curves = [];
+    var box = $('ed-curves'); box.innerHTML = '';
     tpl.params.forEach(function (p) {
+      if (p.type === 'curve') {
+        var w = document.createElement('div'); w.className = 'field';
+        var sp = document.createElement('span'); sp.textContent = p.label; w.appendChild(sp);
+        box.appendChild(w);
+        ed.curves.push(new TC.CurveEditor(w, { value: S.params[p.key], onChange: function (v) { S.params[p.key] = v; save(); } }));
+        return;
+      }
       var lab = document.createElement('label'); lab.className = 'field';
       var span = document.createElement('span'); span.textContent = p.label;
       var input;
@@ -412,29 +561,47 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       } else if (p.type === 'textarea') { input = document.createElement('textarea'); }
       else { input = document.createElement('input'); input.type = p.type === 'number' ? 'number' : 'text'; if (p.min !== undefined) input.min = p.min; if (p.max !== undefined) input.max = p.max; }
       input.id = 'f-' + p.key;
-      input.value = S.params[p.key];
+      input.value = S.params[p.key] === undefined ? '' : S.params[p.key];
       input.addEventListener('input', function () {
         S.params[p.key] = p.type === 'number' ? Number(input.value) : input.value;
-        store.set('g.p.' + S.brand + '.' + id, S.params);
-        tiles.forEach(function (t) { if (t.id === id) drawTile(t, TC.templates[id].thumb); });
+        save();
       });
       lab.appendChild(span); lab.appendChild(input); host.appendChild(lab);
     });
-    $('editor').hidden = false;
-    document.body.style.overflow = 'hidden';
-    sizeEditor();
-    $('ed-close').focus();
+    $('ed-motion').hidden = !ed.curves.length;
   }
-  function closeEditor() { S.edit = null; $('editor').hidden = true; document.body.style.overflow = ''; }
+  function closeEditor() {
+    S.edit = null; $('editor').hidden = true; document.body.style.overflow = '';
+    ed.curves.forEach(function (c) { c.destroy(); }); ed.curves = [];
+  }
   function sizeEditor() {
     var cv = $('ed-cv'), d = dims();
     var box = cv.parentNode.getBoundingClientRect();
-    var maxW = Math.max(200, box.width - 48), maxH = Math.max(200, Math.min(window.innerHeight - 140, box.height - 24));
+    var narrow = window.innerWidth <= 900;
+    var maxW = Math.max(200, box.width - 48);
+    var maxH = narrow ? window.innerHeight * 0.42 : Math.max(200, Math.min(window.innerHeight - 96, box.height - 48));
     var w = maxW, h = w * d.h / d.w;
     if (h > maxH) { h = maxH; w = h * d.w / d.h; }
-    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1);
     cv.style.width = Math.round(w) + 'px'; cv.style.height = Math.round(h) + 'px';
     cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  }
+  function wireFx() {
+    var blur = $('fx-blur'), ab = $('fx-ab'), lens = $('fx-lens');
+    function show() {
+      $('fx-ab-v').textContent = ab.value === '0' ? 'desligada' : ab.value;
+      $('fx-lens-v').textContent = lens.value === '0' ? 'desligada' : lens.value;
+    }
+    function put() {
+      S.fx = { blur: Number(blur.value), aberration: Number(ab.value), lens: Number(lens.value) };
+      store.set('g.fx', S.fx);
+      show();
+    }
+    blur.value = String(S.fx.blur);
+    if (blur.value === '') blur.value = String(TC.fxDefaults.blur);
+    ab.value = S.fx.aberration; lens.value = S.fx.lens;
+    blur.onchange = put; ab.oninput = put; lens.oninput = put;
+    show();
   }
 
   // ---------- loop ----------
@@ -446,17 +613,22 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       var dur = Math.max(tpl.minDur, Number(ed.dur) || tpl.duration);
       if (ed.playing) { ed.t = ((now - ed.clock) / 1000) % (dur + 0.6); $('ed-scrub').value = Math.round(Math.min(1, ed.t / dur) * 1000); }
       var cv = $('ed-cv');
-      TC.renderFrame(cv.getContext('2d'), S.edit, { w: cv.width, h: cv.height, t: Math.min(ed.t, dur), dur: dur, params: S.params, brand: S.brand, preview: true, backdrop: S.bd });
-      $('ed-t').textContent = Math.min(ed.t, dur).toFixed(1).replace('.', ',') + 's';
+      ed.r.render(cv.getContext('2d'), S.edit, { w: cv.width, h: cv.height, t: Math.min(ed.t, dur), dur: dur, params: S.params, brand: S.brand, preview: true, backdrop: S.bd, fx: fxFor(3) });
+      $('ed-t').textContent = fmtS(Math.min(ed.t, dur)) + 's';
       return;
     }
-    if (S.motion !== 'on' || now - last < 33) return;
+    if (reduce || now - last < 33) return;
     last = now;
+    if (hero.visible) {
+      var hd = TC.templates[hero.id].duration;
+      drawHero(Math.min(hd, ((now - hero.start) / 1000) % (hd + 1.2)));
+    }
+    if (S.motion !== 'on') return;
     tiles.forEach(function (t) {
       if (!t.visible) return;
-      var tpl = TC.templates[t.id];
-      var cyc = tpl.duration + 0.8;
-      drawTile(t, Math.min(tpl.duration, ((now / 1000) + t.offset) % cyc));
+      var tp = TC.templates[t.id];
+      var cyc = tp.duration + 0.8;
+      drawTile(t, Math.min(tp.duration, ((now / 1000) + t.offset) % cyc));
     });
   }
 
@@ -465,6 +637,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
     seg('bd', 'bd', resizeAll);
     seg('motion', 'motion', function () { tiles.forEach(function (t) { drawTile(t, TC.templates[t.id].thumb); }); });
     brandSelect();
+    wireFx();
     $('ed-close').onclick = closeEditor;
     $('editor').addEventListener('click', function (e) { if (e.target.id === 'editor' || e.target.classList.contains('ed-stage')) closeEditor(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.edit) closeEditor(); });
@@ -475,11 +648,23 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
       if (ed.playing) ed.clock = performance.now() - ed.t * 1000;
     };
     $('ed-scrub').oninput = function () {
-      ed.playing = false; $('ed-play').textContent = '▶';
+      ed.playing = false; $('ed-play').textContent = '▶'; $('ed-play').setAttribute('aria-label', 'Tocar');
       var tpl = TC.templates[S.edit];
       ed.t = Number($('ed-scrub').value) / 1000 * Math.max(tpl.minDur, Number(ed.dur) || tpl.duration);
     };
-    $('ed-dur').oninput = function () { var v = Number($('ed-dur').value); if (v > 0) ed.dur = v; };
+    $('ed-dur').oninput = function () {
+      var v = Number($('ed-dur').value);
+      if (v > 0) { ed.dur = v; store.set('g.d.' + S.edit, v); showHint(); }
+    };
+    $('ed-reset').onclick = function () {
+      var id = S.edit;
+      store.set('g.p.' + S.brand + '.' + id, null);
+      store.set('g.d.' + id, null);
+      S.params = paramsFor(id);
+      ed.dur = TC.templates[id].duration; $('ed-dur').value = ed.dur;
+      buildFields(id); showHint();
+      tiles.forEach(function (t) { if (t.id === id) drawTile(t, TC.templates[id].thumb); });
+    };
     var rt;
     window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resizeAll, 120); });
   }
@@ -488,7 +673,7 @@ footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--li
   buildBank();
   wire();
   resizeAll();
-  TC.loadFonts(TC.brands[S.brand]).then(function () { resizeAll(); requestAnimationFrame(loop); });
+  TC.loadFonts(TC.brands[S.brand]).then(function () { hero.start = performance.now(); resizeAll(); requestAnimationFrame(loop); });
 })();
 </script>
 

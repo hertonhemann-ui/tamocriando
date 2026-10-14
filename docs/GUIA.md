@@ -1,81 +1,118 @@
-# Guia de uso: animação como sinalização
+# Guia de uso: como o outro entende
 
-Pensa numa estrada. A placa não está lá pra enfeitar: ela diz onde tu está, o que vem depois e onde virar. Quem dirige sem placa até chega, mas chega cansado e com a sensação de que se perdeu no caminho.
+Pensa em quem conta história numa roda de fogueira. A mão aponta, a voz baixa, tem uma pausa antes da parte que importa. Nenhum desses gestos aparece mais que a história, mas sem eles a história não pega.
 
-Vídeo é igual. O público não tem o teu roteiro na mão. Cada animação deste banco é uma placa: diz "isso aqui é o gancho", "agora estamos na etapa 3 de 5", "essa é a frase que importa", "acabou, faz isso agora". É a mesma tese que tu vende pros clientes (**clareza antes do marketing**), aplicada na edição.
+Cada animação deste banco é um gesto desses. Ela existe pra uma coisa: o outro entender e levar embora. Antes de colocar qualquer uma na timeline, pergunta: **o que a pessoa precisa entender neste segundo, e essa animação ajuda ela a entender ou só a ver?** Se for só ver, tira.
 
-Animação que não sinaliza nada é ruído. Antes de colocar uma, pergunta: *que placa é essa?*
+O símbolo por trás de tudo (da cinza à brasa) não aparece explicado em lugar nenhum. Ele está no material: o que é morno entra cinza, o que importa esquenta, a chama acende e se consome, a brasa fica. Quem assiste sente isso sem ninguém dizer, e é assim que tem que ser.
 
 ---
 
-## O mapa do roteiro
+## Na ordem em que o outro sente
 
-| Momento | O que a pessoa precisa | Animações | Detalhe que faz diferença |
+Quem assiste passa por seis momentos, nessa ordem. Cada animação foi feita pra um deles.
+
+| Momento | O que acontece com a pessoa | Animações | Detalhe que faz diferença |
 |---|---|---|---|
-| **1. Gancho (0–3s)** | Um motivo pra parar o dedo | Pergunta · Destaque de Palavra · Intro Clareza | Em Reels, nada de vinheta antes do gancho. O gancho *é* a abertura. |
-| **2. Quem fala** | Saber por que te ouvir | Nome e Cargo · Intro Brasa | Nome e Cargo nos primeiros 5s, uma vez só. Intro Brasa só em vídeo longo, aula ou série fixa. |
-| **3. Onde estamos** | Ver o todo antes da parte | Trilha do Método · Capítulo · Contador de Dicas | Mostra a trilha completa uma vez no começo e depois só a etapa atual. |
-| **4. Argumento** | Raciocínio em blocos que se lembram | Fluxo A ⮕ B · Eu ≠ Mercado · Lista em Cascata · Mito × Verdade | Sincroniza o risco do Mito com o "só que..." da fala. O corte da carta vira a virada. |
-| **5. Prova e tese** | Motivo pra acreditar e frase pra repetir | Número de Impacto · Cartela Tese | Número sempre com fonte ou contexto no rótulo ("de alcance em 90 dias"). |
-| **6. Fechamento** | Uma ação clara | Fechamento CTA · Varrida Brasa · Blocos | Uma ação só. "Salva e segue e comenta" vira nenhuma. |
+| **1. Reconhecimento** | Ela se vê no que tu está descrevendo | Pergunta · Palavra Acesa · Símbolo | Em Reels, nada de vinheta antes disso. O reconhecimento é a abertura. |
+| **2. Alívio** | Entende que o problema tem nome e não é falta de esforço | Cartela Tese · Anotação · Nome | O Nome entra aqui, uma vez só, quando ela já quer saber quem está falando. |
+| **3. Indignação** | Percebe quanto custa continuar morno | Virada · Cinza × Brasa | Sincroniza o começo da queima com o "só que..." da fala. |
+| **4. Esperança** | Vê que tem caminho e onde está nele | Trilha da Brasa · De → Pra · Lista · Capítulo · Número | Mostra a trilha inteira uma vez e depois só a etapa da vez. |
+| **5. Identidade** | Reconhece quem quer ser | Marca · Cartela Tese | Uma Marca por vídeo. É a palavra que tu quer que fique. |
+| **6. Determinação** | Sai com uma coisa só na cabeça | Assinatura · Acender | A Assinatura fecha sem pedido. Quem foi marcado lembra de quem marcou. |
 
-### Por que a Trilha do Método é a peça mais importante do banco
+Em qualquer momento: **Queima** e **Sopro** pra esconder o corte, **Contador** pra listas longas, **Fundo Vivo** atrás de texto lido em off.
 
-O teu método (Conhecimento ⮕ Narrativa ⮕ Percepção ⮕ Valor ⮕ Coerência) só vira ativo de marca quando o público reconhece ele sem tu explicar. Isso acontece por repetição visual: o mesmo mapa, sempre no mesmo lugar, com a etapa da vez acesa. Depois de 10 vídeos, a pessoa vê a trilha e já sabe "isso é do Herton". É o mesmo princípio do 04/08 nos teus carrosséis, só que em vídeo.
+### Por que a Trilha da Brasa é a peça mais importante do banco
+
+O teu processo (raio-x, a frase, o filtro, o eixo, antes e depois) só vira ativo de marca quando o público reconhece ele sem tu explicar. Isso acontece por repetição visual: o mesmo desenho, sempre no mesmo lugar, com a etapa da vez acesa.
+
+Cada etapa tem um ícone que esquenta: cinza, sopro, brasa, chama, marca. A pessoa não precisa saber o que os ícones significam. Depois de dez vídeos, ela vê a trilha e já sabe de quem é, e sabe que tem um caminho que vai do frio ao quente. É o mesmo princípio do 04/08 nos teus carrosséis, só que em vídeo.
 
 ---
 
 ## Regras práticas
 
-**Tempo de tela pra leitura.** Conta 3 palavras por segundo e soma 1 segundo. "a CLAREZA vem antes do MARKETING" = 6 palavras = 3s no mínimo. Se a animação sai antes disso, a pessoa sente que perdeu algo.
+**Tempo de leitura.** Conta uns 0,3 s por palavra com o texto parado na tela, mais 1 s pro olho achar onde ler. "o morno não marca ninguém" = 5 palavras = 2,5 s parada, no mínimo. Se a animação sai antes, a pessoa sente que perdeu algo, e essa sensação fica associada a ti.
 
-**Destaque é recurso escasso.** No máximo 2 ou 3 Destaques de Palavra por vídeo de 60s. Se tudo brilha, nada brilha.
+**Uma brasa por tela.** A cor brasa é a cor da devoção e aparece só no que importa: uma palavra, um trecho, um número. Se tudo brilha, o olho não sabe pra onde ir. Os textos padrão já seguem isso; quando trocar, escolhe um trecho só pra ficar em brasa.
 
-**Áreas seguras no 9:16.** A interface do Reels cobre o topo (~12%) e a base (~20%), mais a coluna de botões à direita. Os templates já respeitam isso; se tu mudar a posição na mão, deixa o texto entre 12% e 80% da altura.
+**Minúsculas no texto principal, maiúsculas só no rótulo.** O texto grande em minúsculas é mais calmo e mais próximo, combina com o movimento de chama. Maiúsculas espaçadas ficam pros rótulos pequenos ("O PROCESSO", "REPARA NISSO").
 
-**Transição no corte.** Varrida Brasa e Blocos cobrem a tela inteira no meio. Coloca a transição numa trilha acima dos dois clipes de forma que o ponto de cobertura total (o painel avisa o segundo exato) fique em cima do corte.
+**Zona segura no 9:16.** A interface do Reels cobre uns 12% de cima e uns 20% de baixo, mais a coluna de botões à direita. Os templates já respeitam isso. Se mudar a posição na mão (Anotação, Símbolo), deixa o texto entre 12% e 80% da altura.
 
-**Uma família visual por vídeo.** Escolhe claro (papel) ou escuro (carvão) pra cartelas cheias e mantém. Misturar os dois no mesmo vídeo faz parecer dois vídeos colados.
+**O corte fica no meio.** Queima e Sopro cobrem a tela inteira na metade da duração. Põe a passagem numa trilha acima dos dois clipes de forma que esse ponto (o painel avisa o segundo exato) caia em cima do corte.
+
+**Uma família visual por vídeo.** Escolhe papel ou tinta pras cartelas cheias e mantém. Misturar os dois no mesmo vídeo faz parecer dois vídeos colados.
+
+**Final sem pedido.** "Segue, salva, comenta" divide a atenção em três e não marca nenhuma. A Assinatura termina com a brasa respirando. Se o vídeo precisa de uma ação, fala ela antes, com a tua voz, e deixa a imagem final quieta.
+
+**Texto que observa.** As frases padrão descrevem o que a pessoa vive ("disciplina forçada é o que sobra quando a devoção foi embora"). Quem se reconhece chega na conclusão sozinho, e aí a conclusão é dele. Conselho direto ("tu precisa...") faz a pessoa se defender.
+
+---
+
+## Curvas: quando mexer
+
+O padrão (entrada **suave**, saída **apagar**) serve pra quase tudo. Mexe quando o sentido pedir:
+
+| Quero que a pessoa sinta | Entrada | Saída |
+|---|---|---|
+| peso, coisa que pousa e fica (Marca, Tese) | brasa | apagar |
+| surpresa pequena, um detalhe que salta (Símbolo, Anotação) | faísca | suave |
+| calma, respiro (Pergunta, Fundo Vivo) | fôlego | fôlego |
+| corte seco, mudança de assunto (Passagens) | o padrão delas | o padrão delas |
+
+Regra de bolso: curva em pé é rápido, deitada é devagar. Entrada rápida chama atenção; saída lenta deixa a coisa na memória.
+
+## Câmera: quando desligar
+
+O desfoque de movimento, a aberração e a lente são detalhe. Parado, quase não se vê nada. Desliga (ou baixa) quando:
+
+- o vídeo já tem muito tratamento de cor e grão, e a aberração começa a brigar com ele;
+- a animação vai ser exportada pra outro editor que vai aplicar o próprio desfoque;
+- o texto é longo e fica muito tempo se mexendo (raro: a regra do tempo de leitura já evita isso).
 
 ---
 
 ## Três receitas prontas
 
-### Reel de 30s: "A frequência está destruindo sua autoridade"
+### Reel de 30s: "o morno não marca ninguém"
 
 | Tempo | Fala | Animação |
 |---|---|---|
-| 0,0s | "A frequência está destruindo sua autoridade" | Destaque de Palavra: `ESTÁ` / `DESTRUINDO` / `sua autoridade` |
-| 3,5s | Apresentação rápida | Nome e Cargo |
-| 8s | "O mercado te diz pra postar todo dia..." | Mito × Verdade |
-| 16s | "Primeiro clareza, depois marketing" | Fluxo A ⮕ B |
-| 24s | Fechamento | Fechamento CTA ("SE ISSO FEZ SENTIDO, MANDA PRA QUEM PRECISA OUVIR.") |
+| 0,0 s | "Quanto te custa não fazer o que tu ama?" | Pergunta (deixa 1,5 s de respiro depois) |
+| 4 s | Apresentação rápida | Nome |
+| 7 s | "Te venderam que disciplina resolve..." | Virada (a queima começa no "só que...") |
+| 15 s | "O que move é outra coisa" | Cinza × Brasa: `disciplina` → `devoção` |
+| 22 s | "O morno não marca ninguém" | Palavra Acesa: `não marca` |
+| 27 s | Fim | Assinatura |
 
-### Vídeo de 3 a 5 minutos (YouTube ou aula): o método completo
+### Vídeo de 3 a 5 minutos (YouTube ou aula): o processo completo
 
 | Momento | Animação |
 |---|---|
-| Abertura | Intro Clareza (ou Intro Brasa se for série) |
-| Mapa do vídeo | Trilha do Método com a etapa 1 acesa |
-| Cada etapa | Capítulo ("PARTE 02 · A NARRATIVA") + Trilha do Método com a etapa da vez |
-| Dentro de cada etapa | Lista em Cascata ou Fluxo A ⮕ B pra organizar o raciocínio |
-| Prova | Número de Impacto com resultado de cliente |
+| Abertura | Acender (só em vídeo longo ou série; em Reels, começa direto no gancho) |
+| Mapa do vídeo | Trilha da Brasa com a etapa 1 acesa |
+| Cada etapa | Capítulo ("parte 02 · a frase") + Trilha da Brasa com a etapa da vez |
+| Dentro de cada etapa | Lista ou De → Pra pra organizar o raciocínio, Símbolo pra uma ideia |
+| Prova | Número com resultado de cliente e a fonte na legenda |
 | Tese final | Cartela Tese |
-| Fim | Fechamento CTA |
+| Fim | Assinatura |
 
-### Depoimento de cliente (universe)
+### Depoimento de cliente
 
 | Momento | Animação |
 |---|---|
-| Cliente começa a falar | Nome e Cargo com o nome e o negócio do cliente |
-| Resultado citado | Número de Impacto |
-| Frase forte do cliente | Cartela Tese com rótulo "O QUE ELA DISSE" e tema claro |
-| Fim | Fechamento CTA com o @ do estúdio |
+| Cliente começa a falar | Nome com o nome e o negócio do cliente |
+| Ele descreve como era antes | Anotação apontando um print ou um número |
+| Resultado citado | Número |
+| Frase forte do cliente | Cartela Tese com rótulo "O QUE ELE DISSE" e tema papel |
+| Fim | Assinatura com o teu nome |
 
 ---
 
 ## Um insight de negócio
 
-O motor troca de marca inteira com um preset (cor, fonte, ícone, assinatura). Isso abre um produto pro estúdio universe: **kit de vinhetas da marca do cliente**. Diagnóstico de identidade, 10 a 17 animações com a cara dele e um painel no Premiere que qualquer editor usa. É coerente com o discurso ("não entregamos peças isoladas, construímos consistência ao longo do tempo") e vira recorrência: toda campanha nova usa o mesmo kit.
+O motor troca de marca inteira com um bloco de configuração (cores, fontes, assinatura). Isso abre um produto: **kit de movimento da marca do cliente**. Raio-x da identidade, 10 a 20 animações com a cara dele e um painel no Premiere que qualquer editor usa. Vira recorrência, porque toda campanha nova usa o mesmo kit, e vira prova do teu método, porque o cliente passa a ser reconhecido pelo mesmo princípio que tu usa aqui: repetição visual com sentido.
 
-Como criar a marca de um cliente: [README › Marcas](../README.md#marcas-e-clientes).
+Como criar a marca de um cliente: [README › Marca de cliente](../README.md#marca-de-cliente).

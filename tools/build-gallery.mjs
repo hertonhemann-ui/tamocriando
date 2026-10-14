@@ -15,10 +15,15 @@ const src = fs.readFileSync(path.join(ROOT, 'gallery/galeria.html'), 'utf8');
 const re = /<!-- @engine:start -->[\s\S]*?<!-- @engine:end -->/;
 if (!re.test(src)) throw new Error('Marcadores @engine não encontrados em gallery/galeria.html');
 
-const files = JSON.parse(fs.readFileSync(path.join(ENGINE, 'scripts.json'), 'utf8'));
+// embute os scripts do motor (engine/scripts.json) e o que mais estiver entre os marcadores (ex.: ui/curve-editor.js)
+const files = JSON.parse(fs.readFileSync(path.join(ENGINE, 'scripts.json'), 'utf8')).map((f) => 'engine/' + f);
+const PLUGIN = path.join(ROOT, 'plugin/tamocriando-motion');
+for (const m of src.match(re)[0].matchAll(/src="\.\.\/plugin\/tamocriando-motion\/([^"]+)"/g)) {
+  if (!files.includes(m[1])) files.push(m[1]);
+}
 const inline = files.map((f) => {
-  const code = fs.readFileSync(path.join(ENGINE, f), 'utf8').replace(/<\/script/gi, '<\\/script');
-  return `<script>/* engine/${f} */\n${code}\n</script>`;
+  const code = fs.readFileSync(path.join(PLUGIN, f), 'utf8').replace(/<\/script/gi, '<\\/script');
+  return `<script>/* ${f} */\n${code}\n</script>`;
 }).join('\n');
 
 fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true });

@@ -29,12 +29,15 @@ E libera extensões não assinadas:
 
 1. Abre a sequência e posiciona o playhead onde a animação começa.
 2. No painel, clica na animação. Edita os textos (a prévia atualiza na hora).
-3. **Inserir no playhead**: o painel renderiza no tamanho e frame rate da sequência e coloca o clipe na primeira trilha livre acima da V1. Se não tiver trilha livre, ele tenta criar uma.
-4. **Só importar pro bin**: renderiza e deixa no bin `Tamo Criando Motion`, pra tu arrastar depois.
+3. Se quiser, abre **Movimento** e mexe nas curvas de entrada e saída (arrasta as bolinhas ou escolhe um atalho), e **Câmera** pra ajustar desfoque de movimento, aberração e lente. Os ajustes de câmera valem pra todas as animações.
+4. **Inserir no playhead**: o painel renderiza no tamanho e frame rate da sequência e coloca o clipe na primeira trilha livre acima da V1. Se não tiver trilha livre, ele tenta criar uma.
+5. **Só importar pro bin**: renderiza e deixa no bin `Tamo Criando Motion`, pra tu arrastar depois.
 
 Os frames ficam em `TamoCriando_Motion/` ao lado do arquivo `.prproj`. **Não apaga essa pasta** enquanto o projeto estiver em uso: o Premiere lê os PNGs de lá. Pra levar o projeto pra outro computador, leva a pasta junto.
 
-Os textos que tu edita ficam salvos no painel por animação e por marca. "Restaurar textos padrão" volta pro original.
+Os textos e as curvas que tu edita ficam salvos no painel por animação. "Restaurar padrão desta animação" volta pro original.
+
+O render demora mais que a prévia porque cada frame é desenhado várias vezes pro desfoque de movimento. Nos testes, sem placa de vídeo, a Trilha da Brasa (5,5 s em 1080×1920) levou cerca de um minuto e meio; com a GPU do Premiere tende a ser bem mais rápido. Se estiver lento, baixa o desfoque pra "leve" ou desliga.
 
 ## Problemas comuns
 
@@ -48,7 +51,10 @@ Cria uma trilha de vídeo nova (botão direito na área das trilhas › Adiciona
 O painel ajusta o frame rate do clipe pro da sequência. Se tu mudou a sequência depois de inserir, clica com o botão direito no clipe no bin › Modificar › Interpretar gravação e coloca o frame rate da sequência.
 
 **As letras saíram com outra fonte.**
-As fontes vêm dentro do plugin (`plugin/tamocriando-motion/fonts/`). Se aparecer fonte genérica, reinstala o plugin com o instalador (a pasta `fonts/` tem que ir junto).
+As fontes (Anton e Inter) vêm dentro do plugin (`plugin/tamocriando-motion/fonts/`). Se aparecer fonte genérica, reinstala o plugin com o instalador (a pasta `fonts/` tem que ir junto).
+
+**O render saiu sem a aberração e a lente.**
+Esses dois efeitos usam WebGL. Se o Premiere estiver sem aceleração de GPU, o painel renderiza só com o desfoque de movimento, sem dar erro. O resto da animação sai igual.
 
 **Quero ver o que está dando errado.**
 Com o painel aberto, acessa `http://localhost:8088` no Chrome. É o console do painel.

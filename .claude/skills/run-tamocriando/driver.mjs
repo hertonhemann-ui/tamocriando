@@ -200,7 +200,7 @@ const COMMANDS = {
   // painel: espera o render+importação terminar (status ok ou err)
   async 'wait-status'() {
     need();
-    await page.waitForFunction(() => /\b(ok|err)\b/.test(document.getElementById('status').className), null, { timeout: 180000 });
+    await page.waitForFunction(() => /\b(ok|err)\b/.test(document.getElementById('status').className), null, { timeout: 600000 });
     const st = await page.evaluate(() => ({ cls: document.getElementById('status').className, text: document.getElementById('status').textContent }));
     log('status [' + st.cls + ']:', st.text);
   },

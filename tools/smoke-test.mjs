@@ -148,10 +148,36 @@ const browser = await chromium.launch();
   await page.locator('#fields input[type=text]').first().fill('teste de campo');
   const p = await page.evaluate((k) => window.TCPanel.state.params[k], firstKey);
   p === 'teste de campo' ? ok('edição de campo chega na prévia') : bad('param ' + firstKey + ' = ' + p);
+
+  // editor de curva: o atalho "faísca" muda a curva de entrada usada na prévia
+  const nCurves = await page.locator('#curves .tc-curve').count();
+  await page.locator('#curves .tc-curve').first().locator('button', { hasText: 'faísca' }).click();
+  const ent = await page.evaluate(() => window.TCPanel.state.params.entrada);
+  nCurves === 2 && JSON.stringify(ent) === JSON.stringify([0.34, 1.5, 0.64, 1])
+    ? ok('editor de curvas: 2 curvas, atalho "faísca" chega nos parâmetros')
+    : bad('curvas no editor: ' + nCurves + ', entrada = ' + JSON.stringify(ent));
   await page.screenshot({ path: path.join(os.tmpdir(), 'tc-panel.png') });
   errors.forEach((e) => bad('erro no painel: ' + e));
   await page.close();
 }
+
+// 3. galeria (gerada por tools/build-gallery.mjs)
+if (fs.existsSync(path.join(ROOT, 'gallery/index.html'))) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(base + '/gallery/index.html');
+  await page.waitForFunction(() => document.querySelectorAll('.shot canvas').length > 0);
+  const shots = await page.locator('.shot').count();
+  const nTpl = await page.evaluate(() => TC.list().length);
+  shots === nTpl ? ok(`galeria mostra as ${shots} animações`) : bad(`galeria mostra ${shots}, motor tem ${nTpl}`);
+  await page.locator('.shot').first().click();
+  await page.waitForSelector('#editor:not([hidden])');
+  const nCurves = await page.locator('#ed-curves .tc-curve').count();
+  nCurves === 2 ? ok('galeria abre o editor com as 2 curvas') : bad('curvas no editor da galeria: ' + nCurves);
+  errors.forEach((e) => bad('erro na galeria: ' + e));
+  await page.close();
+} else console.log('  --  galeria não gerada (roda node tools/build-gallery.mjs), pulei');
 
 await browser.close();
 srv.close();

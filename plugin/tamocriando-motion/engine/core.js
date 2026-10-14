@@ -222,6 +222,12 @@
     this.map[k] = v; return v;
   };
   var textCache = new LRU(40), fieldCache = new LRU(16), pointCache = new LRU(20), mottleCache = {}, grainCache = {};
+  // texto desenhado antes da fonte carregar sairia com a fonte reserva pra sempre: limpa quando ela chega
+  function clearTextCache() { textCache = new LRU(40); pointCache = new LRU(20); }
+  TC.clearTextCache = clearTextCache;
+  if (typeof document !== 'undefined' && document.fonts && document.fonts.addEventListener) {
+    document.fonts.addEventListener('loadingdone', clearTextCache);
+  }
 
   // ------------------------------------------------------------------
   // Stage: o "palco" que cada template recebe
@@ -636,17 +642,21 @@
       cc.putImageData(img, 0, 0);
       mottleCache.cv = cv;
     }
-    var c = this.c;
+    var c = this.c, key = color || this.col.ink;
+    if (!mottleCache[key]) {
+      var tmp = makeCanvas(96, 96), tc = tmp.getContext('2d');
+      tc.drawImage(mottleCache.cv, 0, 0);
+      tc.globalCompositeOperation = 'source-in';
+      tc.fillStyle = key;
+      tc.fillRect(0, 0, 96, 96);
+      mottleCache[key] = tmp;
+    }
+    var tmp2 = mottleCache[key];
     c.save();
     c.globalAlpha *= alpha;
     c.imageSmoothingEnabled = true;
-    var tmp = makeCanvas(96, 96), tc = tmp.getContext('2d');
-    tc.drawImage(mottleCache.cv, 0, 0);
-    tc.globalCompositeOperation = 'source-in';
-    tc.fillStyle = color || this.col.ink;
-    tc.fillRect(0, 0, 96, 96);
     var s = Math.max(this.w, this.h);
-    c.drawImage(tmp, (this.w - s) / 2, (this.h - s) / 2, s, s);
+    c.drawImage(tmp2, (this.w - s) / 2, (this.h - s) / 2, s, s);
     c.restore();
   };
   // fundo de papel (ou tinta, ou brasa) com textura
@@ -987,7 +997,7 @@
       '700 40px ' + f.sans, '800 40px ' + f.sans, 'italic 500 40px ' + f.sans, 'italic 700 40px ' + f.sans];
     return Promise.all(specs.map(function (s) {
       return document.fonts.load(s, 'aãçéíóú AÇÃ').catch(function () { return null; });
-    })).then(function () { return document.fonts.ready; });
+    })).then(function () { return document.fonts.ready; }).then(function () { clearTextCache(); });
   };
 
   TC.Stage = Stage;

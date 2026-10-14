@@ -1,13 +1,13 @@
 {
   "name": "tamocriando-motion",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Banco de animações da marca + plugin pro Premiere Pro",
   "type": "module",
   "scripts": {
     "test": "node tools/smoke-test.mjs",
     "render": "node tools/render.mjs",
-    "catalogo": "node tools/render.mjs --catalog --out docs",
+    "catalogo": "node tools/render.mjs --catalog",
     "galeria": "node tools/build-gallery.mjs",
     "pacote": "node tools/pack-plugin.mjs"
   },

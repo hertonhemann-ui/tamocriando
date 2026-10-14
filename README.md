@@ -1,12 +1,14 @@
 # Tamo Criando Motion
 
-Banco de animações da marca **Novo MKT** e um painel pro Premiere Pro que coloca a animação, com o teu texto, direto na timeline.
+Banco de animações da marca **herton hemann** e um painel pro Premiere Pro que coloca a animação, com o teu texto, direto na timeline.
 
-São 17 animações pensadas como **sinalização** do roteiro (gancho, quem fala, onde estamos, argumento, prova, fechamento), com a identidade que já existe nos teus posts: Anton, Montserrat e Space Mono, papel creme, carvão, ameixa, brasa e âmbar, o raio e a chama.
+São 20 animações em torno de uma ideia só: **da cinza à brasa**. Elas não explicam o símbolo, só usam ele. Cinza é o morno, o que não marca ninguém. A chama acende e se consome. O que fica é a brasa.
+
+Tudo parte de uma pergunta: **como o outro entende?** Por isso o texto fica parado o tempo de ler, a brasa aparece só no que importa e o movimento é de chama, suave na chegada e devagar na saída.
 
 ![Catálogo 9:16](docs/catalogo-9x16.jpg)
 
-- **Ver tudo rodando e editar texto:** abre `gallery/index.html` no navegador.
+- **Ver tudo rodando, trocar texto e mexer nas curvas:** abre `gallery/index.html` no navegador.
 - **Instalar no Premiere:** [docs/INSTALAR.md](docs/INSTALAR.md).
 - **Qual animação usar em cada momento do vídeo:** [docs/GUIA.md](docs/GUIA.md).
 
@@ -14,27 +16,82 @@ São 17 animações pensadas como **sinalização** do roteiro (gancho, quem fal
 
 ## As animações
 
-| | Animação | Pra quê |
+Organizadas pelo que fazem com quem assiste.
+
+### Acender — abrir, fechar e dar fundo
+
+| | Animação | O que acontece |
 |---|---|---|
-| <img src="docs/previews/intro-brasa_9x16.webp" width="90"> | **Intro Brasa** | Faísca sobe, acende o raio, marca entra, frase digitada. Abertura de vídeo longo ou série. |
-| <img src="docs/previews/intro-clareza_9x16.webp" width="90"> | **Intro Clareza** | Fragmentos do mercado (post, tráfego, copy...) viram a tese "CLAREZA vem antes do MARKETING." |
-| <img src="docs/previews/outro-cta_9x16.webp" width="90"> | **Fechamento CTA** | Frase final com palavra em brasa e o @ numa etiqueta. Uma ação só. |
-| <img src="docs/previews/metodo-trilha_9x16.webp" width="90"> | **Trilha do Método** | Conhecimento ⮕ Narrativa ⮕ Percepção ⮕ Valor ⮕ Coerência com a etapa atual acesa. O "você está aqui" do teu método. |
-| <img src="docs/previews/capitulo_9x16.webp" width="90"> | **Capítulo** | "PARTE 02 · A NARRATIVA" com número rolando e varrida diagonal. Cartela cheia ou faixa. |
-| <img src="docs/previews/contador_9x16.webp" width="90"> | **Contador de Dicas** | Etiqueta "DICA 03 / 07" com barra de progresso. O 04/08 dos carrosséis, em vídeo. |
-| <img src="docs/previews/destaque-palavra_9x16.webp" width="90"> | **Destaque de Palavra** | O estilo de legenda dos teus Reels (linha branca, palavra âmbar na caixa ameixa, linha em itálico), animado. |
-| <img src="docs/previews/tese_9x16.webp" width="90"> | **Cartela Tese** | O carrossel "A TESE" em movimento: chama, rótulo, frase grande, palavra em brasa, rodapé com assinatura. |
-| <img src="docs/previews/lista_9x16.webp" width="90"> | **Lista em Cascata** | Itens entrando um a um com raio, check ou número. |
-| <img src="docs/previews/numero_9x16.webp" width="90"> | **Número de Impacto** | Número contando dentro de um anel. Resultado de cliente, dado, prova. |
-| <img src="docs/previews/comparativo_9x16.webp" width="90"> | **Eu ≠ Mercado** | O lado do mercado entra e é riscado; o teu lado entra com raios. Posicionamento por contraste. |
-| <img src="docs/previews/mito-verdade_9x16.webp" width="90"> | **Mito × Verdade** | Carta com o mito, risco, giro, verdade no verso escuro. |
-| <img src="docs/previews/fluxo_9x16.webp" width="90"> | **Fluxo A ⮕ B** | CLAREZA → depois → MARKETING, com legenda de cada lado. |
-| <img src="docs/previews/pergunta_9x16.webp" width="90"> | **Pergunta** | Fundo ameixa com padrão de raios, aspas e a pergunta palavra a palavra. |
-| <img src="docs/previews/lower-third_9x16.webp" width="90"> | **Nome e Cargo** | Círculo em brasa com a chama + nome, cargo e slogan em mono. |
-| <img src="docs/previews/transicao-brasa_9x16.webp" width="90"> | **Varrida Brasa** | Três faixas diagonais e o raio no meio. Esconde o corte. |
-| <img src="docs/previews/transicao-blocos_9x16.webp" width="90"> | **Blocos** | Blocos cobrem a tela em onda e somem na mesma ordem. |
+| <img src="docs/previews/acender_9x16.webp" width="90"> | **Acender** | O nome começa coberto de cinza. Um sopro leva a cinza embora, a brasa aparece por baixo, a chama acende e a frase entra. |
+| <img src="docs/previews/assinatura_9x16.webp" width="90"> | **Assinatura** | A chama acende sobre uma brasa, o nome entra, e no fim a chama se consome sozinha. O que fica é a brasa respirando. Fecha sem pedir nada. |
+| <img src="docs/previews/fundo-vivo_9x16.webp" width="90"> | **Fundo Vivo** | Papel ou tinta com cinza flutuando e brasa subindo de leve. Loop sem emenda pra cartela ou citação. |
+
+### Marcar — o que tem que ficar no outro
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/marca_9x16.webp" width="90"> | **Marca** | A palavra desce quente como ferro em brasa, bate, chamusca o papel e esfria. Uma por vídeo. |
+| <img src="docs/previews/palavra-acesa_9x16.webp" width="90"> | **Palavra Acesa** | Duas linhas em minúsculas e a palavra-chave no meio: entra cinza, esquenta até virar brasa e fica respirando. |
+| <img src="docs/previews/tese_9x16.webp" width="90"> | **Cartela Tese** | A frase que o outro vai printar, em papel, tinta ou brasa. As linhas sobem como calor e entram em foco. |
+| <img src="docs/previews/numero_9x16.webp" width="90"> | **Número** | Número contando dentro de um anel que esquenta do cinza à brasa. Com total, o anel mostra a proporção. |
+
+### Virar — mudar a percepção
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/cinza-brasa_9x16.webp" width="90"> | **Cinza × Brasa** | A primeira palavra esfria, vira cinza e se desfaz. A segunda chega coberta de cinza, a cinza sobe e ela acende. |
+| <img src="docs/previews/virada_9x16.webp" width="90"> | **Virada** | Um cartão com o que te venderam pega fogo a partir de um canto. Por baixo aparece o que é. |
+| <img src="docs/previews/fluxo_9x16.webp" width="90"> | **De → Pra** | Palavra fria de um lado, quente do outro. Uma fagulha percorre a curva e acende a segunda. |
+| <img src="docs/previews/pergunta_9x16.webp" width="90"> | **Pergunta** | A pergunta entra palavra por palavra e uma brasa fica respirando embaixo: o tempo de responder por dentro. |
+
+### Guiar — mostrar onde a pessoa está
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/trilha-brasa_9x16.webp" width="90"> | **Trilha da Brasa** | As etapas do teu processo num caminho ondulado, cada uma com um ícone da cinza à brasa (cinza, sopro, brasa, chama, marca). A atual acende. |
+| <img src="docs/previews/capitulo_9x16.webp" width="90"> | **Capítulo** | Cartela de parte com número rolando, entrando e saindo com borda acesa. |
+| <img src="docs/previews/contador_9x16.webp" width="90"> | **Contador** | "dica 03 / 07" no canto, com uma fileira de brasas: as que já foram acesas, a atual respirando, as próximas frias. |
+| <img src="docs/previews/lista_9x16.webp" width="90"> | **Lista** | Itens curtos entrando um a um, cada marcador é uma brasa que acende quando o item chega. |
+
+### Apontar — quem fala, o que olhar
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/nome_9x16.webp" width="90"> | **Nome** | A chama acende ao lado do nome e a frase de posicionamento entra embaixo, com o trecho que importa em brasa. |
+| <img src="docs/previews/anotacao_9x16.webp" width="90"> | **Anotação** | Traço de caneta em brasa feito à mão: círculo, sublinhado, seta, xis ou colchete. |
+| <img src="docs/previews/simbolo_9x16.webp" width="90"> | **Símbolo** | Ícone de papel recortado que cai e assenta, em stop motion: máscara, espelho, ímã, etiqueta, digital, ampulheta, chave, lupa, balão, chama, brasa ou cinza. |
+
+### Passagens — esconder o corte
+
+| | Animação | O que acontece |
+|---|---|---|
+| <img src="docs/previews/queima_9x16.webp" width="90"> | **Queima** | A imagem pega fogo pelos cantos, vira carvão e o carvão se desfaz revelando o próximo clipe. |
+| <img src="docs/previews/sopro_9x16.webp" width="90"> | **Sopro** | Uma rajada de fumaça e cinza atravessa a tela. Mais leve que a queima. |
 
 Todas funcionam em 9:16, 16:9, 1:1 e 4:5, em qualquer resolução e frame rate. As que vão por cima do vídeo saem com transparência.
+
+---
+
+## Curvas e câmera
+
+**Curvas.** Cada animação tem duas curvas editáveis: a de **entrada** (como as coisas chegam) e a de **saída** (como vão embora). No painel e na galeria tem um editor igual ao gráfico do After Effects: duas alças pra arrastar e seis atalhos prontos.
+
+| Atalho | Sensação |
+|---|---|
+| suave | chega rápido e assenta devagar (o padrão de entrada) |
+| brasa | ainda mais macia no final, pra coisa que pousa |
+| faísca | passa um pouco do ponto e volta, pra coisa pequena que salta |
+| fôlego | começa e termina devagar, pra movimento grande |
+| apagar | sai devagar e acelera no fim, como chama que se consome (o padrão de saída) |
+| linear | velocidade constante |
+
+**Câmera.** O render passa por um pós-processamento que dá jeito de filmado:
+
+- **desfoque de movimento**: o que se mexe rápido borra como num obturador de 180°;
+- **aberração cromática**: vermelho e azul se separam um pouco, mais forte nas bordas e só onde tem movimento;
+- **lente**: distorção de barril bem sutil.
+
+Tudo isso é detalhe. Os padrões (180°, aberração 35, lente 20) foram calibrados pra quase não se notar parado e dar vida no movimento.
 
 ---
 
@@ -42,12 +99,14 @@ Todas funcionam em 9:16, 16:9, 1:1 e 4:5, em qualquer resolução e frame rate. 
 
 ```
 plugin/tamocriando-motion/      ← pasta que vai pro Premiere
-  engine/core.js                ← motor: easing, texto, ícones, brasas, granulado
-  engine/brands.js              ← marcas (cores, fontes, ícones, assinatura)
-  engine/templates/*.js         ← as 17 animações
+  engine/core.js                ← motor: curvas, texto, chama, brasa, cinza, fagulha, papel, máscaras de queima
+  engine/fx.js                  ← câmera: desfoque de movimento, aberração, lente (WebGL)
+  engine/brands.js              ← marca (cores, fontes, assinatura)
+  engine/templates/*.js         ← as 20 animações, um arquivo por grupo
+  ui/curve-editor.js            ← editor de curvas (painel e galeria)
   index.html, panel.js/.css     ← painel
   host/premiere.jsx             ← ponte com o Premiere (importa e coloca no playhead)
-  fonts/                        ← Anton, Montserrat, Space Mono (OFL)
+  fonts/                        ← Anton e Inter (OFL)
 gallery/                        ← galeria pra navegador
 tools/render.mjs                ← render em lote (MOV com alpha, prévias)
 tools/smoke-test.mjs            ← teste de tudo sem precisar do Premiere
@@ -55,7 +114,7 @@ install/                        ← instaladores Windows e Mac
 docs/                           ← guia, instalação, catálogo
 ```
 
-Cada animação é uma função que desenha um frame a partir do tempo `t` num `<canvas>`. Nada depende do frame anterior, então o mesmo código serve pra prévia no painel, pra galeria e pro render final, em qualquer tamanho. O painel desenha frame a frame, grava PNG com transparência na pasta do projeto e pede pro Premiere importar como sequência de imagens no frame rate da sequência.
+Cada animação é uma função que desenha um frame a partir do tempo `t` num `<canvas>`. Nada depende do frame anterior, então o mesmo código serve pra prévia no painel, pra galeria e pro render final, em qualquer tamanho. O painel desenha frame a frame (já com o pós-processamento), grava PNG com transparência na pasta do projeto e pede pro Premiere importar como sequência de imagens no frame rate da sequência.
 
 ## Gerar os vídeos fora do Premiere
 
@@ -64,26 +123,24 @@ Pra quem edita em outro programa (DaVinci, CapCut, After Effects) ou quer um pac
 ```bash
 npm install
 npm run render                                    # tudo, 9:16 e 16:9, ProRes 4444 com alpha
-node tools/render.mjs --only lower-third --formats 16:9 --params '{"nome":"ANA SOUZA","cargo":"FUNDADORA DA GUAPA"}'
-node tools/render.mjs --codec png                 # QuickTime PNG: ~4x menor que ProRes, também com alpha
+node tools/render.mjs --only nome --formats 16:9 --params '{"nome":"ana souza","cargo":"fundadora da guapa"}'
+node tools/render.mjs --codec png                 # QuickTime PNG: bem menor que ProRes, também com alpha
 node tools/render.mjs --fps 25 --formats 1:1      # outro frame rate / formato
+node tools/render.mjs --aberration 20 --lens 0    # câmera mais discreta (--no-fx desliga tudo)
 node tools/render.mjs --catalog                   # imagem com todas
 ```
 
 Saída em `renders/` (fica fora do Git: o pacote completo em ProRes passa de 1 GB).
 
-## Marcas e clientes
+## Marca de cliente
 
-Uma marca é um bloco em `plugin/tamocriando-motion/engine/brands.js`. Os templates nunca usam cor solta: usam papéis (`accent`, `paper`, `panel`...). Trocar o preset troca tudo.
+A marca é um bloco em `plugin/tamocriando-motion/engine/brands.js`. Os templates nunca usam cor solta, usam papéis: `ember` (brasa), `paper` (papel), `ink` (tinta), `ash` (cinza), mais `glow`, `hot`, `crust` e `paperShade`, que são tons derivados pra fogo e textura. Pra um cliente:
 
-Já vêm duas: **Novo MKT** (padrão) e **universe** (roxo, hexágono). Pra um cliente:
+1. Copia o bloco `herton`, dá um id novo (`'guapa'`).
+2. Troca `colors` pelas cores dele e `sign` pelos textos (nome, cargo, trecho em destaque).
+3. Fonte diferente: coloca o `.ttf` em `fonts/`, declara em `fonts.css` e aponta em `fonts`.
 
-1. Copia o bloco `'universe'`, dá um id novo (`'guapa'`).
-2. Troca `colors` pelas cores da marca dele e `sign` pelos textos (nome, cargo, slogan, @).
-3. `icon` e `badge`: `'bolt'`, `'flame'` ou `'hex'` (ou cria um ícone novo em `TC.icons`, no `core.js`).
-4. Fonte diferente: coloca o `.ttf` em `fonts/`, declara em `fonts.css` e aponta em `fonts`.
-
-A marca aparece no seletor do painel e da galeria.
+Com mais de uma marca, aparece um seletor no painel e na galeria.
 
 ## Criar uma animação nova
 
@@ -91,20 +148,22 @@ A marca aparece no seletor do painel e da galeria.
 TC.register({
   id: 'minha-animacao',
   name: 'Minha Animação',
-  category: 'enfase',                // abertura, estrutura, enfase, argumento, identidade, transicao
+  category: 'marcar',                // acender, marcar, virar, guiar, apontar, passagem
   duration: 4,
-  params: [{ key: 'texto', label: 'Texto', type: 'text', default: 'OLÁ' }],
+  params: [{ key: 'texto', label: 'Texto', type: 'text', default: 'olá' }],
   description: 'O que ela faz.',
   uso: 'Quando usar.',
   draw: function (S, t) {
-    var k = TC.ramp(t, 0, 0.6);      // 0→1 com easing entre 0s e 0,6s
+    var k = S.inK(0, 0.6);           // 0→1 entre 0s e 0,6s, com a curva de entrada editável
+    var out = S.outK(S.dur - 0.5, S.dur); // 0→1 no fim, com a curva de saída
     S.font('display', 120 * S.u);    // S.u = 1px em 1080p, escala sozinho
-    S.text(S.p.texto, S.w / 2, S.h / 2 + (1 - k) * 80 * S.u, { align: 'center', color: S.col.accent });
+    S.c.globalAlpha = k * (1 - out);
+    S.text(S.p.texto, S.w / 2, S.h / 2 + (1 - k) * 80 * S.u, { align: 'center', color: S.col.paper });
   }
 });
 ```
 
-Coloca num arquivo de `engine/templates/`, adiciona em `engine/scripts.json` e no `index.html` do painel, e roda `node tools/smoke-test.mjs`.
+Coloca num arquivo de `engine/templates/`, adiciona em `engine/scripts.json`, no `index.html` do painel e em `gallery/galeria.html`, e roda `node tools/smoke-test.mjs`.
 
 ## Testes
 
@@ -112,6 +171,6 @@ Coloca num arquivo de `engine/templates/`, adiciona em `engine/scripts.json` e n
 node tools/smoke-test.mjs
 ```
 
-Desenha todas as animações em todos os formatos e marcas (inclusive com campos vazios), abre o painel com o Premiere simulado, renderiza e confere a chamada de importação, e valida a sintaxe do script do Premiere.
+Desenha todas as animações em todos os formatos (com e sem o pós-processamento, inclusive com campos vazios), abre o painel com o Premiere simulado, renderiza e confere a chamada de importação, e valida a sintaxe do script do Premiere.
 
 O que **não** dá pra testar fora do Premiere: a importação real e a colocação na trilha (`host/premiere.jsx`). Esse arquivo usa só a API documentada do Premiere (`importFiles` como sequência de imagens, `setOverrideFrameRate`, `overwriteClip`), mas o primeiro uso de verdade é o teste final. Se algo falhar, o console em `http://localhost:8088` mostra o erro.

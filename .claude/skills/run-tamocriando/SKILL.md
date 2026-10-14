@@ -119,10 +119,10 @@ Commands typed while one is running queue up and run in order.
 ```bash
 node tools/render.mjs --still 2.6 --only marca --formats 9:16 --out /tmp/tamocriando-run/render     # one full-res PNG
 node tools/render.mjs --sheet --only virada --formats 16:9 --out /tmp/tamocriando-run/render         # contact sheet
-node tools/render.mjs --only contador --formats 9:16 --codec png --out /tmp/tamocriando-run/render   # MOV (png, rgba) ~5 s
+node tools/render.mjs --only contador --formats 9:16 --codec png --out /tmp/tamocriando-run/render   # MOV (png, rgba), 150 frames, ~25 s with fx
 ```
 
-Other flags (`--catalog`, `--gif`, `--params '{json}'`, `--fps`, `--times a,b,c`) are in the header of `tools/render.mjs`.
+Renders go through the same camera post-processing as the panel by default (`--blur 0.5 --aberration 35 --lens 20 --samples 6`); `--no-fx` gives raw engine frames (the `contador` MOV drops from ~25 s to ~5 s). Other flags (`--catalog`, `--gif`, `--params '{json}'`, `--fps`, `--times a,b,c`) are in the header of `tools/render.mjs`.
 
 ## Run (human path)
 
@@ -134,7 +134,7 @@ On a machine with Premiere: run `install/instalar-windows.bat` or `install/insta
 node tools/smoke-test.mjs
 ```
 
-Expected: every line `ok` and `tudo certo` — all templates × 4 formats (raw and with fx) draw without throwing, panel/gallery script lists match `engine/scripts.json`, the panel renders the shortest template at 29.97 fps and calls `tc_insert`, and `host/premiere.jsx` passes `node --check`.
+Expected: every line `ok` and `tudo certo` — all templates × 4 formats (raw and with fx) draw without throwing, panel/gallery script lists match `engine/scripts.json`, the panel renders the shortest template at 29.97 fps and calls `tc_insert`, the panel's curve editor ("faísca" preset) reaches `state.params.entrada`, the gallery shows every template and opens its editor with 2 curves, and `host/premiere.jsx` passes `node --check`. The gallery part needs `node tools/build-gallery.mjs` first (otherwise it prints `--  galeria não gerada` and skips).
 
 ## Gotchas
 
@@ -146,6 +146,9 @@ Expected: every line `ok` and `tudo certo` — all templates × 4 formats (raw a
 - **`fx` needs WebGL.** Headless Chromium here has it (SwiftShader). `frame … fx` prints whether WebGL was actually used; without it only motion blur is applied.
 - **The fake Premiere answers by string prefix** (`tc_info`, `tc_insert`); a new ExtendScript function in `host/premiere.jsx` needs a matching branch in `cepMock()` in the driver.
 - **Templates are pure functions of `t`**: `frame <id> <t>` is deterministic; `t` is clamped to `[0, duration]`.
+- **Text drawn before the fonts load used to stick in the fallback face.** `S.textLayer` caches the rendered word; the gallery drew once before `TC.loadFonts` resolved and "Acender" stayed in a thin sans forever. `core.js` now clears the text caches on `document.fonts` `loadingdone` and after `TC.loadFonts`. Any new cache keyed on text must be cleared in `clearTextCache()` too.
+- **Panel export is slow headless.** The panel renders through `TC.Renderer` (6 motion-blur subframes + a low-res motion mask + WebGL), ~0.5 s/frame at 1080×1920 on SwiftShader: `trilha-brasa` (165 frames) took ~80 s. Keep the default 540×960 fake sequence unless you need full size; `wait-status` waits up to 10 min.
+- **Curve editors** are `.tc-curve` blocks inside `#curves` (panel) and `#ed-curves` (gallery); their preset buttons carry the preset label (`suave`, `brasa`, `faísca`, `fôlego`, `apagar`, `linear`). `eval TCPanel.curves()` returns the panel's editor instances.
 
 ## Troubleshooting
 

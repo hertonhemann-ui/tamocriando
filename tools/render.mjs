@@ -3,14 +3,21 @@
  * Renderizador em lote do banco de animações.
  *
  *   node tools/render.mjs                       # tudo, 9:16 e 16:9, ProRes 4444 com alpha
- *   node tools/render.mjs --only destaque-palavra --formats 9:16
- *   node tools/render.mjs --only lower-third --params '{"nome":"ANA SOUZA"}'
+ *   node tools/render.mjs --only palavra-acesa --formats 9:16
+ *   node tools/render.mjs --only nome --params '{"nome":"ana souza"}'
  *   node tools/render.mjs --codec png           # QuickTime PNG (arquivo menor, também tem alpha)
  *   node tools/render.mjs --previews            # gera também MP4 e GIF de pré-visualização
  *   node tools/render.mjs --sheet               # folhas de contato (revisão rápida)
  *   node tools/render.mjs --catalog             # uma imagem com todas as animações
  *   node tools/render.mjs --still 2.5 --only marca  # um frame em resolução cheia (com fundo de prévia)
  *   node tools/render.mjs --gif --out docs      # prévias animadas leves (WebP) pro README
+ *
+ * Câmera (o mesmo pós-processamento do painel, ligado por padrão; não vale pro --catalog):
+ *   --blur 0.5         desfoque de movimento, fração do frame (0.5 = obturador 180°, 0 desliga)
+ *   --aberration 35    aberração cromática de 0 a 100 (só onde algo se mexe)
+ *   --lens 20          distorção de lente de 0 a 100
+ *   --samples 6        instantes por frame no desfoque
+ *   --no-fx            desliga tudo (frame cru do motor)
  *
  * Precisa de: Node 18+, ffmpeg no PATH e Playwright (npm i -D playwright).
  */
@@ -24,7 +31,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function parseArgs(argv) {
-  const a = { formats: ['9:16', '16:9'], fps: 30, codec: 'prores', out: path.join(ROOT, 'renders'), brand: 'novo-mkt', scale: 1 };
+  const a = { formats: ['9:16', '16:9'], fps: 30, codec: 'prores', out: path.join(ROOT, 'renders'), brand: undefined, scale: 1,
+    fx: { blur: 0.5, aberration: 35, lens: 20, samples: 6 }, useFx: true };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
     const next = () => argv[++i];
@@ -45,6 +53,11 @@ function parseArgs(argv) {
     else if (k === '--times') a.times = next().split(',').map(Number);
     else if (k === '--backdrop') a.backdrop = next();
     else if (k === '--keep-frames') a.keepFrames = true;
+    else if (k === '--blur') a.fx.blur = Number(next());
+    else if (k === '--aberration') a.fx.aberration = Number(next());
+    else if (k === '--lens') a.fx.lens = Number(next());
+    else if (k === '--samples') a.fx.samples = Number(next());
+    else if (k === '--no-fx') a.useFx = false;
     else if (k === '-h' || k === '--help') { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('*/')[0]); process.exit(0); }
     else throw new Error('Argumento desconhecido: ' + k);
   }
@@ -79,6 +92,8 @@ const CODECS = {
 
 async function main() {
   const a = parseArgs(process.argv);
+  // o que a página recebe: mesmas escalas do painel (aberração e lente em 0..1)
+  const fxFor = (fps) => (a.useFx ? { blur: a.fx.blur, samples: a.fx.samples, fps, aberration: a.fx.aberration / 100, lens: a.fx.lens / 100 } : undefined);
   let chromium;
   try { ({ chromium } = await import('playwright')); }
   catch { throw new Error('Playwright não encontrado. Roda: npm i -D playwright'); }
@@ -98,7 +113,7 @@ async function main() {
   if (a.catalog) {
     for (const fmt of a.formats) {
       const url = await page.evaluate(({ ids, fmt, brand }) => window.tcCatalog(ids, fmt, brand), { ids: todo.map((t) => t.id), fmt, brand: a.brand });
-      const dest = path.join(a.out, `catalogo_${a.brand}_${fmt.replace(':', 'x')}.png`);
+      const dest = path.join(a.out, `catalogo_${fmt.replace(':', 'x')}.png`);
       fs.writeFileSync(dest, Buffer.from(url.split(',')[1], 'base64'));
       console.log('catálogo', path.relative(process.cwd(), dest));
     }
@@ -118,7 +133,7 @@ async function main() {
         const times = a.times || [0.25, 0.5, 0.8, 1.2, 1.8, tpl.thumb, dur - 0.3, dur - 0.1].map((x) => Math.max(0, Math.min(dur, x)));
         const scale = fmt === '16:9' ? 0.3 : 0.25;
         const url = await page.evaluate(({ id, o }) => window.tcSheet(id, o), {
-          id: tpl.id, o: { w, h, scale, times, cols: 4, dur, params: a.params, brand: a.brand, backdrop: a.backdrop }
+          id: tpl.id, o: { w, h, scale, times, cols: 4, dur, params: a.params, brand: a.brand, backdrop: a.backdrop, fx: fxFor(a.fps) }
         });
         const dir = path.join(a.out, 'sheets'); fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(path.join(dir, tag + '.png'), Buffer.from(url.split(',')[1], 'base64'));
@@ -128,7 +143,7 @@ async function main() {
 
       if (a.still !== undefined) {
         const url = await page.evaluate(({ id, o }) => window.tcFrame(id, o), {
-          id: tpl.id, o: { w, h, t: a.still, dur, params: a.params, brand: a.brand, preview: true, backdrop: a.backdrop }
+          id: tpl.id, o: { w, h, t: a.still, dur, params: a.params, brand: a.brand, preview: true, backdrop: a.backdrop, fx: fxFor(a.fps) }
         });
         const sdir = path.join(a.out, 'stills'); fs.mkdirSync(sdir, { recursive: true });
         fs.writeFileSync(path.join(sdir, `${tag}_${a.still}.png`), Buffer.from(url.split(',')[1], 'base64'));
@@ -142,7 +157,7 @@ async function main() {
         const tmpg = fs.mkdtempSync(path.join(os.tmpdir(), 'tc-gif-'));
         for (let i = 0; i < n; i++) {
           const url = await page.evaluate(({ id, o }) => window.tcFrame(id, o), {
-            id: tpl.id, o: { w: gw, h: gh, t: Math.min(dur, i / gfps), dur, params: a.params, brand: a.brand, preview: true }
+            id: tpl.id, o: { w: gw, h: gh, t: Math.min(dur, i / gfps), dur, params: a.params, brand: a.brand, preview: true, fx: fxFor(gfps) }
           });
           fs.writeFileSync(path.join(tmpg, `g_${String(i).padStart(5, '0')}.png`), Buffer.from(url.split(',')[1], 'base64'));
         }
@@ -160,7 +175,7 @@ async function main() {
       process.stdout.write(`${tag}: ${frames} frames `);
       for (let i = 0; i < frames; i++) {
         const url = await page.evaluate(({ id, o }) => window.tcFrame(id, o), {
-          id: tpl.id, o: { w, h, t: i / a.fps, dur, params: a.params, brand: a.brand }
+          id: tpl.id, o: { w, h, t: i / a.fps, dur, params: a.params, brand: a.brand, fx: fxFor(a.fps) }
         });
         fs.writeFileSync(path.join(tmp, `f_${String(i).padStart(5, '0')}.png`), Buffer.from(url.split(',')[1], 'base64'));
         if (i % 30 === 0) process.stdout.write('.');

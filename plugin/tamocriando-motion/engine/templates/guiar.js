@@ -279,7 +279,7 @@
       var c = S.c, u = S.u, w = S.w, h = S.h, col = S.col, p = S.p, D = S.dur;
       var band = p.modo === 'faixa', paper = p.fundo === 'papel';
       var area = band ? (S.vertical ? { x: 0, y: h * 0.37, w: w, h: h * 0.26 } : { x: 0, y: h * 0.29, w: w, h: h * 0.42 }) : { x: 0, y: 0, w: w, h: h };
-      var kin = S.inK(0, 0.75), kout = S.outK(D - 0.7, D);
+      var kin = S.inK(0, 1.0), kout = S.outK(D - 0.8, D);
       var ink = paper ? col.ink : col.paper;
       var L = S.layer('cap', w, h);
       var numStr = String(p.numero || ''), label = String(p.rotulo || '');
