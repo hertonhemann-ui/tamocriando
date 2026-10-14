@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>TC render</title>
+<link rel="stylesheet" href="../plugin/tamocriando-motion/fonts.css">
+<style>html,body{margin:0;background:#000}</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<script>
+  // carrega os scripts do motor na ordem definida em engine/scripts.json
+  window.tcReady = fetch('../plugin/tamocriando-motion/engine/scripts.json')
+    .then(function (r) { return r.json(); })
+    .then(function (list) {
+      return list.reduce(function (p, f) {
+        return p.then(function () {
+          return new Promise(function (res, rej) {
+            var s = document.createElement('script');
+            s.src = '../plugin/tamocriando-motion/engine/' + f;
+            s.onload = res; s.onerror = rej;
+            document.body.appendChild(s);
+          });
+        });
+      }, Promise.resolve());
+    })
+    .then(function () { return TC.loadFonts(); })
+    .then(function () { return TC.list().map(function (t) { return { id: t.id, name: t.name, duration: t.duration, thumb: t.thumb, category: t.category }; }); });
+
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+
+  // um frame -> dataURL PNG (com alpha)
+  window.tcFrame = function (id, o) {
+    if (cv.width !== o.w || cv.height !== o.h) { cv.width = o.w; cv.height = o.h; }
+    TC.renderFrame(ctx, id, o);
+    return cv.toDataURL('image/png');
+  };
+
+  // folha de contato pra revisar uma animação de relance
+  window.tcSheet = function (id, o) {
+    var times = o.times, cols = o.cols || times.length;
+    var fw = Math.round(o.w * o.scale), fh = Math.round(o.h * o.scale);
+    var rows = Math.ceil(times.length / cols);
+    var sheet = document.createElement('canvas');
+    sheet.width = cols * fw + (cols + 1) * 8; sheet.height = rows * (fh + 28) + 8;
+    var sc = sheet.getContext('2d');
+    sc.fillStyle = '#222'; sc.fillRect(0, 0, sheet.width, sheet.height);
+    var frame = document.createElement('canvas'); frame.width = fw; frame.height = fh;
+    var fc = frame.getContext('2d');
+    times.forEach(function (t, i) {
+      fc.setTransform(1, 0, 0, 1, 0, 0);
+      fc.clearRect(0, 0, fw, fh);
+      TC.renderFrame(fc, id, { w: fw, h: fh, t: t, dur: o.dur, params: o.params, brand: o.brand, preview: true, backdrop: o.backdrop });
+      var x = 8 + (i % cols) * (fw + 8), y = 8 + Math.floor(i / cols) * (fh + 28);
+      sc.drawImage(frame, x, y);
+      sc.fillStyle = '#ddd'; sc.font = '14px monospace';
+      sc.fillText(id + '  t=' + t.toFixed(2) + 's', x, y + fh + 18);
+    });
+    return sheet.toDataURL('image/png');
+  };
+
+  // catálogo: todas as animações no seu frame "de capa"
+  window.tcCatalog = function (ids, fmt, brand) {
+    var dims = { '9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080], '4:5': [1080, 1350] }[fmt];
+    var cols = fmt === '16:9' ? 3 : 6;
+    var fw = fmt === '16:9' ? 640 : 320, fh = Math.round(fw * dims[1] / dims[0]);
+    var gap = 14, labelH = 34;
+    var rows = Math.ceil(ids.length / cols);
+    var sheet = document.createElement('canvas');
+    sheet.width = cols * fw + (cols + 1) * gap; sheet.height = rows * (fh + labelH + gap) + gap;
+    var sc = sheet.getContext('2d');
+    sc.fillStyle = '#17141a'; sc.fillRect(0, 0, sheet.width, sheet.height);
+    var frame = document.createElement('canvas'); frame.width = fw; frame.height = fh;
+    var fc = frame.getContext('2d');
+    ids.forEach(function (id, i) {
+      var tpl = TC.templates[id];
+      fc.setTransform(1, 0, 0, 1, 0, 0); fc.clearRect(0, 0, fw, fh);
+      TC.renderFrame(fc, id, { w: fw, h: fh, t: tpl.thumb, brand: brand, preview: true });
+      var x = gap + (i % cols) * (fw + gap), y = gap + Math.floor(i / cols) * (fh + labelH + gap);
+      sc.drawImage(frame, x, y);
+      sc.fillStyle = '#efe8dc'; sc.font = '600 17px "TC Sans", sans-serif';
+      sc.fillText(tpl.name, x, y + fh + 23);
+      sc.fillStyle = '#a39a93'; sc.font = '13px "TC Mono", monospace';
+      sc.textAlign = 'right'; sc.fillText(id, x + fw, y + fh + 23); sc.textAlign = 'left';
+    });
+    return sheet.toDataURL('image/png');
+  };
+</script>
+</body>
+</html>

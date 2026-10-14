@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamo Criando Motion</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <header class="top">
+    <div class="mark">
+      <svg viewBox="-0.5 -0.5 1 1" aria-hidden="true"><path d="M0.10 -0.50 L-0.38 0.08 L-0.04 0.08 L-0.14 0.50 L0.38 -0.10 L0.04 -0.10 L0.18 -0.50 Z"/></svg>
+      <span>Tamo Criando <b>Motion</b></span>
+    </div>
+    <select id="brand" title="Marca"></select>
+  </header>
+
+  <div class="seqbar">
+    <span id="seqinfo">Procurando sequência…</span>
+    <button id="refresh" class="icon" title="Atualizar info da sequência">↻</button>
+  </div>
+
+  <main>
+    <section id="library">
+      <nav id="cats" class="chips"></nav>
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <section id="editor" hidden>
+      <div class="ed-head">
+        <button id="back" class="ghost">← Banco</button>
+        <h2 id="ed-title"></h2>
+      </div>
+      <div class="stage-wrap"><canvas id="stage"></canvas></div>
+      <div class="transport">
+        <button id="play" class="icon" title="Play/pausa">❚❚</button>
+        <input type="range" id="scrub" min="0" max="1000" value="0">
+        <span id="time">0,0s</span>
+      </div>
+      <p class="desc" id="ed-desc"></p>
+      <details class="uso" open>
+        <summary>Quando usar</summary>
+        <p id="ed-uso"></p>
+      </details>
+
+      <form id="fields" autocomplete="off"></form>
+
+      <div class="grid2">
+        <label class="field"><span>Duração (s)</span><input type="number" id="dur" step="0.1" min="0.5"></label>
+        <label class="field"><span>Formato</span>
+          <select id="fmt">
+            <option value="auto">Igual à sequência</option>
+            <option value="9:16">9:16 vertical</option>
+            <option value="16:9">16:9 horizontal</option>
+            <option value="1:1">1:1 quadrado</option>
+            <option value="4:5">4:5 feed</option>
+          </select>
+        </label>
+        <label class="field"><span>Trilha</span>
+          <select id="track">
+            <option value="-1">Automática (livre acima da V1)</option>
+            <option value="1">V2</option><option value="2">V3</option><option value="3">V4</option>
+            <option value="4">V5</option><option value="5">V6</option>
+          </select>
+        </label>
+        <label class="field"><span>Fundo da prévia</span>
+          <select id="bd">
+            <option value="video">Vídeo fictício</option>
+            <option value="checker">Xadrez (mostra o alpha)</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="insert" class="primary">Inserir no playhead</button>
+        <button id="importOnly">Só importar pro bin</button>
+      </div>
+      <div class="progress" id="progress" hidden><div class="bar" id="bar"></div></div>
+      <p class="status" id="status"></p>
+      <button id="reset" class="link">Restaurar textos padrão</button>
+    </section>
+  </main>
+
+  <script src="engine/core.js"></script>
+  <script src="engine/brands.js"></script>
+  <script src="engine/templates/abertura.js"></script>
+  <script src="engine/templates/estrutura.js"></script>
+  <script src="engine/templates/enfase.js"></script>
+  <script src="engine/templates/argumento.js"></script>
+  <script src="engine/templates/identidade.js"></script>
+  <script src="engine/templates/transicoes.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>

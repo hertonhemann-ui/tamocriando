@@ -1,0 +1,495 @@
+<!doctype html>
+<!-- gerado por tools/build-gallery.mjs a partir de galeria.html -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../plugin/tamocriando-motion/fonts.css">
+</head>
+<body>
+<title>Tamo Criando Motion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,400..900;1,400..900&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: régua de roteiro no topo, banco em grade por categoria, editor em painel lateral */
+:root {
+  --paper: #EFE8DC;
+  --paper-2: #E6DDCE;
+  --ink: #241A17;
+  --ink-soft: #6E615A;
+  --rust: #A43D14;
+  --brasa: #E2582B;
+  --ambar: #B9741C;
+  --line: #D6CBBA;
+  --card: #F6F1E8;
+  --shade: rgba(36, 26, 23, 0.08);
+  --display: 'Anton', 'TC Display', Impact, 'Arial Narrow', sans-serif;
+  --body: 'Montserrat', 'TC Sans', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'Space Mono', 'TC Mono', 'Courier New', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141112; --paper-2: #1D191A; --ink: #F1EADF; --ink-soft: #A39A93; --rust: #F08A5D;
+    --brasa: #E2582B; --ambar: #E8A03C; --line: #332D2E; --card: #1A1617; --shade: rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141112; --paper-2: #1D191A; --ink: #F1EADF; --ink-soft: #A39A93; --rust: #F08A5D;
+  --brasa: #E2582B; --ambar: #E8A03C; --line: #332D2E; --card: #1A1617; --shade: rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 15px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0.005em; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.label { font: 700 11px/1.3 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--rust); }
+button, select, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--brasa); outline-offset: 2px; }
+
+/* topo */
+header.top { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: end; padding-top: 40px; }
+header.top h1 { font-size: clamp(52px, 9vw, 112px); line-height: 0.92; text-transform: uppercase; }
+header.top h1 em { font-style: normal; color: var(--brasa); }
+.intro { display: flex; flex-direction: column; gap: 14px; max-width: 46ch; }
+.intro p { color: var(--ink-soft); }
+.intro strong { color: var(--ink); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; padding: 14px 0; border-block: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--paper); z-index: 4; }
+.ctl { display: flex; flex-direction: column; gap: 4px; }
+.ctl > span { font: 700 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--card); }
+.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.ctl select { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.controls .spacer { flex: 1; }
+.count { font: 700 12px var(--mono); color: var(--ink-soft); }
+
+/* régua do roteiro */
+.roteiro { display: flex; flex-direction: column; gap: 18px; }
+.roteiro-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: end; }
+.roteiro-head h2 { font-size: clamp(32px, 4.6vw, 48px); text-transform: uppercase; }
+.roteiro-head p { color: var(--ink-soft); max-width: 52ch; }
+.beats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; border-top: 3px solid var(--ink); }
+.beat { padding: 14px 14px 16px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.beat:last-child { border-right: 0; }
+.beat .n { font: 700 11px var(--mono); color: var(--brasa); letter-spacing: 0.1em; }
+.beat h3 { font-size: 24px; text-transform: uppercase; line-height: 1; }
+.beat .q { font-size: 13px; color: var(--ink-soft); min-height: 3.2em; }
+.beat ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.beat li button { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: underline; text-decoration-color: var(--brasa); text-underline-offset: 3px; }
+.beat li button:hover { color: var(--brasa); }
+
+/* banco */
+.cat { display: flex; flex-direction: column; gap: 18px; }
+.cat-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.cat-head h2 { font-size: 34px; text-transform: uppercase; }
+.cat-head p { color: var(--ink-soft); font-size: 14px; }
+.grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.grid.wide { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+.item { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.shot { position: relative; border-radius: 10px; overflow: hidden; background: #111; cursor: pointer; border: 0; padding: 0; display: block; width: 100%; box-shadow: 0 1px 0 var(--shade); }
+.shot canvas { display: block; width: 100%; height: auto; }
+.shot .edit { position: absolute; right: 8px; bottom: 8px; font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; background: var(--brasa); color: #fff; padding: 5px 9px; border-radius: 999px; opacity: 0; transition: opacity .15s; }
+.shot:hover .edit, .shot:focus-visible .edit { opacity: 1; }
+.item h3 { font: 800 16px/1.25 var(--body); }
+.item .desc { font-size: 13.5px; color: var(--ink-soft); }
+.item .uso { font-size: 13px; border-left: 2px solid var(--brasa); padding-left: 10px; }
+.item .uso b { font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); display: block; }
+
+/* editor */
+.editor { position: fixed; inset: 0; z-index: 10; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 100%); background: rgba(10, 8, 8, 0.72); }
+.editor[hidden] { display: none !important; }
+.ed-stage { display: flex; align-items: center; justify-content: center; padding: 24px; min-width: 0; }
+.ed-stage canvas { max-width: 100%; max-height: calc(100vh - 140px); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.ed-side { background: var(--paper); overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 28px 20px; display: flex; flex-direction: column; gap: 14px; }
+.ed-side h2 { font-size: 34px; text-transform: uppercase; line-height: 1; }
+.ed-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.x { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 700; font-size: 13px; }
+.transport { display: flex; gap: 10px; align-items: center; }
+.transport input { flex: 1; accent-color: var(--brasa); }
+.transport .t { font: 700 12px var(--mono); color: var(--ink-soft); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+.fields { display: flex; flex-direction: column; gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field > span { font: 700 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.field input, .field select, .field textarea { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 8px 10px; font-size: 14px; width: 100%; }
+.field textarea { min-height: 70px; resize: vertical; }
+.hint { font-size: 13px; color: var(--ink-soft); background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
+.hint code { font: 12px var(--mono); }
+
+/* instalação */
+.install { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; border-top: 3px solid var(--ink); padding-top: 22px; }
+.install h2 { font-size: clamp(32px, 4.6vw, 48px); text-transform: uppercase; line-height: 1; }
+.install .lead { color: var(--ink-soft); margin-top: 10px; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
+.steps li::before { content: counter(s, decimal-leading-zero); font: 700 13px var(--mono); color: var(--brasa); padding-top: 2px; }
+.steps code, .install code { font: 12.5px var(--mono); background: var(--paper-2); padding: 1px 6px; border-radius: 4px; word-break: break-word; }
+footer { color: var(--ink-soft); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+@media (max-width: 900px) {
+  header.top, .install { grid-template-columns: minmax(0, 1fr); }
+  .beats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .beat:nth-child(2n) { border-right: 0; }
+  .beat { border-bottom: 1px solid var(--line); }
+  .editor { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .ed-stage { padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px; }
+  .ed-stage canvas { max-height: 42vh; }
+}
+@media (max-width: 480px) {
+  .controls { position: static; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .grid.wide { grid-template-columns: minmax(0, 1fr); }
+  .item .desc { display: none; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Banco de <em>animações</em> da marca</h1>
+    <div class="intro">
+      <span class="label">Tamo Criando Motion · 17 animações</span>
+      <p><strong>Animação aqui é sinalização, não enfeite.</strong> Cada peça tem uma função no roteiro: segurar a atenção, mostrar onde a pessoa está no raciocínio, fixar a frase que importa. Tudo sai com a tua fonte, a tua cor e o teu texto, direto na timeline do Premiere.</p>
+      <p>Clica em qualquer animação pra editar o texto e ver ao vivo.</p>
+    </div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Opções de visualização">
+    <div class="ctl"><span>Formato</span>
+      <div class="seg" id="fmt">
+        <button type="button" data-v="9:16" aria-pressed="true">9:16</button>
+        <button type="button" data-v="16:9" aria-pressed="false">16:9</button>
+        <button type="button" data-v="1:1" aria-pressed="false">1:1</button>
+      </div>
+    </div>
+    <label class="ctl"><span>Marca</span><select id="brand"></select></label>
+    <div class="ctl"><span>Fundo</span>
+      <div class="seg" id="bd">
+        <button type="button" data-v="video" aria-pressed="true">Vídeo</button>
+        <button type="button" data-v="checker" aria-pressed="false">Alpha</button>
+      </div>
+    </div>
+    <div class="ctl"><span>Movimento</span>
+      <div class="seg" id="motion">
+        <button type="button" data-v="on" aria-pressed="true">Rodando</button>
+        <button type="button" data-v="off" aria-pressed="false">Parado</button>
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <span class="count" id="count"></span>
+  </div>
+
+  <section class="roteiro" aria-labelledby="rt">
+    <div class="roteiro-head">
+      <h2 id="rt">Onde cada uma entra no roteiro</h2>
+      <p>Um vídeo bem estruturado tem momentos previsíveis. A animação certa em cada um funciona como placa de estrada: a pessoa sabe onde está e pra onde vai.</p>
+    </div>
+    <div class="beats" id="beats"></div>
+  </section>
+
+  <div id="bank" class="wrap" style="gap:56px"></div>
+
+  <section class="install" aria-labelledby="inst">
+    <div>
+      <span class="label">Plugin pro Premiere</span>
+      <h2 id="inst">Do banco pra timeline em um clique</h2>
+      <p class="lead">O painel renderiza a animação com o teu texto em PNG com transparência, no tamanho e frame rate da sequência aberta, salva ao lado do projeto e coloca no playhead, na primeira trilha livre acima da V1.</p>
+    </div>
+    <ol class="steps">
+      <li><span>Baixa o repositório <code>tamocriando</code> (botão Code › Download ZIP no GitHub) e descompacta.</span></li>
+      <li><span>Windows: dois cliques em <code>install/instalar-windows.bat</code>. Mac: dois cliques em <code>install/instalar-mac.command</code>.</span></li>
+      <li><span>Fecha e abre o Premiere. O painel fica em <code>Janela › Extensões › Tamo Criando Motion</code>.</span></li>
+      <li><span>Posiciona o playhead, escolhe a animação, ajusta o texto e clica em <b>Inserir no playhead</b>. Os PNGs ficam em <code>TamoCriando_Motion/</code> ao lado do .prproj; não apaga essa pasta enquanto usar o projeto.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Fontes: Anton, Montserrat e Space Mono (licença OFL), as mesmas famílias dos teus posts.</span>
+    <span id="ver"></span>
+  </footer>
+</div>
+
+<div class="editor" id="editor" hidden role="dialog" aria-modal="true" aria-labelledby="ed-name">
+  <div class="ed-stage"><canvas id="ed-cv"></canvas></div>
+  <div class="ed-side">
+    <div class="ed-top">
+      <span class="label" id="ed-cat"></span>
+      <button type="button" class="x" id="ed-close">Fechar</button>
+    </div>
+    <h2 id="ed-name"></h2>
+    <p class="desc" id="ed-desc" style="color:var(--ink-soft);font-size:14px"></p>
+    <div class="transport">
+      <button type="button" class="x" id="ed-play" aria-label="Pausar">❚❚</button>
+      <input type="range" id="ed-scrub" min="0" max="1000" value="0" aria-label="Posição na animação">
+      <span class="t" id="ed-t">0,0s</span>
+    </div>
+    <div class="fields" id="ed-fields"></div>
+    <label class="field"><span>Duração (segundos)</span><input type="number" id="ed-dur" step="0.1" min="0.5"></label>
+    <p class="hint" id="ed-hint"></p>
+  </div>
+</div>
+
+<!-- @engine:start -->
+<script src="../plugin/tamocriando-motion/engine/core.js"></script>
+<script src="../plugin/tamocriando-motion/engine/brands.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/abertura.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/estrutura.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/enfase.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/argumento.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/identidade.js"></script>
+<script src="../plugin/tamocriando-motion/engine/templates/transicoes.js"></script>
+<!-- @engine:end -->
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var S = {
+    fmt: store.get('g.fmt', '9:16'),
+    brand: store.get('g.brand', TC.defaultBrand),
+    bd: store.get('g.bd', 'video'),
+    motion: reduce ? 'off' : store.get('g.motion', 'on'),
+    params: {},
+    edit: null
+  };
+  if (!TC.brands[S.brand]) S.brand = TC.defaultBrand;
+
+  var CAT_TEXT = {
+    abertura: 'Abrem e fecham o vídeo. Primeira e última impressão da marca.',
+    estrutura: 'Mostram onde a pessoa está dentro do raciocínio.',
+    enfase: 'Fixam a frase, o número ou a lista que precisa ficar.',
+    argumento: 'Estruturas de raciocínio: comparar, desmontar, sequenciar, perguntar.',
+    identidade: 'Quem está falando, com nome e credencial.',
+    transicao: 'Escondem o corte entre dois clipes. O meio da transição cai no corte.'
+  };
+  var BEATS = [
+    { n: '0–3s', t: 'Gancho', q: 'A frase ou pergunta que trava o dedo.', ids: ['pergunta', 'destaque-palavra', 'intro-clareza'] },
+    { n: 'Contexto', t: 'Quem fala', q: 'Credencial rápida, sem currículo.', ids: ['lower-third', 'intro-brasa'] },
+    { n: 'Mapa', t: 'Onde estamos', q: 'O público vê o todo antes da parte.', ids: ['metodo-trilha', 'capitulo', 'contador'] },
+    { n: 'Miolo', t: 'Argumento', q: 'Organizar o raciocínio em blocos que se lembram.', ids: ['fluxo', 'comparativo', 'lista', 'mito-verdade'] },
+    { n: 'Prova', t: 'Prova e tese', q: 'Número de cliente e a frase pra print.', ids: ['numero', 'tese'] },
+    { n: 'Final', t: 'Fechamento', q: 'Uma ação só. Duas dividem a atenção.', ids: ['outro-cta', 'transicao-brasa', 'transicao-blocos'] }
+  ];
+
+  function paramsFor(id) {
+    var p = TC.defaults(id, TC.brands[S.brand]);
+    var saved = store.get('g.p.' + S.brand + '.' + id, null);
+    if (saved) for (var k in saved) if (k in p) p[k] = saved[k];
+    return p;
+  }
+
+  // ---------- controles ----------
+  function seg(id, key, after) {
+    var el = $(id);
+    Array.prototype.forEach.call(el.querySelectorAll('button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.v === S[key]));
+      b.onclick = function () {
+        S[key] = b.dataset.v; store.set('g.' + key, S[key]);
+        Array.prototype.forEach.call(el.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        after && after();
+      };
+    });
+  }
+  function brandSelect() {
+    var sel = $('brand');
+    Object.keys(TC.brands).forEach(function (k) {
+      var o = document.createElement('option'); o.value = k; o.textContent = TC.brands[k].name; sel.appendChild(o);
+    });
+    sel.value = S.brand;
+    sel.onchange = function () { S.brand = sel.value; store.set('g.brand', S.brand); resizeAll(); };
+  }
+
+  // ---------- régua ----------
+  function buildBeats() {
+    var host = $('beats');
+    BEATS.forEach(function (b, i) {
+      var d = document.createElement('div'); d.className = 'beat';
+      d.innerHTML = '<span class="n"></span><h3></h3><p class="q"></p><ul></ul>';
+      d.querySelector('.n').textContent = String(i + 1).padStart(2, '0') + ' · ' + b.n;
+      d.querySelector('h3').textContent = b.t;
+      d.querySelector('.q').textContent = b.q;
+      var ul = d.querySelector('ul');
+      b.ids.forEach(function (id) {
+        if (!TC.templates[id]) return;
+        var li = document.createElement('li'); var bt = document.createElement('button');
+        bt.type = 'button'; bt.textContent = TC.templates[id].name;
+        bt.onclick = function () { openEditor(id); };
+        li.appendChild(bt); ul.appendChild(li);
+      });
+      host.appendChild(d);
+    });
+  }
+
+  // ---------- banco ----------
+  var tiles = [];
+  function buildBank() {
+    var bank = $('bank');
+    TC.categories.forEach(function (cat) {
+      var list = TC.list().filter(function (t) { return t.category === cat.id; });
+      if (!list.length) return;
+      var sec = document.createElement('section'); sec.className = 'cat';
+      sec.innerHTML = '<div class="cat-head"><h2></h2><p></p></div><div class="grid"></div>';
+      sec.querySelector('h2').textContent = cat.name;
+      sec.querySelector('p').textContent = CAT_TEXT[cat.id] || '';
+      var grid = sec.querySelector('.grid');
+      list.forEach(function (tpl) {
+        var it = document.createElement('article'); it.className = 'item';
+        it.innerHTML = '<button type="button" class="shot"><canvas></canvas><span class="edit">Editar</span></button><h3></h3><p class="desc"></p><p class="uso"><b>Quando usar</b></p>';
+        it.querySelector('h3').textContent = tpl.name;
+        it.querySelector('.desc').textContent = tpl.description;
+        it.querySelector('.uso').appendChild(document.createTextNode(tpl.uso));
+        it.querySelector('.shot').setAttribute('aria-label', 'Editar ' + tpl.name);
+        it.querySelector('.shot').onclick = function () { openEditor(tpl.id); };
+        grid.appendChild(it);
+        tiles.push({ id: tpl.id, cv: it.querySelector('canvas'), grid: grid, visible: false, offset: Math.random() * 3 });
+      });
+      bank.appendChild(sec);
+    });
+    $('count').textContent = TC.list().length + ' animações';
+    $('ver').textContent = 'Motor v' + TC.version;
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { tiles.forEach(function (t) { if (t.cv === e.target) t.visible = e.isIntersecting; }); });
+      }, { rootMargin: '100px' });
+      tiles.forEach(function (t) { io.observe(t.cv); });
+    } else tiles.forEach(function (t) { t.visible = true; });
+  }
+
+  function dims() { return TC.formats[S.fmt] || TC.formats['9:16']; }
+  function sizeTile(t) {
+    var d = dims();
+    var cssW = t.cv.parentNode.clientWidth || 220;
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    t.cv.width = Math.round(cssW * dpr);
+    t.cv.height = Math.round(t.cv.width * d.h / d.w);
+  }
+  function drawTile(t, time) {
+    TC.renderFrame(t.cv.getContext('2d'), t.id, { w: t.cv.width, h: t.cv.height, t: time, params: paramsFor(t.id), brand: S.brand, preview: true, backdrop: S.bd });
+  }
+  function resizeAll() {
+    document.querySelectorAll('.grid').forEach(function (g) { g.classList.toggle('wide', S.fmt === '16:9'); });
+    tiles.forEach(function (t) { sizeTile(t); drawTile(t, TC.templates[t.id].thumb); });
+    if (S.edit) sizeEditor();
+  }
+
+  // ---------- editor ----------
+  var ed = { playing: true, clock: 0, t: 0, dur: 4 };
+  function openEditor(id) {
+    var tpl = TC.templates[id];
+    S.edit = id;
+    S.params = paramsFor(id);
+    ed.dur = tpl.duration; ed.playing = true; ed.clock = performance.now();
+    $('ed-name').textContent = tpl.name;
+    var cat = TC.categories.filter(function (c) { return c.id === tpl.category; })[0];
+    $('ed-cat').textContent = cat ? cat.name : '';
+    $('ed-desc').textContent = tpl.uso;
+    $('ed-play').textContent = '❚❚';
+    $('ed-dur').value = ed.dur; $('ed-dur').min = tpl.minDur;
+    $('ed-hint').innerHTML = '';
+    var hint = 'No painel do Premiere: <code>' + tpl.name + '</code>. ' + (tpl.cut ? 'Põe a transição de forma que o ponto ' + (tpl.cut * tpl.duration).toFixed(2).replace('.', ',') + 's caia em cima do corte entre os clipes.' : (tpl.full ? 'Ocupa a tela toda e sai revelando o vídeo de baixo.' : 'Sai com transparência: vai numa trilha acima do vídeo.'));
+    $('ed-hint').innerHTML = hint;
+    var host = $('ed-fields'); host.innerHTML = '';
+    tpl.params.forEach(function (p) {
+      var lab = document.createElement('label'); lab.className = 'field';
+      var span = document.createElement('span'); span.textContent = p.label;
+      var input;
+      if (p.type === 'select') {
+        input = document.createElement('select');
+        p.options.forEach(function (o) { var op = document.createElement('option'); op.value = o; op.textContent = o; input.appendChild(op); });
+      } else if (p.type === 'textarea') { input = document.createElement('textarea'); }
+      else { input = document.createElement('input'); input.type = p.type === 'number' ? 'number' : 'text'; if (p.min !== undefined) input.min = p.min; if (p.max !== undefined) input.max = p.max; }
+      input.id = 'f-' + p.key;
+      input.value = S.params[p.key];
+      input.addEventListener('input', function () {
+        S.params[p.key] = p.type === 'number' ? Number(input.value) : input.value;
+        store.set('g.p.' + S.brand + '.' + id, S.params);
+        tiles.forEach(function (t) { if (t.id === id) drawTile(t, TC.templates[id].thumb); });
+      });
+      lab.appendChild(span); lab.appendChild(input); host.appendChild(lab);
+    });
+    $('editor').hidden = false;
+    document.body.style.overflow = 'hidden';
+    sizeEditor();
+    $('ed-close').focus();
+  }
+  function closeEditor() { S.edit = null; $('editor').hidden = true; document.body.style.overflow = ''; }
+  function sizeEditor() {
+    var cv = $('ed-cv'), d = dims();
+    var box = cv.parentNode.getBoundingClientRect();
+    var maxW = Math.max(200, box.width - 48), maxH = Math.max(200, Math.min(window.innerHeight - 140, box.height - 24));
+    var w = maxW, h = w * d.h / d.w;
+    if (h > maxH) { h = maxH; w = h * d.w / d.h; }
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.style.width = Math.round(w) + 'px'; cv.style.height = Math.round(h) + 'px';
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  }
+
+  // ---------- loop ----------
+  var last = 0;
+  function loop(now) {
+    requestAnimationFrame(loop);
+    if (S.edit) {
+      var tpl = TC.templates[S.edit];
+      var dur = Math.max(tpl.minDur, Number(ed.dur) || tpl.duration);
+      if (ed.playing) { ed.t = ((now - ed.clock) / 1000) % (dur + 0.6); $('ed-scrub').value = Math.round(Math.min(1, ed.t / dur) * 1000); }
+      var cv = $('ed-cv');
+      TC.renderFrame(cv.getContext('2d'), S.edit, { w: cv.width, h: cv.height, t: Math.min(ed.t, dur), dur: dur, params: S.params, brand: S.brand, preview: true, backdrop: S.bd });
+      $('ed-t').textContent = Math.min(ed.t, dur).toFixed(1).replace('.', ',') + 's';
+      return;
+    }
+    if (S.motion !== 'on' || now - last < 33) return;
+    last = now;
+    tiles.forEach(function (t) {
+      if (!t.visible) return;
+      var tpl = TC.templates[t.id];
+      var cyc = tpl.duration + 0.8;
+      drawTile(t, Math.min(tpl.duration, ((now / 1000) + t.offset) % cyc));
+    });
+  }
+
+  function wire() {
+    seg('fmt', 'fmt', resizeAll);
+    seg('bd', 'bd', resizeAll);
+    seg('motion', 'motion', function () { tiles.forEach(function (t) { drawTile(t, TC.templates[t.id].thumb); }); });
+    brandSelect();
+    $('ed-close').onclick = closeEditor;
+    $('editor').addEventListener('click', function (e) { if (e.target.id === 'editor' || e.target.classList.contains('ed-stage')) closeEditor(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.edit) closeEditor(); });
+    $('ed-play').onclick = function () {
+      ed.playing = !ed.playing;
+      $('ed-play').textContent = ed.playing ? '❚❚' : '▶';
+      $('ed-play').setAttribute('aria-label', ed.playing ? 'Pausar' : 'Tocar');
+      if (ed.playing) ed.clock = performance.now() - ed.t * 1000;
+    };
+    $('ed-scrub').oninput = function () {
+      ed.playing = false; $('ed-play').textContent = '▶';
+      var tpl = TC.templates[S.edit];
+      ed.t = Number($('ed-scrub').value) / 1000 * Math.max(tpl.minDur, Number(ed.dur) || tpl.duration);
+    };
+    $('ed-dur').oninput = function () { var v = Number($('ed-dur').value); if (v > 0) ed.dur = v; };
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resizeAll, 120); });
+  }
+
+  buildBeats();
+  buildBank();
+  wire();
+  resizeAll();
+  TC.loadFonts(TC.brands[S.brand]).then(function () { resizeAll(); requestAnimationFrame(loop); });
+})();
+</script>
+
+</body>
+</html>
