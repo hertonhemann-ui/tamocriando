@@ -1,0 +1,1176 @@
+<title>Café Cantinho</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: barra de status no topo, cozinha em canvas no centro, painel de estado ao lado (embaixo no celular). Fases do dia aparecem como cartões por cima. Visual único: noite de bairro, azul-marinho com luz âmbar de balcão. */
+:root{
+  --noite:#0e1828; --painel:#15233a; --painel2:#1b2c47; --linha:#2b3f5e;
+  --texto:#eaf0f8; --suave:#9db0ca; --acento:#f0b23a; --acento-esc:#2a1c05;
+  --bom:#62c98f; --ruim:#ec6b5d; --aviso:#e8c35a;
+  --f-disp:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --f-corpo:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--noite);color:var(--texto);font-family:var(--f-corpo);font-size:15px;line-height:1.45}
+.app{max-width:1280px;margin:0 auto;padding-block:12px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;background:var(--painel);border:1px solid var(--linha);border-radius:10px;padding:10px 14px}
+.marca{font-family:var(--f-disp);font-weight:800;font-size:20px;letter-spacing:-.01em;color:var(--acento);margin-right:auto}
+.marca small{font-family:var(--f-corpo);font-weight:400;font-size:12px;color:var(--suave);margin-left:8px;letter-spacing:.04em;text-transform:uppercase}
+.stat{display:flex;flex-direction:column;line-height:1.15}
+.stat b{font-family:var(--f-num);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
+.acoes-topo{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+.btn{background:var(--painel2);border:1px solid var(--linha);border-radius:8px;padding:7px 12px;font-size:14px}
+.btn:hover:not(:disabled){border-color:var(--acento)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primario{background:var(--acento);color:var(--acento-esc);border-color:var(--acento);font-weight:700}
+.principal{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}
+@media (max-width:1000px){.principal{grid-template-columns:minmax(0,1fr)}}
+.palco{position:relative;min-width:0}
+canvas{display:block;width:100%;max-width:100%;aspect-ratio:800/500;border-radius:10px;border:1px solid var(--linha);background:#1a2638;touch-action:manipulation}
+.barra-gestao{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;background:var(--acento);color:var(--acento-esc);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-weight:700}
+.barra-gestao .btn{background:var(--acento-esc);color:var(--acento);border-color:var(--acento-esc)}
+.painel{background:var(--painel);border:1px solid var(--linha);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.painel h3{margin:0 0 6px;font-family:var(--f-disp);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave)}
+.linha-kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:2px 0}
+.linha-kv b{font-family:var(--f-num);font-weight:500;font-variant-numeric:tabular-nums}
+.medidor{height:8px;border-radius:4px;background:var(--painel2);overflow:hidden;margin-top:4px}
+.medidor i{display:block;height:100%;border-radius:4px;transition:width .3s}
+.dica{font-size:13px;color:var(--suave)}
+.dica kbd{font-family:var(--f-num);font-size:12px;background:var(--painel2);border:1px solid var(--linha);border-radius:4px;padding:0 5px;color:var(--texto)}
+.pilula{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--painel2);border:1px solid var(--linha);color:var(--suave)}
+.pilula.ruim{color:var(--ruim);border-color:color-mix(in srgb,var(--ruim) 50%,transparent)}
+.pilula.bom{color:var(--bom);border-color:color-mix(in srgb,var(--bom) 50%,transparent)}
+/* Cartões de fase */
+.veu{position:fixed;inset:0;background:rgba(5,10,20,.72);display:flex;align-items:center;justify-content:center;z-index:20;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.cartao{background:var(--painel);border:1px solid var(--linha);border-radius:14px;width:100%;max-width:600px;max-height:100%;overflow:auto;padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.sobre{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--acento);font-weight:700}
+.cartao h2{font-family:var(--f-disp);font-weight:800;font-size:28px;line-height:1.1;margin:4px 0 12px;text-wrap:balance;letter-spacing:-.015em}
+.cartao h4{font-family:var(--f-disp);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:18px 0 8px}
+.cartao p{margin:0 0 10px;max-width:62ch}
+.fala{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;background:var(--painel2);border-radius:10px;padding:10px 12px;margin:8px 0}
+.fala .quem{font-family:var(--f-disp);font-weight:700;color:var(--acento);white-space:nowrap}
+.escolhas{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.escolha{text-align:left;background:var(--painel2);border:1px solid var(--linha);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.escolha:hover:not(:disabled){border-color:var(--acento)}
+.escolha:disabled{opacity:.5;cursor:not-allowed}
+.escolha b{font-weight:700}
+.escolha span{font-size:13px;color:var(--suave)}
+.escolha .custo{font-family:var(--f-num);font-size:12px;color:var(--acento)}
+.escolha .req{font-size:12px;color:var(--ruim)}
+.horas{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--suave)}
+.horas i{width:14px;height:14px;border-radius:50%;border:2px solid var(--acento);display:inline-block}
+.horas i.cheia{background:var(--acento)}
+.grade-acoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.seg{display:inline-flex;border:1px solid var(--linha);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:6px 12px;font-size:14px;color:var(--suave)}
+.seg button[aria-pressed="true"]{background:var(--acento);color:var(--acento-esc);font-weight:700}
+.config{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.config label{font-size:13px;color:var(--suave);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rodape-cartao{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+table.contas{width:100%;border-collapse:collapse;font-size:14px}
+table.contas td{padding:5px 0;border-bottom:1px solid var(--linha)}
+table.contas td:last-child{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
+.pos{color:var(--bom)} .neg{color:var(--ruim)}
+.diario{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.diario li{background:var(--painel2);border-radius:8px;padding:8px 12px;font-size:14px}
+.diario .dia{font-family:var(--f-num);font-size:12px;color:var(--acento);margin-right:6px}
+.diario .causa{display:block;font-size:12.5px;color:var(--suave);margin-top:3px}
+.diario .causa::before{content:"↳ por causa disto: "}
+.compra{display:grid;grid-template-columns:1fr auto auto;gap:8px 12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--linha)}
+.compra small{color:var(--suave)}
+.qtd{display:flex;align-items:center;gap:6px;font-family:var(--f-num)}
+.qtd button{width:30px;height:30px;border-radius:6px;background:var(--painel2);border:1px solid var(--linha)}
+.titulo-jogo{font-family:var(--f-disp);font-weight:800;font-size:clamp(36px,7vw,56px);line-height:.95;letter-spacing:-.03em;color:var(--acento);margin:6px 0 14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="status">
+    <div class="marca">Café Cantinho<small>protótipo · 5 dias</small></div>
+    <div class="stat"><span>Dia</span><b id="hDia">—</b></div>
+    <div class="stat"><span>Hora</span><b id="hHora">—</b></div>
+    <div class="stat"><span>Caixa</span><b id="hCaixa">—</b></div>
+    <div class="stat"><span>Reputação</span><b id="hRep">—</b></div>
+    <div class="acoes-topo">
+      <button class="btn" id="bGestao" hidden>Gestão (G)</button>
+      <button class="btn" id="bPausa" hidden>Pausar (Esc)</button>
+      <button class="btn" id="bDiario">Diário</button>
+    </div>
+  </header>
+  <div class="principal">
+    <div class="palco">
+      <div class="barra-gestao" id="barraGestao" hidden>
+        <span id="txtGestao">Modo gestão: toque numa estação e depois num espaço vazio ou em outra estação para trocar de lugar.</span>
+        <button class="btn" id="bConcluiGestao">Concluir</button>
+      </div>
+      <canvas id="cena" width="800" height="500" aria-label="Cozinha do café"></canvas>
+    </div>
+    <aside class="painel" id="painel"></aside>
+  </div>
+</div>
+<div class="veu" id="veu" hidden><div class="cartao" id="cartao" role="dialog" aria-modal="true"></div></div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const cv = $('#cena'), ctx = cv.getContext('2d');
+const W = 800, H = 500;
+
+/* ---------- Constantes de design (dados) ---------- */
+const DAY_LEN = 180, GRACE = 25, DIAS = 5;
+const NOME_DIA = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+const PRECO_BASE = { espresso: 6, cappuccino: 9, pao: 5 };
+const PRECO_MULT = { baixo: 0.8, normal: 1, alto: 1.25 };
+const DEMANDA_PRECO = { baixo: 1.2, normal: 1, alto: 0.8 };
+const PAC_PRECO = { baixo: 1.1, normal: 1, alto: 0.85 };
+const ALUGUEL = 40;
+const SAL = { integral: 35, meio: 20 };
+const PACOTES = {
+  grao: { nome: 'Grão de café', qtd: 20, preco: 24, un: 'doses' },
+  leite: { nome: 'Leite', qtd: 10, preco: 14, un: 'doses' },
+  massa: { nome: 'Massa de pão de queijo', qtd: 12, preco: 9, un: 'unid.' },
+};
+const ITEM_NOME = { po: 'pó de café', espresso: 'espresso', cappuccino: 'cappuccino', pao: 'pão de queijo' };
+const BASE_T = { moedor: 1.6, maquina: 3.0, vapor: 2.2, forno: 7 };
+const ST_DEF = {
+  moedor: { nome: 'Moedor', cor: '#7a4e2d' },
+  maquina: { nome: 'Máquina', cor: '#4b5868' },
+  vapor: { nome: 'Vaporizador', cor: '#5f86ab' },
+  forno: { nome: 'Forno', cor: '#a4532f' },
+  lixo: { nome: 'Lixo', cor: '#56616c' },
+};
+const SLOTS = {
+  b0: { x: 110, y: 76, p: 'parede' }, b1: { x: 210, y: 76, p: 'parede' }, b2: { x: 310, y: 76, p: 'parede' },
+  b3: { x: 410, y: 76, p: 'parede' }, b4: { x: 510, y: 76, p: 'parede' }, b5: { x: 610, y: 76, p: 'parede' },
+  b6: { x: 710, y: 76, p: 'parede' },
+  c0: { x: 140, y: 300, p: 'balcao' }, c1: { x: 255, y: 300, p: 'balcao' },
+  c2: { x: 545, y: 300, p: 'balcao' }, c3: { x: 660, y: 300, p: 'balcao' },
+};
+const ENTREGA = { x: 400, y: 300 };
+const VAGAS = [400, 326, 474, 252, 548, 178];
+const VAGA_Y = 386;
+const PORTA = { x: 820, y: 470 };
+const SW = 84, SH = 56;
+const LIM = { x0: 60, x1: 740, y0: 126, y1: 256 };
+const CORES_CLIENTE = ['#c0675a', '#5a8fc0', '#7cae6a', '#b98bd0', '#d39a4a', '#5fb3a8', '#9a7b62', '#c77fa0'];
+const SAVE_KEY = 'cafe-cantinho-v1';
+
+function pontoDe(slotId) {
+  const s = SLOTS[slotId];
+  return s.p === 'parede' ? { x: s.x, y: s.y + 48 } : { x: s.x, y: s.y - 44 };
+}
+
+/* ---------- Estado persistente ---------- */
+function novoEstado() {
+  return {
+    v: 1, dia: 1, fase: 'titulo', caixa: 300, rep: 30, preco: 'normal',
+    estoque: { grao: 20, leite: 10, massa: 12 }, fornoPaes: 0,
+    me: { estresse: 20, cozXp: 0, gestao: 0, padrao: { cozinha: 0, social: 0, gestao: 0, descanso: 0 } },
+    bia: { contratada: false, regime: null, papel: 'cafe', estresse: 20, moral: 50, saiu: false, aumento: 0 },
+    lucia: { afin: 20, conf: 10 },
+    caio: { afin: 45, semVer: 0, viuHoje: false },
+    rafa: { afin: 0, forca: 1, acordo: null, valor: 0 },
+    flags: {}, mem: {}, diario: [], agenda: [], vistos: {}, tensao: 0,
+    layout: { moedor: 'b1', maquina: 'b2', vapor: 'b3', forno: 'b5', lixo: 'c3' },
+    mods: {}, amanha: {}, horas: 0, hist: [], snap: null,
+  };
+}
+let S = novoEstado();
+let R = novoRuntime();
+let filaEventos = [];
+let trava = false; // true enquanto um cartão que não pode ser interrompido está aberto
+
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const brl = n => (n < 0 ? '−' : '') + 'R$ ' + Math.abs(Math.round(n)).toLocaleString('pt-BR');
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function lembra(k, txt) { S.mem[k] = { dia: S.dia, txt }; }
+function diario(txt, causaKey) {
+  const m = causaKey && S.mem[causaKey];
+  S.diario.push({ dia: S.dia, txt, causa: m ? `dia ${m.dia}, ${m.txt}` : null });
+}
+function agendar(dia, id) { S.agenda.push({ dia, id }); }
+function temAgenda(id) { return S.agenda.some(a => a.id === id && a.dia <= S.dia); }
+function tiraAgenda(id) { S.agenda = S.agenda.filter(a => a.id !== id); }
+function nivelCoz() { return Math.min(3, Math.floor(S.me.cozXp / 60)); }
+function biaAtiva() { return S.bia.contratada && !S.bia.saiu; }
+function salarioBia() { return biaAtiva() ? SAL[S.bia.regime] + S.bia.aumento : 0; }
+function precoItem(item, especialNormal) {
+  const m = especialNormal ? 1 : PRECO_MULT[S.preco];
+  return Math.round(PRECO_BASE[item] * m);
+}
+function relacao(a) {
+  if (a < 0) return 'fria';
+  if (a < 25) return 'distante';
+  if (a < 50) return 'cordial';
+  if (a < 75) return 'próxima';
+  return 'muito próxima';
+}
+function demanda() {
+  let d = (0.6 + S.rep / 100) * DEMANDA_PRECO[S.preco] * (1 - 0.06 * S.rafa.forca);
+  if (S.mods.chuva) d *= 0.75;
+  if (S.mods.showCaio) d *= 1.4;
+  if (S.mods.caioNoRafa) d *= 0.85;
+  return d;
+}
+
+/* ---------- Eventos (dados + regras) ---------- */
+const EV = [
+  {
+    id: 'bia_emprego', quando: 'pos', forcado: true, peso: 'pesado', cond: s => s.dia === 1,
+    texto: () => ({
+      titulo: 'Alguém bate no vidro',
+      corpo: ['Tu vira a placa para "fechado". Uma moça que passou a tarde olhando a fila bate no vidro da porta.'],
+      falas: [['Bia', 'Sou a Bia. Trabalhei dois anos numa padaria. Vi que tu tá sozinho aí dentro. Precisa de ajuda?']],
+    }),
+    escolhas: () => [
+      { t: 'Contratar em tempo integral', sub: 'Ela cuida de uma estação o expediente inteiro.', custo: 'R$ 35 por dia',
+        ef: s => { s.bia.contratada = true; s.bia.regime = 'integral'; lembra('bia_contratada', 'tu contratou a Bia no primeiro dia'); diario('Contratei a Bia em tempo integral.'); return 'A Bia começa amanhã. De manhã, tu escolhe em qual estação ela fica.'; } },
+      { t: 'Contratar meio período', sub: 'Ela ajuda só na primeira metade do expediente.', custo: 'R$ 20 por dia',
+        ef: s => { s.bia.contratada = true; s.bia.regime = 'meio'; lembra('bia_contratada', 'tu contratou a Bia no primeiro dia'); diario('Contratei a Bia em meio período.'); return 'A Bia topa. "Meio período já ajuda. Se precisar de mais, me fala."'; } },
+      { t: 'Agora não dá', sub: 'O caixa ainda está apertado.',
+        ef: s => { lembra('bia_recusada', 'tu disse à Bia que não dava pra contratar'); agendar(3, 'bia_no_rival'); diario('Disse para a Bia que não dava pra contratar ninguém.'); return 'Ela agradece, meio sem graça, e some na esquina.'; } },
+    ],
+  },
+  {
+    id: 'bia_no_rival', quando: 'manha', forcado: true, peso: 'pesado', cond: () => temAgenda('bia_no_rival'),
+    texto: () => ({
+      titulo: 'Avental de outra cor',
+      corpo: ['Indo comprar pão, tu passa pelo Grão Nobre, o café do Rafa. A Bia está lá dentro, de avental verde, despachando uma fila.'],
+      falas: [['Bia', 'Oi! O Rafa precisava de gente. Tu tinha dito que não dava, né? Sem ressentimento.']],
+    }),
+    escolhas: () => [
+      { t: 'Desejar boa sorte', sub: 'E seguir o dia.', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; diario('A Bia agora trabalha no Grão Nobre. O café do Rafa ficou mais rápido e puxa parte da tua clientela.', 'bia_recusada'); return 'O Grão Nobre ganhou braço. Tu vai sentir isso na fila.'; } },
+      { t: 'Perguntar como é trabalhar lá', sub: 'Saber o que o rival paga.', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; s.flags.sabeSalarioRafa = true; diario('A Bia agora trabalha no Grão Nobre. O Rafa paga R$ 50 por dia.', 'bia_recusada'); return '"R$ 50 por dia e ele fecha às seis." Tu guarda o número.'; } },
+    ],
+  },
+  {
+    id: 'bia_sobrecarregada', quando: 'pos', forcado: true, peso: 'pesado', cond: s => biaAtiva() && s.bia.estresse >= 60,
+    texto: s => ({
+      titulo: 'A Bia no estoque',
+      corpo: ['Depois de fechar, tu encontra a Bia sentada numa caixa de leite, olhando para o nada.'],
+      falas: [['Bia', s.bia.papel === 'cafe' ? 'Desculpa. É que eu fico na máquina o dia inteiro e ainda saio tarde. Tá puxado.' : 'Desculpa. Forno o dia todo, calor o dia todo. Tá puxado.']],
+    }),
+    escolhas: s => [
+      { t: 'Dar folga amanhã', sub: 'Tu toca o café sozinho por um dia.', ef: s => { s.amanha.biaFolga = true; s.bia.estresse -= 40; s.bia.moral += 10; lembra('bia_folga', 'tu deu folga à Bia quando ela estava no limite'); diario('Dei folga para a Bia amanhã.'); return 'Ela sorri de verdade pela primeira vez na semana.'; } },
+      { t: 'Aumentar o salário dela', sub: 'Mais R$ 15 por dia.', custo: '+R$ 15/dia', ef: s => { s.bia.aumento += 15; s.bia.moral += 15; s.bia.estresse -= 10; diario('Dei aumento de R$ 15 por dia para a Bia.'); return 'Ela agradece. O cansaço continua, mas agora tem motivo.'; } },
+      { t: 'Só café amanhã', sub: 'Tirar o pão de queijo do cardápio por um dia para aliviar.', ef: s => { s.amanha.semPao = true; s.bia.estresse -= 20; diario('Tirei o pão de queijo do cardápio por um dia para aliviar a Bia.'); return 'Menos coisa para fazer. Menos coisa para vender também.'; } },
+      { t: 'Pedir pra ela aguentar até sexta', sub: 'A semana está quase no fim.', ef: s => { s.bia.moral -= 15; lembra('bia_aguenta', 'tu pediu para a Bia aguentar até sexta'); agendar(s.dia + 2, 'bia_demissao'); diario('Pedi para a Bia aguentar até sexta.'); return 'Ela diz que tudo bem. Não parece tudo bem.'; } },
+    ],
+  },
+  {
+    id: 'bia_demissao', quando: 'manha', forcado: true, peso: 'pesado', cond: s => temAgenda('bia_demissao') && biaAtiva() && s.bia.estresse >= 45,
+    texto: () => ({
+      titulo: 'A Bia chega sem avental',
+      corpo: ['A Bia chega cedo, mas não amarra o avental.'],
+      falas: [['Bia', 'O Rafa me ofereceu um lugar no Grão Nobre. Menos horas. Eu aceitei. Desculpa.']],
+    }),
+    escolhas: s => [
+      { t: 'Desejar boa sorte', ef: s => { tiraAgenda('bia_demissao'); s.bia.saiu = true; s.bia.foiRafa = true; s.rafa.forca += 2; diario('A Bia pediu demissão e foi para o Grão Nobre.', 'bia_aguenta'); return 'Tu volta a fazer tudo sozinho. E o rival ganhou uma funcionária treinada por ti.'; } },
+      { t: 'Oferecer o dobro para ela ficar', sub: 'Salário dobra até o fim da semana.', req: s => ({ ok: s.caixa >= 120, motivo: 'Precisa de pelo menos R$ 120 em caixa' }),
+        ef: s => { tiraAgenda('bia_demissao'); s.bia.aumento += SAL[s.bia.regime]; s.bia.estresse -= 15; diario('Dobrei o salário da Bia para ela não ir para o Grão Nobre.', 'bia_aguenta'); return 'Ela fica. O caixa sente.'; } },
+    ],
+  },
+  {
+    id: 'leite_estragou', quando: 'manha', peso: 'pesado', min: 2, cond: s => s.dia <= 4,
+    texto: () => ({ titulo: 'A geladeira desligou', corpo: ['Caiu a luz de madrugada. Todo o leite estragou.'] }),
+    pre: s => { s.estoque.leite = 0; },
+    escolhas: s => [
+      { t: 'Comprar no mercado, mais caro', sub: '10 doses por R$ 30 (o dobro do fornecedor).', req: s => ({ ok: s.caixa >= 30, motivo: 'Precisa de R$ 30' }), ef: s => { s.caixa -= 30; s.estoque.leite += 10; diario('Perdi o leite e comprei no mercado pelo dobro.'); return 'Problema resolvido. Margem menor hoje.'; } },
+      { t: 'Tirar o cappuccino do cardápio hoje', sub: 'Quem pedir cappuccino vai levar espresso.', ef: s => { s.mods.semCappuccino = true; diario('Fiquei sem leite e tirei o cappuccino do cardápio por um dia.'); return 'Mais simples. A Dona Lúcia não vai gostar.'; } },
+      { t: 'Pedir leite emprestado para o Rafa', sub: 'O dono do café rival, na esquina.', ef: s => { s.estoque.leite += 6; s.rafa.afin += 8; lembra('favor_rafa', 'o Rafa te emprestou leite'); diario('O Rafa me emprestou leite quando a geladeira pifou.'); return 'Ele empresta seis caixas. "Tranquilo. Um dia tu me ajuda."'; } },
+    ],
+  },
+  {
+    id: 'chuva', quando: 'manha', peso: 'leve', min: 2, cond: () => true,
+    texto: () => ({ titulo: 'Chuva forte', corpo: ['Chove desde cedo. Pouca gente na rua, mas quem entra para se abrigar não tem pressa.'] }),
+    escolhas: () => [{ t: 'Abrir assim mesmo', sub: 'Menos clientes, mais paciência.', ef: s => { s.mods.chuva = true; return 'Dia calmo à vista.'; } }],
+  },
+  {
+    id: 'elogio', quando: 'pos', peso: 'leve', min: 2, cond: s => s.tensao >= 2,
+    texto: s => ({ titulo: 'Um bilhete no balcão', corpo: ['Um senhor deixou um guardanapo dobrado ao lado da xícara: "Melhor espresso do bairro. Volto amanhã."', biaAtiva() ? 'A Bia cola o bilhete na parede da cozinha.' : 'Tu cola o bilhete na parede da cozinha.'] }),
+    escolhas: () => [{ t: 'Guardar o bilhete', ef: s => { s.rep += 2; s.me.estresse -= 10; diario('Alguém deixou um bilhete dizendo que é o melhor espresso do bairro.'); return 'Às vezes é isso que segura a semana.'; } }],
+  },
+  {
+    id: 'lucia_preco', quando: 'pos', peso: 'pesado', cond: s => s.flags.luciaPagouAlto && s.lucia.afin > 5,
+    texto: () => ({
+      titulo: 'Dona Lúcia volta ao balcão',
+      corpo: ['Ela já tinha ido embora. Volta, ajeita a bolsa e fala baixo.'],
+      falas: [['Dona Lúcia', 'Meu filho, onze reais no cappuccino? Eu venho aqui todo dia. Desde antes de tu chegar, quando isso aqui era uma loja de chaves.']],
+    }),
+    escolhas: s => [
+      { t: 'Manter o preço', sub: 'É o que o café precisa agora.', ef: s => { s.lucia.afin -= 12; lembra('lucia_preco', 'tu manteve o preço alto mesmo com a reclamação da Dona Lúcia'); diario('Mantive o preço alto. A Dona Lúcia saiu chateada.'); return 'Ela não discute. Só diz "tá bom" do jeito que as pessoas dizem quando não está.'; } },
+      { t: 'Preço antigo só para ela', sub: 'Cliente fiel paga o preço normal.', ef: s => { s.flags.luciaPrecoAntigo = true; s.lucia.afin += 8; s.lucia.conf += 10; lembra('lucia_desconto', 'tu deu à Dona Lúcia o preço antigo'); diario('Dei à Dona Lúcia o preço antigo, só para ela.'); return 'Ela aperta tua mão. "Tu é dos bons."'; } },
+      { t: 'Explicar as contas para ela', sub: 'Aluguel, leite, grão. Sem rodeio.', req: s => ({ ok: s.lucia.afin >= 30 || s.me.padrao.social >= 1, motivo: 'Ela ainda não te conhece o bastante (converse com ela antes)' }),
+        ef: s => { s.lucia.afin += 3; s.lucia.conf += 15; s.rep += 3; diario('Expliquei as contas do café para a Dona Lúcia. Ela entendeu e comentou com as amigas.'); return 'Ela escuta tudo. "Então é isso. Vou falar pras meninas que tu é honesto."'; } },
+    ],
+  },
+  {
+    id: 'lucia_clube', quando: 'pos', peso: 'leve', min: 3, cond: s => s.lucia.afin >= 45 && s.dia <= 4,
+    texto: s => ({
+      titulo: 'O grupo de crochê',
+      corpo: ['Dona Lúcia demora no balcão depois de pagar.'],
+      falas: [['Dona Lúcia', (s.flags.luciaContou ? 'Lembra que te contei da padaria que fechou? ' : 'A padaria onde a gente se encontrava fechou. ') + 'Meu grupo de crochê ficou sem lugar. Posso trazer as meninas amanhã à tarde? São cinco.']],
+    }),
+    escolhas: () => [
+      { t: 'Aceitar', sub: 'Cinco clientes juntas no meio da tarde.', ef: s => { s.amanha.clube = true; s.lucia.afin += 5; lembra('clube_aceito', 'tu aceitou receber o grupo de crochê da Dona Lúcia'); diario('Aceitei receber o grupo de crochê da Dona Lúcia.'); return 'Ela sai animada. Amanhã, lá pelas três, chegam cinco senhoras de uma vez.'; } },
+      { t: 'Dizer que o café é pequeno demais', ef: s => { s.lucia.afin -= 5; diario('Recusei o grupo de crochê da Dona Lúcia.'); return '"Entendo." Ela entende. Mas lembra.'; } },
+    ],
+  },
+  {
+    id: 'caio_show', quando: 'pos', peso: 'leve', min: 2, cond: s => s.caio.afin >= 55 && s.dia <= 4,
+    texto: () => ({
+      titulo: 'Caio e o violão',
+      corpo: ['O Caio aparece no fim do expediente com o violão nas costas.'],
+      falas: [['Caio', 'E se eu tocar aqui na sexta? Tu não me paga nada, só me dá café. Eu chamo a galera.']],
+    }),
+    escolhas: () => [
+      { t: 'Topar o show de sexta', sub: 'Muito mais gente na sexta. Prepare-se.', ef: s => { s.flags.showCaio = true; s.caio.afin += 8; lembra('show_caio', 'tu topou o show do Caio'); diario('Combinei com o Caio um show no café na sexta.'); return '"Fechado! Vai lotar, tu vai ver."'; } },
+      { t: 'Recusar', sub: 'Sexta já é corrida.', ef: s => { s.caio.afin -= 6; diario('Recusei o show do Caio.'); return 'Ele dá de ombros. "Beleza. Outra hora."'; } },
+    ],
+  },
+  {
+    id: 'caio_sumindo', quando: 'manha', peso: 'pesado', min: 3, cond: s => s.caio.semVer >= 2 && !s.flags.showCaio,
+    texto: s => ({
+      titulo: 'Mensagem do Caio',
+      corpo: [`Faz ${s.caio.semVer} noites que tu não aparece no bar do Seu Jorge. Chega uma mensagem:`],
+      falas: [['Caio', 'Sumiu, hein. Sei que o café tá puxado. Ah, o Rafa me chamou pra tocar no Grão Nobre na sexta. Tô pensando.']],
+    }),
+    escolhas: () => [
+      { t: 'Prometer aparecer hoje à noite', sub: 'Tu vai precisar cumprir.', ef: s => { s.flags.promessaCaio = s.dia; lembra('promessa_caio', 'tu prometeu ao Caio que ia aparecer'); return '"Vou cobrar, hein."'; } },
+      { t: 'Mandar um áudio pedindo desculpa', ef: s => { s.caio.afin += 3; return 'Ele responde com um emoji de joinha. Difícil saber o que significa.'; } },
+      { t: 'Deixar pra lá', sub: 'Não dá para dar conta de tudo.', ef: s => { s.flags.caioNoRafa = true; lembra('caio_largado', 'tu deixou a mensagem do Caio sem resposta'); diario('Deixei a mensagem do Caio sem resposta.'); return 'Silêncio do outro lado.'; } },
+    ],
+  },
+  {
+    id: 'rafa_proposta', quando: 'manha', peso: 'pesado', min: 3, cond: s => !s.rafa.acordo,
+    texto: s => ({
+      titulo: 'Rafa, do Grão Nobre',
+      corpo: ['O dono do café rival aparece antes de tu abrir, com as mãos no bolso.'],
+      falas: [['Rafa', 'Vou direto: teu pão de queijo é melhor que o meu. Me fornece 8 por dia que eu te pago R$ 40.' + (s.mem.favor_rafa ? ' E, convenhamos, tu me deve aquela do leite.' : '')]],
+    }),
+    escolhas: s => [
+      { t: 'Aceitar', sub: 'Toda manhã: 8 massas e 1 hora para entregar. R$ 40 por dia.', ef: s => { s.rafa.acordo = 'pao'; s.rafa.valor = 40; s.rafa.afin += 10; s.rafa.forca += 1; lembra('acordo_rafa', 'tu aceitou fornecer pão de queijo para o Rafa'); diario('Fechei acordo: forneço 8 pães de queijo por dia ao Grão Nobre por R$ 40.'); return 'Dinheiro garantido. E agora o teu pão também atrai gente para o rival.'; } },
+      { t: 'Recusar', ef: s => { s.rafa.afin -= s.mem.favor_rafa ? 15 : 5; diario('Recusei fornecer pão de queijo para o Rafa.', s.mem.favor_rafa ? 'favor_rafa' : null); return s.mem.favor_rafa ? '"Depois daquela do leite? Tá certo." Ele sai sem se despedir.' : '"Pensa com carinho." Ele sai assobiando.'; } },
+      { t: 'Contraproposta: R$ 60', sub: 'Exige saber negociar.', req: s => ({ ok: s.me.gestao >= 1, motivo: 'Precisa de gestão nível 1 (estude à noite)' }),
+        ef: s => { if (s.rafa.afin >= 0) { s.rafa.acordo = 'pao'; s.rafa.valor = 60; s.rafa.forca += 1; lembra('acordo_rafa', 'tu fechou com o Rafa a R$ 60'); diario('Negociei com o Rafa: 8 pães de queijo por dia a R$ 60.'); return 'Ele ri. "Tu aprende rápido." Aperto de mão.'; } s.rafa.afin -= 5; diario('Tentei negociar com o Rafa e ele recusou.'); return '"Com a nossa história? Não."'; } },
+    ],
+  },
+  {
+    id: 'critico', quando: 'pos', peso: 'pesado', min: 3, cond: s => s.rep >= 45 && s.dia <= 4,
+    texto: () => ({
+      titulo: 'Uma cliente pede o dono',
+      corpo: ['Ela fotografa a xícara antes de beber.'],
+      falas: [['Cliente', 'Escrevo o "Comendo pela Cidade". Volto amanhã. Não vou dizer a hora.']],
+    }),
+    escolhas: () => [
+      { t: 'Agradecer e se preparar', sub: 'Amanhã ela vem. Espresso e pão de queijo, provavelmente.', ef: s => { s.amanha.critico = true; diario('Uma blogueira de comida avisou que volta amanhã.'); return 'Ela vai pedir rápido e esperar pouco. Planeje a manhã.'; } },
+      { t: 'Pedir para ela vir num dia mais calmo', ef: s => { s.rep -= 1; diario('Pedi para a blogueira vir outro dia.'); return '"Não funciona assim." Ela não volta.'; } },
+    ],
+  },
+  {
+    id: 'esgotamento', quando: 'manha', forcado: true, peso: 'pesado', cond: s => s.me.estresse >= 85,
+    texto: () => ({ titulo: 'O corpo cobrou', corpo: ['O despertador toca e tu não consegue levantar. A cabeça lateja, o peito aperta. A manhã inteira vai embora.'] }),
+    pre: s => { s.horas = 0; lembra('esgotou', 'tu passou do limite e esgotou'); },
+    escolhas: s => [
+      { t: 'Abrir o café mesmo assim', sub: 'Descansa um pouco, mas segue no limite.', ef: s => { s.me.estresse -= 20; diario('Esgotei. Perdi a manhã e abri o café no limite.'); return 'Tu abre. Devagar.'; } },
+      { t: 'Ligar para o Caio', sub: 'Ele cuida das compras e te dá um respiro.', req: s => ({ ok: s.caio.afin >= 50, motivo: 'A amizade com o Caio precisa estar próxima' }), ef: s => { s.me.estresse -= 40; s.caio.afin += 5; s.estoque.grao += 10; diario('Esgotei. O Caio veio, fez as compras e ficou comigo.', 'esgotou'); return 'Ele chega com pão, grão e nenhuma pergunta.'; } },
+      { t: 'Abrir só à tarde', sub: 'Expediente pela metade.', ef: s => { s.me.estresse -= 50; s.mods.meioDia = true; diario('Esgotei e abri o café só à tarde.'); return 'Metade do dia. Metade da fila. Metade da receita.'; } },
+    ],
+  },
+];
+
+/* Diretor de histórias: escolhe o que acontece e quando, olhando a tensão recente */
+function diretor(quando) {
+  const ok = e => e.quando === quando && !S.vistos[e.id] && S.dia >= (e.min || 1) && e.cond(S);
+  const forcados = EV.filter(e => e.forcado && ok(e));
+  const opc = EV.filter(e => !e.forcado && ok(e));
+  const out = forcados.slice(0, 2);
+  if (out.length < 2 && opc.length && Math.random() < 0.8) {
+    let pool = opc;
+    if (S.tensao >= 3) { const leves = opc.filter(e => e.peso === 'leve'); if (leves.length) pool = leves; }
+    else if (S.tensao <= 0) { const pes = opc.filter(e => e.peso === 'pesado'); if (pes.length) pool = pes; }
+    out.push(pick(pool));
+  }
+  out.forEach(e => { S.tensao += e.peso === 'pesado' ? 2 : -1; S.tensao = Math.max(0, S.tensao); });
+  return out.map(e => e.id);
+}
+
+/* ---------- Runtime do expediente ---------- */
+function novoRuntime() {
+  return {
+    t: 0, rodando: false, pausa: false, gestao: false, sel: null, fim: false, len: DAY_LEN,
+    p: { x: 400, y: 200, hold: null, alvo: null, passo: 0 },
+    est: { moedor: { st: 'idle', t: 0, dur: 0 }, maquina: { st: 'idle', t: 0, dur: 0 }, vapor: { st: 'idle', t: 0, dur: 0 }, forno: { st: 'idle', t: 0, dur: 0 }, lixo: { st: 'idle' } },
+    clientes: [], vagas: Array(6).fill(null), agenda: [], fx: [], toast: null, nid: 1,
+    stats: { receita: 0, atendidos: 0, recusados: 0, irritados: 0, gorjeta: 0, rep0: S ? S.rep : 30 },
+    biaTrab: false,
+  };
+}
+function procMult() {
+  let m = 1 - 0.07 * nivelCoz();
+  m *= 1 + Math.max(0, S.me.estresse - 50) / 100;
+  if (S.mods.organizado) m *= 0.92;
+  return m;
+}
+function biaMult() { return 1 + Math.max(0, S.bia.estresse - 50) / 80; }
+function biaTrabalhando() {
+  return biaAtiva() && !S.mods.biaFolga && (S.bia.regime === 'integral' || R.t < R.len / 2);
+}
+function toast(txt) { R.toast = { txt, t: 0 }; }
+function fx(x, y, txt, cor) { R.fx.push({ x, y, txt, cor, t: 0 }); }
+
+function iniciarExpediente() {
+  R = novoRuntime();
+  R.rodando = true;
+  R.len = S.mods.meioDia ? DAY_LEN / 2 : DAY_LEN;
+  R.biaTrab = biaAtiva() && !S.mods.biaFolga;
+  const n = Math.max(6, Math.round(18 * demanda() * (R.len / DAY_LEN) * (S.dia === 1 ? 0.7 : 1)));
+  for (let i = 0; i < n; i++) R.agenda.push({ t: 4 + (R.len - 30) * (i + Math.random() * 0.85) / n, tipo: 'normal' });
+  if (S.lucia.afin > 5) R.agenda.push({ t: R.len * 0.22, tipo: 'lucia' });
+  else if (!S.flags.luciaSumiu) { S.flags.luciaSumiu = true; diario('A Dona Lúcia não veio. Disseram que ela agora toma café na padaria nova.', S.mem.lucia_preco ? 'lucia_preco' : 'lucia_esperou'); }
+  if (S.mods.critico) R.agenda.push({ t: R.len * rnd(0.3, 0.65), tipo: 'critico' });
+  if (S.mods.clube) for (let i = 0; i < 5; i++) R.agenda.push({ t: R.len * 0.55 + i * 1.8, tipo: 'clube' });
+  R.agenda.sort((a, b) => a.t - b.t);
+  S.flags.luciaPagouAlto = false;
+}
+
+function gerarPedido() {
+  const opts = [['espresso', 0.4], ['cappuccino', 0.35], ['pao', 0.25]].filter(([i]) => !(i === 'pao' && S.mods.semPao));
+  const tot = opts.reduce((a, o) => a + o[1], 0);
+  const sorteia = () => { let r = Math.random() * tot; for (const [i, w] of opts) { if ((r -= w) <= 0) return i; } return opts[0][0]; };
+  const ped = [sorteia()];
+  if (Math.random() < 0.3) ped.push(!S.mods.semPao && Math.random() < 0.6 ? 'pao' : sorteia());
+  return ped.map(i => (i === 'cappuccino' && S.mods.semCappuccino ? 'espresso' : i));
+}
+
+function spawn(a) {
+  const v = R.vagas.indexOf(null);
+  if (v < 0) {
+    R.stats.recusados++; S.rep -= 0.5;
+    fx(760, 420, 'fila cheia, foi embora', '#ec6b5d');
+    if (a.tipo === 'lucia') { S.lucia.afin -= 6; }
+    if (a.tipo === 'critico') { S.rep -= 10; diario('A blogueira viu a fila cheia e foi embora. A resenha saiu falando da espera.'); }
+    return;
+  }
+  let pac = 38 * PAC_PRECO[S.preco] * (S.mods.chuva ? 1.3 : 1);
+  let ped = gerarPedido(), nome = null, cor = pick(CORES_CLIENTE);
+  if (a.tipo === 'lucia') { ped = [S.mods.semCappuccino ? 'espresso' : 'cappuccino']; nome = 'Dona Lúcia'; pac = 42; cor = '#b98bd0'; }
+  if (a.tipo === 'critico') { ped = S.mods.semPao ? ['espresso'] : ['espresso', 'pao']; nome = 'Blogueira'; pac = 28; cor = '#e0e0e0'; }
+  if (a.tipo === 'clube') { ped = [Math.random() < 0.6 ? (S.mods.semCappuccino ? 'espresso' : 'cappuccino') : (S.mods.semPao ? 'espresso' : 'pao')]; nome = 'Crochê'; pac = 52; cor = pick(['#c77fa0', '#b98bd0', '#d39a4a']); }
+  const c = { id: R.nid++, x: PORTA.x, y: PORTA.y, tx: VAGAS[v], ty: VAGA_Y, vaga: v, ped: ped.slice(), rest: ped.slice(), pac, pacMax: pac, estado: 'chegando', cor, nome, tipo: a.tipo };
+  R.vagas[v] = c.id;
+  R.clientes.push(c);
+}
+
+function interagir(id) {
+  const p = R.p, h = p.hold;
+  if (id === 'entrega') return entregar();
+  const s = R.est[id];
+  if (id === 'moedor') {
+    if (s.st === 'ready' && !h) { p.hold = 'po'; s.st = 'idle'; }
+    else if (s.st === 'idle' && !h) { if (S.estoque.grao > 0) { S.estoque.grao--; s.st = 'working'; s.t = 0; s.dur = BASE_T.moedor * procMult(); } else toast('Acabou o grão. Compre de manhã.'); }
+    else if (s.st === 'working') toast('Moendo...');
+    else if (h) toast('Mãos ocupadas.');
+  } else if (id === 'maquina') {
+    if (s.st === 'ready' && !h) { p.hold = 'espresso'; s.st = 'idle'; }
+    else if (s.st === 'ready' && h === 'po') { p.hold = 'espresso'; s.st = 'working'; s.t = 0; s.dur = BASE_T.maquina * procMult(); s.bia = false; toast('Trocou: deixou o pó e pegou o espresso.'); }
+    else if (s.st === 'idle' && h === 'po') { p.hold = null; s.st = 'working'; s.t = 0; s.dur = BASE_T.maquina * procMult(); s.bia = false; }
+    else if (s.st === 'idle' && !h) toast('A máquina precisa de pó do moedor.');
+    else if (s.st === 'working') toast(s.bia ? 'A Bia está usando a máquina.' : 'Extraindo...');
+    else toast('Isso não vai na máquina.');
+  } else if (id === 'vapor') {
+    if (s.st === 'ready' && !h) { p.hold = 'cappuccino'; s.st = 'idle'; }
+    else if (s.st === 'ready' && h === 'espresso' && S.estoque.leite > 0) { S.estoque.leite--; p.hold = 'cappuccino'; s.st = 'working'; s.t = 0; s.dur = BASE_T.vapor * procMult(); toast('Trocou: deixou o espresso e pegou o cappuccino.'); }
+    else if (s.st === 'idle' && h === 'espresso') { if (S.mods.semCappuccino) toast('Cappuccino fora do cardápio hoje.'); else if (S.estoque.leite > 0) { S.estoque.leite--; p.hold = null; s.st = 'working'; s.t = 0; s.dur = BASE_T.vapor * procMult(); } else toast('Acabou o leite.'); }
+    else if (s.st === 'idle') toast('Traga um espresso para virar cappuccino.');
+    else if (s.st === 'working') toast('Vaporizando...');
+  } else if (id === 'forno') {
+    if (!h && S.fornoPaes > 0) { p.hold = 'pao'; S.fornoPaes--; }
+    else if (!h && s.st === 'idle') { if (S.mods.semPao) toast('Pão de queijo fora do cardápio hoje.'); else if (S.estoque.massa >= 4) { S.estoque.massa -= 4; s.st = 'working'; s.t = 0; s.dur = BASE_T.forno * procMult(); toast('Assando 4 pães.'); } else toast('Falta massa (precisa de 4).'); }
+    else if (s.st === 'working') toast('Assando...');
+    else toast('Mãos ocupadas.');
+  } else if (id === 'lixo') {
+    if (h) { toast('Jogou fora: ' + ITEM_NOME[h] + '.'); p.hold = null; } else toast('Lixo.');
+  }
+}
+
+function entregar() {
+  const h = R.p.hold;
+  if (!h) return toast('Pegue um pedido pronto primeiro.');
+  if (h === 'po') return toast('Pó não se serve. Leve à máquina.');
+  const cands = R.clientes.filter(c => c.estado === 'espera' && c.rest.includes(h)).sort((a, b) => a.pac - b.pac);
+  if (!cands.length) return toast('Ninguém está esperando ' + ITEM_NOME[h] + '.');
+  const c = cands[0];
+  c.rest.splice(c.rest.indexOf(h), 1);
+  R.p.hold = null;
+  if (c.rest.length) { fx(c.x, c.y - 50, 'falta 1', '#f0b23a'); return; }
+  pagar(c);
+}
+
+function pagar(c) {
+  const normal = c.tipo === 'lucia' && S.flags.luciaPrecoAntigo;
+  let total = c.ped.reduce((a, i) => a + precoItem(i, normal), 0);
+  const frac = c.pac / c.pacMax;
+  let gorj = frac > 0.7 ? Math.round(rnd(1, 3)) : 0;
+  S.caixa += total + gorj; R.stats.receita += total; R.stats.gorjeta += gorj; R.stats.atendidos++;
+  S.rep += frac > 0.5 ? 0.7 : 0.25;
+  fx(c.x, c.y - 50, '+' + brl(total + gorj), '#62c98f');
+  if (c.tipo === 'lucia') {
+    S.lucia.afin += frac > 0.5 ? 6 : 2;
+    if (!S.flags.luciaAtendida) { S.flags.luciaAtendida = true; diario('Conheci a Dona Lúcia. Pede cappuccino e chega sempre no meio da manhã.'); }
+    if (S.preco === 'alto' && !normal) S.flags.luciaPagouAlto = true;
+    if (S.mods.semCappuccino) { S.lucia.afin -= 3; fx(c.x, c.y - 66, '"sem o meu cappuccino?"', '#e8c35a'); }
+  }
+  if (c.tipo === 'critico') { S.rep += frac > 0.4 ? 10 : 3; diario(frac > 0.4 ? 'A blogueira foi atendida rápido. A resenha saiu elogiando o café.' : 'A blogueira foi atendida, mas esperou. A resenha saiu morna.'); }
+  if (c.tipo === 'clube') { S.lucia.afin += 2; R.stats.clube = (R.stats.clube || 0) + 1; }
+  sair(c);
+}
+function sair(c) {
+  c.estado = 'saindo'; c.tx = PORTA.x; c.ty = PORTA.y;
+  if (R.vagas[c.vaga] === c.id) R.vagas[c.vaga] = null;
+}
+
+function atualizar(dt) {
+  if (!R.rodando || R.pausa) return;
+  dt *= R.gestao ? 0.25 : 1;
+  R.t += dt;
+  while (R.agenda.length && R.agenda[0].t <= R.t) spawn(R.agenda.shift());
+  // jogador
+  const p = R.p;
+  if (!R.gestao) {
+    const vel = 230 / (1 + Math.max(0, S.me.estresse - 50) / 100);
+    let dx = 0, dy = 0;
+    if (teclas.has('ArrowLeft') || teclas.has('a')) dx--;
+    if (teclas.has('ArrowRight') || teclas.has('d')) dx++;
+    if (teclas.has('ArrowUp') || teclas.has('w')) dy--;
+    if (teclas.has('ArrowDown') || teclas.has('s')) dy++;
+    if (dx || dy) { p.alvo = null; const l = Math.hypot(dx, dy); p.x += dx / l * vel * dt; p.y += dy / l * vel * dt; p.passo += dt; }
+    else if (p.alvo) {
+      const ddx = p.alvo.x - p.x, ddy = p.alvo.y - p.y, d = Math.hypot(ddx, ddy);
+      if (d < 5) { const id = p.alvo.st; p.alvo = null; if (id) interagir(id); }
+      else { const st = Math.min(d, vel * dt); p.x += ddx / d * st; p.y += ddy / d * st; p.passo += dt; }
+    }
+    p.x = clamp(p.x, LIM.x0, LIM.x1); p.y = clamp(p.y, LIM.y0, LIM.y1);
+  }
+  // estações
+  for (const id of ['moedor', 'maquina', 'vapor', 'forno']) {
+    const s = R.est[id];
+    if (s.st === 'working') {
+      s.t += dt;
+      if (s.t >= s.dur) {
+        if (id === 'forno') { S.fornoPaes += 4; s.st = 'idle'; if (!s.bia) S.me.cozXp += 3; }
+        else { s.st = 'ready'; if (!s.bia && id !== 'moedor') S.me.cozXp += 3; }
+        s.bia = false;
+      }
+    }
+  }
+  // Bia
+  if (biaTrabalhando()) {
+    if (S.bia.papel === 'cafe') {
+      const m = R.est.maquina;
+      if (m.st === 'idle' && S.estoque.grao > 0) { S.estoque.grao--; m.st = 'working'; m.t = 0; m.dur = 5 * biaMult(); m.bia = true; }
+    } else if (S.bia.papel === 'forno') {
+      const f = R.est.forno;
+      if (f.st === 'idle' && S.fornoPaes <= 2 && S.estoque.massa >= 4 && !S.mods.semPao) { S.estoque.massa -= 4; f.st = 'working'; f.t = 0; f.dur = BASE_T.forno * 1.1 * biaMult(); f.bia = true; }
+    }
+  }
+  // clientes
+  let esperando = 0;
+  for (const c of R.clientes) {
+    const ddx = c.tx - c.x, ddy = c.ty - c.y, d = Math.hypot(ddx, ddy);
+    if (d > 2) { const st = Math.min(d, 140 * dt); c.x += ddx / d * st; c.y += ddy / d * st; }
+    else if (c.estado === 'chegando') c.estado = 'espera';
+    if (c.estado === 'espera') {
+      esperando++;
+      c.pac -= dt;
+      if (c.pac <= 0) {
+        R.stats.irritados++; S.rep -= 1.5; S.me.estresse += 3;
+        fx(c.x, c.y - 50, 'foi embora irritado', '#ec6b5d');
+        if (c.tipo === 'lucia') { S.lucia.afin -= 10; lembra('lucia_esperou', 'a Dona Lúcia foi embora sem ser atendida'); diario('A Dona Lúcia cansou de esperar e foi embora.'); }
+        if (c.tipo === 'critico') { S.rep -= 10; diario('A blogueira cansou de esperar. A resenha saiu falando mal do atendimento.'); }
+        if (c.tipo === 'clube') S.lucia.afin -= 3;
+        sair(c);
+      }
+    }
+  }
+  R.clientes = R.clientes.filter(c => !(c.estado === 'saindo' && Math.hypot(c.tx - c.x, c.ty - c.y) < 3));
+  S.me.estresse = clamp(S.me.estresse + dt * (0.03 + 0.015 * esperando), 0, 100);
+  S.rep = clamp(S.rep, 0, 100);
+  for (const f of R.fx) f.t += dt;
+  R.fx = R.fx.filter(f => f.t < 1.4);
+  if (R.toast) { R.toast.t += dt; if (R.toast.t > 2.2) R.toast = null; }
+  // fim do dia
+  if (R.t >= R.len) {
+    const ativos = R.clientes.filter(c => c.estado !== 'saindo').length;
+    if ((!ativos && !R.agenda.length) || R.t >= R.len + GRACE) {
+      R.clientes.filter(c => c.estado !== 'saindo').forEach(c => { R.stats.irritados++; sair(c); });
+      R.agenda = [];
+      fimExpediente();
+    }
+  }
+}
+
+/* ---------- Desenho ---------- */
+const DPR = Math.min(2, window.devicePixelRatio || 1);
+cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+const fundo = document.createElement('canvas');
+fundo.width = W * DPR; fundo.height = H * DPR;
+(function pintaFundo() {
+  const g = fundo.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  // parede
+  g.fillStyle = '#26456b'; g.fillRect(0, 0, W, 46);
+  g.fillStyle = '#1d3757'; g.fillRect(0, 40, W, 6);
+  for (let x = 30; x < W; x += 150) { g.fillStyle = '#6b4a30'; g.fillRect(x, 16, 90, 5); g.fillStyle = '#e8d9b8'; for (let k = 0; k < 4; k++) g.fillRect(x + 8 + k * 20, 6, 10, 10); }
+  // azulejo da cozinha
+  for (let y = 46; y < 282; y += 30) for (let x = 0; x < W; x += 30) {
+    g.fillStyle = ((x + y) / 30) % 2 ? '#e7edf4' : '#dde6f0'; g.fillRect(x, y, 30, 30);
+    g.strokeStyle = 'rgba(58,105,170,.35)'; g.lineWidth = 1.2;
+    g.beginPath(); g.moveTo(x + 15, y + 5); g.lineTo(x + 25, y + 15); g.lineTo(x + 15, y + 25); g.lineTo(x + 5, y + 15); g.closePath(); g.stroke();
+    g.fillStyle = 'rgba(58,105,170,.45)'; g.beginPath(); g.arc(x + 15, y + 15, 2, 0, 7); g.fill();
+  }
+  // salão (madeira)
+  for (let y = 320; y < H; y += 18) { g.fillStyle = (y / 18) % 2 ? '#6c4832' : '#76503a'; g.fillRect(0, y, W, 18); g.fillStyle = 'rgba(0,0,0,.12)'; for (let x = (y * 7) % 120; x < W; x += 120) g.fillRect(x, y, 2, 18); }
+  // mesas
+  [[90, 440], [210, 470], [620, 455]].forEach(([x, y]) => { g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(x + 3, y + 6, 30, 12, 0, 0, 7); g.fill(); g.fillStyle = '#c99a62'; g.beginPath(); g.ellipse(x, y, 30, 14, 0, 0, 7); g.fill(); g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(x - 6, y - 2, 4, 0, 7); g.fill(); });
+  // porta
+  g.fillStyle = '#3a2618'; g.fillRect(770, 410, 30, 90); g.fillStyle = '#f0b23a'; g.fillRect(774, 414, 4, 82);
+  // balcão
+  g.fillStyle = '#8a5734'; g.fillRect(40, 286, 720, 36);
+  g.fillStyle = '#e4d6bd'; g.fillRect(36, 278, 728, 14);
+  g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(40, 316, 720, 6);
+})();
+
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+function desenhaItem(item, x, y, s = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  if (item === 'po') { ctx.fillStyle = '#5a3a22'; ctx.beginPath(); ctx.ellipse(0, 3, 9, 5, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#7a5232'; ctx.beginPath(); ctx.ellipse(0, 0, 6, 4, 0, 0, 7); ctx.fill(); }
+  if (item === 'espresso') { ctx.fillStyle = '#f4f1ea'; rr(-6, -4, 12, 10, 3); ctx.fill(); ctx.fillStyle = '#c88a48'; ctx.beginPath(); ctx.ellipse(0, -3, 5, 2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#f4f1ea'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(7, 1, 3, -1.4, 1.4); ctx.stroke(); }
+  if (item === 'cappuccino') { ctx.fillStyle = '#f4f1ea'; rr(-8, -5, 16, 13, 4); ctx.fill(); ctx.fillStyle = '#b07a46'; ctx.beginPath(); ctx.ellipse(0, -4, 7, 3, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, -4, 3.5, 1.6, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#f4f1ea'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(9, 1, 3.5, -1.4, 1.4); ctx.stroke(); }
+  if (item === 'pao') { ctx.fillStyle = '#d9a441'; ctx.beginPath(); ctx.arc(0, 0, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#f1cf7a'; ctx.beginPath(); ctx.arc(-2, -2, 3, 0, 7); ctx.fill(); }
+  ctx.restore();
+}
+function desenhaEstacao(id, slotId) {
+  const s = SLOTS[slotId], d = ST_DEF[id], e = R.est[id];
+  const x = s.x - SW / 2, y = s.y - SH / 2;
+  ctx.fillStyle = 'rgba(0,0,0,.22)'; rr(x + 3, y + 5, SW, SH, 8); ctx.fill();
+  ctx.fillStyle = d.cor; rr(x, y, SW, SH, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.12)'; rr(x + 4, y + 4, SW - 8, 10, 4); ctx.fill();
+  ctx.save(); ctx.translate(s.x, s.y + 2); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2.5;
+  if (id === 'moedor') { ctx.beginPath(); ctx.moveTo(-10, -12); ctx.lineTo(10, -12); ctx.lineTo(5, 2); ctx.lineTo(-5, 2); ctx.closePath(); ctx.fill(); ctx.fillRect(-7, 4, 14, 8); }
+  if (id === 'maquina') { ctx.fillRect(-16, -12, 32, 8); ctx.fillRect(-3, -4, 6, 6); ctx.strokeRect(-9, 6, 18, 6); }
+  if (id === 'vapor') { ctx.beginPath(); ctx.arc(-6, -2, 6, 0, 7); ctx.arc(4, -6, 7, 0, 7); ctx.arc(8, 2, 5, 0, 7); ctx.fill(); ctx.fillRect(-2, 6, 4, 8); }
+  if (id === 'forno') { ctx.strokeRect(-16, -12, 32, 24); ctx.fillStyle = e.st === 'working' ? '#ffb347' : 'rgba(255,255,255,.3)'; ctx.fillRect(-11, -6, 22, 13); }
+  if (id === 'lixo') { ctx.fillRect(-9, -8, 18, 4); ctx.beginPath(); ctx.moveTo(-8, -3); ctx.lineTo(8, -3); ctx.lineTo(6, 13); ctx.lineTo(-6, 13); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+  ctx.fillStyle = '#10213a'; ctx.font = '700 11px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.textAlign = 'center';
+  const ly = s.p === 'parede' ? y + SH + 13 : y + SH + 13;
+  ctx.fillStyle = s.p === 'parede' ? '#1d3757' : '#f2e6d0'; ctx.fillText(d.nome, s.x, ly);
+  if (e.st === 'working') { const k = clamp(e.t / e.dur, 0, 1); ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(x + 8, y - 10, SW - 16, 6, 3); ctx.fill(); ctx.fillStyle = e.bia ? '#7fc4ff' : '#f0b23a'; rr(x + 8, y - 10, (SW - 16) * k, 6, 3); ctx.fill(); }
+  if (e.st === 'ready') { const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180); ctx.strokeStyle = `rgba(98,201,143,${0.5 + pulse * 0.5})`; ctx.lineWidth = 3; rr(x - 2, y - 2, SW + 4, SH + 4, 10); ctx.stroke(); desenhaItem(id === 'moedor' ? 'po' : id === 'maquina' ? 'espresso' : 'cappuccino', s.x + SW / 2 - 10, y + 8, 1); }
+  if (id === 'forno' && S.fornoPaes > 0) { ctx.fillStyle = '#f0b23a'; ctx.beginPath(); ctx.arc(x + SW - 4, y + 4, 11, 0, 7); ctx.fill(); ctx.fillStyle = '#2a1c05'; ctx.font = '700 12px "IBM Plex Mono", monospace'; ctx.fillText(S.fornoPaes, x + SW - 4, y + 8); }
+  if (R.gestao && R.sel === id) { ctx.strokeStyle = '#f0b23a'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]); rr(x - 4, y - 4, SW + 8, SH + 8, 10); ctx.stroke(); ctx.setLineDash([]); }
+}
+function desenhaPessoa(x, y, cor, opts = {}) {
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + 12, 13, 5, 0, 0, 7); ctx.fill();
+  const bob = opts.passo ? Math.sin(opts.passo * 14) * 1.5 : 0;
+  ctx.fillStyle = cor; rr(x - 11, y - 8 + bob, 22, 22, 9); ctx.fill();
+  if (opts.avental) { ctx.fillStyle = opts.avental; rr(x - 7, y - 2 + bob, 14, 15, 4); ctx.fill(); }
+  ctx.fillStyle = opts.pele || '#e2b48c'; ctx.beginPath(); ctx.arc(x, y - 16 + bob, 9, 0, 7); ctx.fill();
+  ctx.fillStyle = opts.cabelo || '#3b2a1e'; ctx.beginPath(); ctx.arc(x, y - 19 + bob, 9, Math.PI, 0); ctx.fill();
+}
+function desenhar() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(fundo, 0, 0, W, H);
+  // entrega
+  ctx.fillStyle = '#f0b23a'; rr(ENTREGA.x - 42, ENTREGA.y - 20, 84, 34, 8); ctx.fill();
+  ctx.fillStyle = '#2a1c05'; ctx.font = '700 12px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ENTREGA', ENTREGA.x, ENTREGA.y + 2);
+  ctx.beginPath(); ctx.arc(ENTREGA.x, ENTREGA.y - 12, 5, Math.PI, 0); ctx.fill();
+  // slots vazios no modo gestão
+  if (R.gestao) {
+    const ocupados = new Set(Object.values(S.layout));
+    for (const [sid, s] of Object.entries(SLOTS)) if (!ocupados.has(sid)) { ctx.strokeStyle = 'rgba(240,178,58,.8)'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); rr(s.x - SW / 2, s.y - SH / 2, SW, SH, 8); ctx.stroke(); ctx.setLineDash([]); }
+  }
+  for (const [id, sid] of Object.entries(S.layout)) desenhaEstacao(id, sid);
+  // pessoas, ordenadas por y
+  const ents = [];
+  for (const c of R.clientes) ents.push({ y: c.y, f: () => desenhaCliente(c) });
+  if (R.rodando && biaTrabalhando()) {
+    const pt = pontoDe(S.layout[S.bia.papel === 'cafe' ? 'maquina' : 'forno']);
+    const bx = clamp(pt.x + 34, LIM.x0, LIM.x1), by = pt.y;
+    ents.push({ y: by, f: () => { desenhaPessoa(bx, by, '#3d6fa8', { avental: '#2f7f6a', cabelo: '#6b3a1f', passo: performance.now() / 1000 * 0.3 }); rotulo(bx, by - 34, 'Bia'); } });
+  }
+  ents.push({ y: R.p.y, f: () => { desenhaPessoa(R.p.x, R.p.y, '#2c3e5c', { avental: '#f0b23a', passo: R.p.passo }); if (R.p.hold) { ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.beginPath(); ctx.arc(R.p.x, R.p.y - 40, 13, 0, 7); ctx.fill(); desenhaItem(R.p.hold, R.p.x, R.p.y - 40, 1); } } });
+  ents.sort((a, b) => a.y - b.y).forEach(e => e.f());
+  // fx
+  ctx.textAlign = 'center';
+  for (const f of R.fx) { ctx.globalAlpha = 1 - f.t / 1.4; ctx.fillStyle = f.cor; ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.strokeStyle = 'rgba(10,20,35,.8)'; ctx.lineWidth = 3; ctx.strokeText(f.txt, f.x, f.y - f.t * 26); ctx.fillText(f.txt, f.x, f.y - f.t * 26); }
+  ctx.globalAlpha = 1;
+  if (R.toast) { ctx.font = '700 14px "Atkinson Hyperlegible", system-ui, sans-serif'; const w = ctx.measureText(R.toast.txt).width + 28; ctx.fillStyle = 'rgba(14,24,40,.9)'; rr(W / 2 - w / 2, 52, w, 30, 15); ctx.fill(); ctx.fillStyle = '#eaf0f8'; ctx.fillText(R.toast.txt, W / 2, 72); }
+  if (R.rodando && R.t >= R.len) { ctx.fillStyle = 'rgba(14,24,40,.85)'; rr(W / 2 - 120, 90, 240, 28, 14); ctx.fill(); ctx.fillStyle = '#f0b23a'; ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.fillText('Placa virada. Atenda quem ficou.', W / 2, 109); }
+  if (R.pausa) { ctx.fillStyle = 'rgba(8,14,26,.6)'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#eaf0f8'; ctx.font = '800 34px "Bricolage Grotesque", sans-serif'; ctx.fillText('Pausado', W / 2, H / 2); ctx.font = '400 14px "Atkinson Hyperlegible", sans-serif'; ctx.fillText('Esc ou o botão Retomar para voltar', W / 2, H / 2 + 26); }
+  if (R.gestao && R.rodando) { ctx.fillStyle = 'rgba(240,178,58,.12)'; ctx.fillRect(0, 0, W, H); }
+}
+function rotulo(x, y, txt) {
+  ctx.font = '700 11px "Atkinson Hyperlegible", system-ui, sans-serif'; const w = ctx.measureText(txt).width + 12;
+  ctx.fillStyle = 'rgba(14,24,40,.82)'; rr(x - w / 2, y - 11, w, 16, 8); ctx.fill(); ctx.fillStyle = '#f0b23a'; ctx.textAlign = 'center'; ctx.fillText(txt, x, y + 1);
+}
+function desenhaCliente(c) {
+  desenhaPessoa(c.x, c.y, c.cor, { pele: c.tipo === 'lucia' ? '#e9c4a4' : undefined, cabelo: c.tipo === 'lucia' || c.tipo === 'clube' ? '#cfcfd6' : undefined, passo: c.estado !== 'espera' ? performance.now() / 1000 : 0 });
+  if (c.nome) rotulo(c.x, c.y + 28, c.nome);
+  if (c.estado === 'espera' && c.rest.length) {
+    const w = 14 + c.rest.length * 22, bx = c.x - w / 2, by = c.y - 66;
+    ctx.fillStyle = '#fbf8f2'; rr(bx, by, w, 26, 8); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(c.x - 5, by + 26); ctx.lineTo(c.x + 5, by + 26); ctx.lineTo(c.x, by + 32); ctx.fill();
+    c.rest.forEach((it, i) => desenhaItem(it, bx + 18 + i * 22, by + 13, 0.95));
+    const k = clamp(c.pac / c.pacMax, 0, 1);
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; rr(c.x - 18, by - 8, 36, 5, 2.5); ctx.fill();
+    ctx.fillStyle = k > 0.5 ? '#62c98f' : k > 0.25 ? '#e8c35a' : '#ec6b5d'; rr(c.x - 18, by - 8, 36 * k, 5, 2.5); ctx.fill();
+  }
+}
+
+/* ---------- Entrada ---------- */
+const teclas = new Set();
+addEventListener('keydown', e => {
+  if (!$('#veu').hidden) return;
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (R.rodando) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(k)) e.preventDefault();
+    if (k === 'Escape') return alternaPausa();
+    if (k === 'g') return alternaGestao();
+    if ((k === 'e' || k === ' ') && !R.gestao && !R.pausa) {
+      let melhor = null, md = 62;
+      for (const [id, sid] of Object.entries(S.layout)) { const pt = pontoDe(sid), d = Math.hypot(pt.x - R.p.x, pt.y - R.p.y); if (d < md) { md = d; melhor = id; } }
+      const de = Math.hypot(ENTREGA.x - R.p.x, ENTREGA.y - 44 - R.p.y); if (de < md) melhor = 'entrega';
+      if (melhor) interagir(melhor);
+      return;
+    }
+  }
+  teclas.add(k);
+});
+addEventListener('keyup', e => teclas.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key));
+addEventListener('blur', () => teclas.clear());
+
+function hitEstacao(x, y) {
+  for (const [id, sid] of Object.entries(S.layout)) { const s = SLOTS[sid]; if (Math.abs(x - s.x) <= SW / 2 + 4 && Math.abs(y - s.y) <= SH / 2 + 8) return id; }
+  return null;
+}
+function hitSlot(x, y) {
+  for (const [sid, s] of Object.entries(SLOTS)) if (Math.abs(x - s.x) <= SW / 2 && Math.abs(y - s.y) <= SH / 2) return sid;
+  return null;
+}
+cv.addEventListener('pointerdown', e => {
+  const r = cv.getBoundingClientRect();
+  const x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
+  if (R.gestao) {
+    const st = hitEstacao(x, y);
+    if (!R.sel) { if (st) R.sel = st; return; }
+    const sid = hitSlot(x, y);
+    if (!sid) { R.sel = null; return; }
+    const dono = Object.keys(S.layout).find(k => S.layout[k] === sid);
+    if (dono === R.sel) { R.sel = null; return; }
+    if (dono) S.layout[dono] = S.layout[R.sel];
+    S.layout[R.sel] = sid; R.sel = null;
+    return;
+  }
+  if (!R.rodando || R.pausa) return;
+  if (Math.abs(x - ENTREGA.x) <= 46 && Math.abs(y - ENTREGA.y) <= 24) { R.p.alvo = { x: ENTREGA.x, y: ENTREGA.y - 44, st: 'entrega' }; return; }
+  const st = hitEstacao(x, y);
+  if (st) { const pt = pontoDe(S.layout[st]); R.p.alvo = { x: clamp(pt.x, LIM.x0, LIM.x1), y: clamp(pt.y, LIM.y0, LIM.y1), st }; return; }
+  if (y > 46 && y < 282) R.p.alvo = { x: clamp(x, LIM.x0, LIM.x1), y: clamp(y, LIM.y0, LIM.y1), st: null };
+});
+
+function alternaPausa() { if (!R.rodando) return; R.pausa = !R.pausa; atualizaTopo(); }
+function alternaGestao() { if (!R.rodando) return; R.gestao = !R.gestao; R.sel = null; $('#barraGestao').hidden = !R.gestao; $('#txtGestao').textContent = 'Gestão no expediente: o tempo corre a 25% e tu fica parado. Toque numa estação e depois num espaço para trocar.'; atualizaTopo(); }
+$('#bPausa').onclick = alternaPausa;
+$('#bGestao').onclick = alternaGestao;
+$('#bConcluiGestao').onclick = () => { if (R.rodando) alternaGestao(); else { R.gestao = false; R.sel = null; $('#barraGestao').hidden = true; mostraManha(); } };
+$('#bDiario').onclick = () => { if (trava) return; if (R.rodando && !R.pausa) alternaPausa(); mostraDiario(); };
+
+/* ---------- Interface: topo e painel ---------- */
+function horaTxt() {
+  if (S.fase === 'expediente') { const k = clamp(R.t / R.len, 0, 1); const ini = S.mods.meioDia ? 13 : 9; const tot = (S.mods.meioDia ? 4 : 8) * 60 * k; const h = ini + Math.floor(tot / 60), m = Math.floor(tot % 60 / 10) * 10; return `${h}h${String(m).padStart(2, '0')}`; }
+  if (S.fase === 'manha') return `${10 - S.horas}h`;
+  if (S.fase === 'noite') return `${21 - S.horas}h`;
+  return '—';
+}
+let ultimoTopo = '';
+function atualizaTopo() {
+  const s = [S.fase === 'titulo' ? '—' : `${S.dia}/5 · ${NOME_DIA[S.dia - 1]}`, horaTxt(), brl(S.caixa), Math.round(S.rep) + '', R.rodando, R.pausa, R.gestao].join('|');
+  if (s === ultimoTopo) return; ultimoTopo = s;
+  $('#hDia').textContent = S.fase === 'titulo' ? '—' : `${S.dia}/5 ${NOME_DIA[S.dia - 1]}`;
+  $('#hHora').textContent = horaTxt();
+  $('#hCaixa').textContent = brl(S.caixa);
+  $('#hCaixa').style.color = S.caixa < 60 ? 'var(--ruim)' : '';
+  $('#hRep').textContent = Math.round(S.rep);
+  $('#bPausa').hidden = !R.rodando; $('#bGestao').hidden = !R.rodando;
+  $('#bPausa').textContent = R.pausa ? 'Retomar (Esc)' : 'Pausar (Esc)';
+  $('#bGestao').textContent = R.gestao ? 'Sair da gestão (G)' : 'Gestão (G)';
+}
+function medidor(v, ruimAlto = true) {
+  const k = clamp(v, 0, 100); const cor = ruimAlto ? (k > 70 ? 'var(--ruim)' : k > 50 ? 'var(--aviso)' : 'var(--bom)') : 'var(--acento)';
+  return `<div class="medidor"><i style="width:${k}%;background:${cor}"></i></div>`;
+}
+function renderPainel() {
+  const e = S.estoque;
+  const baixo = (v, lim) => v <= lim ? ' class="neg"' : '';
+  const nv = nivelCoz();
+  let h = `<div><h3>Estoque</h3>
+    <div class="linha-kv"><span>Grão</span><b${baixo(e.grao, 5)}>${e.grao} doses</b></div>
+    <div class="linha-kv"><span>Leite</span><b${baixo(e.leite, 3)}>${e.leite} doses</b></div>
+    <div class="linha-kv"><span>Massa de pão</span><b${baixo(e.massa, 4)}>${e.massa}</b></div>
+    <div class="linha-kv"><span>Pães prontos no forno</span><b>${S.fornoPaes}</b></div></div>
+  <div><h3>Você</h3>
+    <div class="linha-kv"><span>Estresse</span><b>${Math.round(S.me.estresse)}</b></div>${medidor(S.me.estresse)}
+    <div class="linha-kv" style="margin-top:6px"><span>Cozinha</span><b>nível ${nv}${nv < 3 ? ` · ${S.me.cozXp % 60}/60` : ''}</b></div>
+    <div class="linha-kv"><span>Gestão</span><b>nível ${S.me.gestao}</b></div>
+    ${S.me.estresse > 50 ? `<p class="dica" style="margin:6px 0 0">Acima de 50, tu anda e trabalha mais devagar.</p>` : ''}</div>`;
+  if (biaAtiva()) h += `<div><h3>Equipe</h3>
+    <div class="linha-kv"><span>Bia · ${S.bia.regime === 'integral' ? 'integral' : 'meio período'}</span><b>${S.mods.biaFolga ? 'de folga' : S.bia.papel === 'cafe' ? 'máquina' : 'forno'}</b></div>
+    <div class="linha-kv"><span>Estresse dela</span><b>${Math.round(S.bia.estresse)}</b></div>${medidor(S.bia.estresse)}</div>`;
+  h += `<div><h3>Pessoas</h3>
+    ${S.flags.luciaAtendida ? `<div class="linha-kv"><span>Dona Lúcia</span><span class="pilula">${relacao(S.lucia.afin)}</span></div>` : ''}
+    <div class="linha-kv"><span>Caio (amigo)</span><span class="pilula">${relacao(S.caio.afin)}</span></div>
+    <div class="linha-kv"><span>Rafa (rival)</span><span class="pilula">${relacao(S.rafa.afin)}</span></div>
+    ${S.bia.foiRafa || (S.mem.bia_recusada && S.vistos.bia_no_rival) ? `<div class="linha-kv"><span>Bia</span><span class="pilula ruim">no Grão Nobre</span></div>` : ''}</div>
+  <div class="dica"><h3>Como jogar</h3>Toque numa estação para ir até ela e usar. Teclado: <kbd>WASD</kbd> ou setas e <kbd>E</kbd>.<br>Grão → <b>Moedor</b> → pó → <b>Máquina</b> → espresso. Espresso → <b>Vaporizador</b> → cappuccino. <b>Forno</b> assa 4 pães. Leve à <b>Entrega</b>.</div>`;
+  $('#painel').innerHTML = h;
+}
+
+/* ---------- Cartões ---------- */
+function cartao(html, aoMontar) {
+  $('#cartao').innerHTML = html; $('#veu').hidden = false;
+  if (aoMontar) aoMontar($('#cartao'));
+  const foco = $('#cartao').querySelector('button:not(:disabled)'); if (foco) foco.focus({ preventScroll: true });
+  $('#cartao').scrollTop = 0;
+}
+function fechaCartao() { $('#veu').hidden = true; }
+function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+function mostraTitulo() {
+  trava = false;
+  S.fase = 'titulo'; atualizaTopo(); renderPainel();
+  let salvo = null; try { salvo = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { salvo = null; }
+  cartao(`<div class="sobre">Protótipo jogável · 5 dias</div>
+    <div class="titulo-jogo">Café<br>Cantinho</div>
+    <p>Tu acabou de abrir um café minúsculo num bairro onde ninguém te conhece. Tem R$ 300, equipamento usado e cinco dias para provar que isso pode dar certo.</p>
+    <p class="dica">Cada dia tem manhã (planejar), expediente (operar), noite (viver) e fechamento (contas e consequências). O que tu faz fora da cozinha muda o que acontece dentro dela.</p>
+    <div class="rodape-cartao">
+      ${salvo && salvo.dia ? `<button class="btn" id="bCont">Continuar do dia ${salvo.dia}</button>` : '<span></span>'}
+      <button class="btn primario" id="bNovo">Abrir as portas</button>
+    </div>`, c => {
+    c.querySelector('#bNovo').onclick = () => { S = novoEstado(); R = novoRuntime(); iniciarDia(); };
+    const bc = c.querySelector('#bCont'); if (bc) bc.onclick = () => { S = Object.assign(novoEstado(), salvo); R = novoRuntime(); iniciarDia(true); };
+  });
+}
+
+function salvar() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { /* sem armazenamento: segue sem salvar */ } }
+
+function iniciarDia(continuando) {
+  if (!continuando) { S.mods = S.amanha || {}; S.amanha = {}; }
+  if (S.dia === 5 && S.flags.showCaio) S.mods.showCaio = true;
+  if (S.dia === 5 && S.flags.caioNoRafa) S.mods.caioNoRafa = true;
+  S.fase = 'manha'; S.horas = 3;
+  S.agenda = S.agenda.filter(a => {
+    if (a.dia > S.dia) return true;
+    if (a.id === 'bia_demissao' && !(biaAtiva() && S.bia.estresse >= 45)) { diario('A Bia aguentou até o fim da semana.', 'bia_aguenta'); return false; }
+    return a.dia === S.dia;
+  });
+  if (!continuando) salvar();
+  S.snap = { rep: S.rep, caixa: S.caixa, lucia: S.lucia.afin, caio: S.caio.afin, bia: S.bia.estresse, rafa: S.rafa.afin, est: S.me.estresse, nd: S.diario.length };
+  S.caio.viuHoje = false;
+  R = novoRuntime();
+  // acordo com o Rafa
+  if (S.rafa.acordo) {
+    if (S.estoque.massa >= 8) { S.estoque.massa -= 8; S.horas -= 1; S.flags.entregouRafa = true; }
+    else { S.rafa.acordo = null; S.rafa.afin -= 15; S.flags.entregouRafa = false; diario('Faltou massa para a entrega do Rafa. Ele cancelou o acordo.', 'acordo_rafa'); }
+  }
+  filaEventos = diretor('manha');
+  atualizaTopo(); renderPainel();
+  proximoEvento(mostraManha);
+}
+
+function proximoEvento(depois) {
+  const id = filaEventos.shift();
+  if (!id) return depois();
+  trava = true;
+  const e = EV.find(x => x.id === id);
+  S.vistos[id] = true;
+  if (e.pre) e.pre(S);
+  const tx = e.texto(S);
+  const esc_ = e.escolhas(S);
+  cartao(`<div class="sobre">Dia ${S.dia} · ${S.fase === 'manha' ? 'manhã' : 'fim do expediente'} · acontecimento</div>
+    <h2>${esc(tx.titulo)}</h2>
+    ${(tx.corpo || []).map(p => `<p>${esc(p)}</p>`).join('')}
+    ${(tx.falas || []).map(([q, f]) => `<div class="fala"><span class="quem">${esc(q)}</span><span>${esc(f)}</span></div>`).join('')}
+    <div class="escolhas">${esc_.map((c, i) => { const r = c.req ? c.req(S) : { ok: true }; return `<button class="escolha" data-i="${i}" ${r.ok ? '' : 'disabled'}><b>${esc(c.t)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}${c.custo ? `<span class="custo">${esc(c.custo)}</span>` : ''}${r.ok ? '' : `<span class="req">${esc(r.motivo)}</span>`}</button>`; }).join('')}</div>`,
+    c => c.querySelectorAll('.escolha').forEach(b => b.onclick = () => {
+      const res = esc_[+b.dataset.i].ef(S);
+      normaliza(); renderPainel(); atualizaTopo();
+      cartao(`<div class="sobre">Dia ${S.dia} · consequência</div><h2>${esc(tx.titulo)}</h2><p>${esc(res)}</p>
+        <p class="dica">Registrado no diário. Algumas escolhas voltam dias depois.</p>
+        <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">Continuar</button></div>`, c2 => c2.querySelector('#bOk').onclick = () => proximoEvento(depois));
+    }));
+}
+function normaliza() {
+  S.me.estresse = clamp(S.me.estresse, 0, 100); S.bia.estresse = clamp(S.bia.estresse, 0, 100); S.bia.moral = clamp(S.bia.moral, 0, 100);
+  S.rep = clamp(S.rep, 0, 100); S.lucia.afin = clamp(S.lucia.afin, -50, 100); S.caio.afin = clamp(S.caio.afin, -50, 100); S.rafa.afin = clamp(S.rafa.afin, -50, 100);
+}
+
+function pips() { return `<div class="horas">${[0, 1, 2].map(i => `<i class="${i < S.horas ? 'cheia' : ''}"></i>`).join('')}<span>${S.horas} ${S.horas === 1 ? 'hora livre' : 'horas livres'}</span></div>`; }
+function botaoAcao(a) {
+  const r = a.req ? a.req() : { ok: true };
+  const semTempo = a.h > S.horas;
+  const dis = !r.ok || semTempo;
+  return `<button class="escolha" data-a="${a.id}" ${dis ? 'disabled' : ''}><b>${esc(a.t)}</b><span>${esc(a.sub)}</span><span class="custo">${a.h} h</span>${!r.ok ? `<span class="req">${esc(r.motivo)}</span>` : semTempo ? '<span class="req">Sem tempo</span>' : ''}</button>`;
+}
+const ACOES_MANHA = [
+  { id: 'comprar', h: 1, t: 'Ir ao fornecedor', sub: 'Comprar grão, leite e massa.' },
+  { id: 'preassar', h: 1, t: 'Pré-assar pão de queijo', sub: 'Abre com 8 pães prontos no forno. Usa 8 massas.', req: () => ({ ok: S.estoque.massa >= 8 && !S.mods.semPao, motivo: S.mods.semPao ? 'Pão fora do cardápio hoje' : 'Precisa de 8 massas' }), ef: () => { S.estoque.massa -= 8; S.fornoPaes += 8; } },
+  { id: 'treinar', h: 1, t: 'Treinar receitas', sub: 'Cozinha mais rápida (+25 de experiência). Cansa um pouco.', ef: () => { S.me.cozXp += 25; S.me.estresse += 5; S.me.padrao.cozinha++; } },
+  { id: 'lucia', h: 1, t: 'Caminhar na praça com a Dona Lúcia', sub: 'Ela gosta de conversar. Tu relaxa.', req: () => ({ ok: !!S.flags.luciaAtendida && S.lucia.afin > 5, motivo: S.flags.luciaAtendida ? 'Ela anda distante' : 'Tu ainda não conhece a Dona Lúcia' }),
+    ef: () => { S.lucia.afin += 8; S.me.estresse -= 5; S.me.padrao.social++; if (!S.flags.luciaContou) { S.flags.luciaContou = true; diario('A Dona Lúcia me contou que a padaria onde o grupo de crochê dela se encontrava fechou.'); return 'Ela conta que a padaria onde o grupo de crochê se reunia fechou. "Agora a gente fica rodando."'; } return 'Vocês falam do bairro, do neto dela, do preço do tomate.'; } },
+  { id: 'bia', h: 1, t: 'Tomar café da manhã com a Bia', sub: 'Ouvir como ela está. Baixa o estresse dela.', req: () => ({ ok: biaAtiva(), motivo: 'Ninguém na equipe ainda' }), ef: () => { S.bia.estresse -= 12; S.bia.moral += 8; S.me.padrao.social++; return S.bia.estresse > 50 ? 'Ela admite que está cansada. Ajuda falar.' : 'Ela ri contando de um cliente que pediu "um espresso grande, mas pequeno".'; } },
+];
+function mostraManha(msg) {
+  trava = false;
+  S.fase = 'manha'; atualizaTopo(); renderPainel();
+  const tutorial = S.dia === 1 ? `<p class="dica">Primeiro dia. Teu tempo antes de abrir é curto: cada ação gasta horas. As configurações do lado direito não gastam tempo.</p>` : '';
+  cartao(`<div class="sobre">Dia ${S.dia} · ${NOME_DIA[S.dia - 1]} · manhã</div>
+    <h2>Antes de abrir</h2>
+    ${msg ? `<div class="fala"><span class="quem">→</span><span>${esc(msg)}</span></div>` : ''}
+    ${tutorial}
+    ${pips()}
+    ${S.flags.entregouRafa && S.rafa.acordo ? '<p class="dica">Uma hora já foi para entregar os 8 pães do Rafa.</p>' : ''}
+    <h4>Gasta tempo</h4>
+    <div class="grade-acoes">${ACOES_MANHA.map(botaoAcao).join('')}</div>
+    <h4>Não gasta tempo</h4>
+    <div class="config">
+      <label>Preços <span class="seg" id="segPreco">${['baixo', 'normal', 'alto'].map(p => `<button aria-pressed="${S.preco === p}" data-p="${p}">${p}</button>`).join('')}</span></label>
+      ${biaAtiva() && !S.mods.biaFolga ? `<label>Bia fica no <span class="seg" id="segBia">${[['cafe', 'café'], ['forno', 'forno']].map(([v, n]) => `<button aria-pressed="${S.bia.papel === v}" data-v="${v}">${n}</button>`).join('')}</span></label>` : ''}
+      <button class="btn" id="bLayout">Reorganizar a cozinha</button>
+    </div>
+    <p class="dica" style="margin-top:8px">Hoje: espresso ${brl(precoItem('espresso'))} · cappuccino ${brl(precoItem('cappuccino'))} · pão ${brl(precoItem('pao'))}. Preço alto rende mais por cliente, mas vem menos gente e com menos paciência.${S.mods.chuva ? ' Está chovendo.' : ''}${S.mods.critico ? ' A blogueira vem hoje.' : ''}${S.mods.clube ? ' O grupo de crochê vem à tarde.' : ''}${S.mods.showCaio ? ' Hoje tem show do Caio: vai lotar.' : ''}</p>
+    <div class="rodape-cartao"><span class="dica">${S.estoque.grao < 8 ? 'Pouco grão em estoque.' : ''}</span><button class="btn primario" id="bAbrir">Abrir o café</button></div>`, c => {
+    c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+      const a = ACOES_MANHA.find(x => x.id === b.dataset.a);
+      if (a.id === 'comprar') return mostraCompras();
+      S.horas -= a.h; const r = a.ef(); normaliza(); mostraManha(r || null);
+    });
+    c.querySelectorAll('#segPreco button').forEach(b => b.onclick = () => { S.preco = b.dataset.p; mostraManha(); });
+    c.querySelectorAll('#segBia button').forEach(b => b.onclick = () => { S.bia.papel = b.dataset.v; mostraManha(); });
+    c.querySelector('#bLayout').onclick = () => { fechaCartao(); R.gestao = true; R.sel = null; $('#txtGestao').textContent = 'Modo gestão: toque numa estação e depois num espaço vazio ou em outra estação para trocar de lugar. Estações perto da Entrega economizam passos.'; $('#barraGestao').hidden = false; };
+    c.querySelector('#bAbrir').onclick = abrirCafe;
+  });
+}
+function mostraCompras() {
+  trava = true;
+  const q = { grao: 0, leite: 0, massa: 0 };
+  const desc = 1 - 0.05 * S.me.gestao;
+  const precoP = k => Math.round(PACOTES[k].preco * desc);
+  const total = () => Object.keys(q).reduce((a, k) => a + q[k] * precoP(k), 0);
+  const render = () => {
+    cartao(`<div class="sobre">Dia ${S.dia} · fornecedor</div><h2>O que levar hoje?</h2>
+      ${S.me.gestao ? `<p class="dica">Teu nível de gestão garante ${S.me.gestao * 5}% de desconto.</p>` : ''}
+      ${Object.entries(PACOTES).map(([k, p]) => `<div class="compra"><div>${p.nome}<br><small>${p.qtd} ${p.un} por ${brl(precoP(k))} · tens ${S.estoque[k]}</small></div>
+        <div class="qtd"><button data-k="${k}" data-d="-1" aria-label="menos">−</button><b>${q[k]}</b><button data-k="${k}" data-d="1" aria-label="mais">+</button></div><b style="font-family:var(--f-num)">${brl(q[k] * precoP(k))}</b></div>`).join('')}
+      <table class="contas" style="margin-top:10px"><tr class="total"><td>Total (caixa: ${brl(S.caixa)})</td><td class="${total() > S.caixa ? 'neg' : ''}">${brl(total())}</td></tr></table>
+      <div class="rodape-cartao"><button class="btn" id="bVolta">Voltar sem ir</button><button class="btn primario" id="bCompra" ${total() > S.caixa || total() === 0 ? 'disabled' : ''}>Comprar (gasta 1 h)</button></div>`, c => {
+      c.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { q[b.dataset.k] = Math.max(0, q[b.dataset.k] + +b.dataset.d); render(); });
+      c.querySelector('#bVolta').onclick = () => mostraManha();
+      c.querySelector('#bCompra').onclick = () => { S.caixa -= total(); for (const k in q) S.estoque[k] += q[k] * PACOTES[k].qtd; S.horas -= 1; S.diaCompras = (S.diaCompras || 0) + total(); mostraManha('Compras feitas.'); };
+    });
+  };
+  render();
+}
+
+function abrirCafe() {
+  trava = false;
+  fechaCartao();
+  S.fase = 'expediente';
+  S.diaCompras = S.diaCompras || 0;
+  iniciarExpediente();
+  atualizaTopo(); renderPainel();
+}
+
+function fimExpediente() {
+  R.rodando = false; R.gestao = false; R.pausa = false; $('#barraGestao').hidden = true;
+  trava = true;
+  S.fase = 'pos'; normaliza(); atualizaTopo(); renderPainel();
+  const st = R.stats; S.ultimo = { ...st, biaTrab: R.biaTrab };
+  const dRep = S.rep - S.snap.rep;
+  cartao(`<div class="sobre">Dia ${S.dia} · 17h</div><h2>Placa virada</h2>
+    <table class="contas">
+      <tr><td>Clientes atendidos</td><td>${st.atendidos}</td></tr>
+      <tr><td>Foram embora irritados</td><td class="${st.irritados ? 'neg' : ''}">${st.irritados}</td></tr>
+      <tr><td>Desistiram (fila cheia)</td><td class="${st.recusados ? 'neg' : ''}">${st.recusados}</td></tr>
+      <tr><td>Vendas</td><td class="pos">${brl(st.receita)}</td></tr>
+      <tr><td>Gorjetas</td><td class="pos">${brl(st.gorjeta)}</td></tr>
+      <tr class="total"><td>Reputação</td><td class="${dRep >= 0 ? 'pos' : 'neg'}">${Math.round(S.rep)} (${dRep >= 0 ? '+' : ''}${dRep.toFixed(1)})</td></tr>
+    </table>
+    ${st.clube ? `<p class="dica" style="margin-top:10px">O grupo de crochê: ${st.clube} de 5 atendidas.</p>` : ''}
+    <div class="rodape-cartao"><span class="dica">Teu estresse: ${Math.round(S.me.estresse)}</span><button class="btn primario" id="bOk">Continuar</button></div>`, c => c.querySelector('#bOk').onclick = () => {
+    filaEventos = diretor('pos');
+    proximoEvento(() => { S.horas = 3; mostraNoite(); });
+  });
+}
+
+const ACOES_NOITE = [
+  { id: 'descansar', h: 1, t: 'Descansar em casa', sub: 'Estresse −15.', ef: () => { S.me.estresse -= 15; S.me.padrao.descanso++; return 'Banho, sofá, nada.'; } },
+  { id: 'bar', h: 2, t: 'Bar do Seu Jorge com o Caio', sub: 'Estresse −18. Amizade com o Caio sobe.', ef: () => { S.me.estresse -= 18; S.caio.afin += 12; S.caio.viuHoje = true; S.me.padrao.social++; if (S.flags.promessaCaio) { S.flags.promessaCaio = false; diario('Cumpri a promessa e fui ver o Caio.', 'promessa_caio'); return 'O Caio abre os braços quando tu entra. "Achei que tu ia furar."'; } return S.caio.afin >= 55 ? 'Vocês ficam até o Seu Jorge apagar a luz.' : 'O Caio conta da banda nova. Tu esquece do café por duas horas.'; } },
+  { id: 'estudar', h: 1, t: 'Estudar gestão', sub: 'Gestão +1: compras mais baratas e novas opções em negociações.', req: () => ({ ok: S.me.gestao < 2, motivo: 'Nível máximo no protótipo' }), ef: () => { S.me.gestao++; S.me.estresse += 3; S.me.padrao.gestao++; return `Planilha, café requentado e um vídeo sobre margem. Gestão agora é nível ${S.me.gestao}.`; } },
+  { id: 'organizar', h: 1, t: 'Organizar a cozinha', sub: 'Amanhã tudo fica 8% mais rápido. Cansa.', ef: () => { S.amanha.organizado = true; S.me.estresse += 5; S.me.padrao.gestao++; return 'Etiquetas, potes no lugar, bancada limpa. Amanhã rende.'; } },
+  { id: 'espiar', h: 1, t: 'Passar pelo Grão Nobre', sub: 'Ver como o Rafa trabalha.', req: () => ({ ok: !S.flags.espiou, motivo: 'Tu já foi lá esta semana' }), ef: () => { S.flags.espiou = true; S.me.padrao.gestao++; diario('Fui ver o Grão Nobre. Fila de estudantes, espresso a R$ 8, ninguém conversa com ninguém.'); return 'Espresso a R$ 8, fila de estudantes com fone de ouvido. Rápido, mas ninguém sabe o nome de ninguém.'; } },
+];
+function mostraNoite(msg) {
+  trava = false;
+  S.fase = 'noite'; atualizaTopo(); renderPainel();
+  cartao(`<div class="sobre">Dia ${S.dia} · ${NOME_DIA[S.dia - 1]} · noite</div>
+    <h2>Depois do expediente</h2>
+    ${msg ? `<div class="fala"><span class="quem">→</span><span>${esc(msg)}</span></div>` : ''}
+    ${S.flags.promessaCaio ? '<p class="dica" style="color:var(--aviso)">Tu prometeu ao Caio que ia aparecer hoje.</p>' : ''}
+    ${pips()}
+    <div class="grade-acoes" style="margin-top:10px">${ACOES_NOITE.map(botaoAcao).join('')}</div>
+    <div class="rodape-cartao"><span class="dica">Estresse: ${Math.round(S.me.estresse)}. Uma noite de sono tira 10.</span><button class="btn primario" id="bDormir">Dormir</button></div>`, c => {
+    c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { const a = ACOES_NOITE.find(x => x.id === b.dataset.a); S.horas -= a.h; const r = a.ef(); normaliza(); mostraNoite(r); });
+    c.querySelector('#bDormir').onclick = fechamento;
+  });
+}
+
+function fechamento() {
+  trava = true;
+  S.fase = 'fechamento';
+  // relações que dependem de presença
+  if (S.caio.viuHoje) S.caio.semVer = 0; else { S.caio.semVer++; S.caio.afin -= 3; }
+  if (S.flags.promessaCaio === S.dia) { S.flags.promessaCaio = false; S.caio.afin -= 20; S.flags.caioNoRafa = true; lembra('promessa_quebrada', 'tu prometeu ao Caio e não apareceu'); diario('Prometi ao Caio que ia aparecer e não fui. Ele aceitou tocar no Grão Nobre na sexta.', 'promessa_caio'); }
+  // contas
+  const sal = S.ultimo && S.ultimo.biaTrab ? salarioBia() : 0;
+  const rafa = S.rafa.acordo && S.flags.entregouRafa ? S.rafa.valor : 0;
+  S.caixa -= ALUGUEL + sal; S.caixa += rafa;
+  // corpo
+  S.me.estresse -= 10;
+  if (biaAtiva()) { if (S.mods.biaFolga) S.bia.estresse -= 35; else S.bia.estresse += S.bia.regime === 'integral' ? 16 : 8; }
+  S.tensao = Math.max(0, S.tensao - 1);
+  normaliza();
+  const st = S.ultimo || { receita: 0, gorjeta: 0 };
+  S.hist.push({ dia: S.dia, receita: st.receita, caixa: S.caixa, rep: S.rep });
+  const sn = S.snap;
+  const delta = (a, b, inv) => { const d = Math.round(a - b); if (!d) return '<span class="dica">igual</span>'; const bom = inv ? d < 0 : d > 0; return `<span class="${bom ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${d}</span>`; };
+  const hoje = S.diario.slice(sn.nd);
+  const amanha = [];
+  if (S.amanha.critico) amanha.push('A blogueira vem em algum momento do dia.');
+  if (S.amanha.clube) amanha.push('O grupo de crochê chega à tarde.');
+  if (S.amanha.biaFolga) amanha.push('A Bia está de folga.');
+  if (S.amanha.semPao) amanha.push('Sem pão de queijo no cardápio.');
+  if (S.amanha.organizado) amanha.push('Cozinha organizada: 8% mais rápida.');
+  if (S.dia === 4 && S.flags.showCaio) amanha.push('Sexta tem show do Caio. Vai lotar.');
+  if (S.rafa.acordo) amanha.push('Entrega de 8 pães para o Rafa (8 massas, 1 hora).');
+  if (S.me.estresse >= 85) amanha.push('Teu estresse está no limite.');
+  const falido = S.caixa < 0;
+  const ultimo = S.dia >= DIAS;
+  cartao(`<div class="sobre">Dia ${S.dia} · fechamento</div><h2>${falido ? 'O caixa não fechou' : 'As contas do dia'}</h2>
+    <table class="contas">
+      <tr><td>Compras de manhã</td><td class="${S.diaCompras ? 'neg' : ''}">${S.diaCompras ? '−' + brl(S.diaCompras) : brl(0)}</td></tr>
+      <tr><td>Vendas e gorjetas</td><td class="pos">+${brl(st.receita + st.gorjeta)}</td></tr>
+      <tr><td>Aluguel</td><td class="neg">−${brl(ALUGUEL)}</td></tr>
+      ${sal ? `<tr><td>Salário da Bia</td><td class="neg">−${brl(sal)}</td></tr>` : ''}
+      ${rafa ? `<tr><td>Pães para o Grão Nobre</td><td class="pos">+${brl(rafa)}</td></tr>` : ''}
+      <tr class="total"><td>Caixa agora</td><td class="${S.caixa < 0 ? 'neg' : ''}">${brl(S.caixa)} (${delta(S.caixa, sn.caixa)})</td></tr>
+    </table>
+    <h4>O que mudou</h4>
+    <table class="contas">
+      <tr><td>Reputação</td><td>${Math.round(S.rep)} ${delta(S.rep, sn.rep)}</td></tr>
+      <tr><td>Teu estresse</td><td>${Math.round(S.me.estresse)} ${delta(S.me.estresse, sn.est, true)}</td></tr>
+      ${S.flags.luciaAtendida ? `<tr><td>Dona Lúcia</td><td>${relacao(S.lucia.afin)} ${delta(S.lucia.afin, sn.lucia)}</td></tr>` : ''}
+      <tr><td>Caio</td><td>${relacao(S.caio.afin)} ${delta(S.caio.afin, sn.caio)}</td></tr>
+      ${biaAtiva() ? `<tr><td>Estresse da Bia</td><td>${Math.round(S.bia.estresse)} ${delta(S.bia.estresse, sn.bia, true)}</td></tr>` : ''}
+      <tr><td>Rafa</td><td>${relacao(S.rafa.afin)} ${delta(S.rafa.afin, sn.rafa)}</td></tr>
+    </table>
+    ${hoje.length ? `<h4>Diário de hoje</h4>${listaDiario(hoje)}` : ''}
+    ${amanha.length && !ultimo && !falido ? `<h4>Amanhã</h4><ul class="diario">${amanha.map(a => `<li>${esc(a)}</li>`).join('')}</ul>` : ''}
+    <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">${falido ? 'Ver o que acontece' : ultimo ? 'Ver como a semana terminou' : `Começar ${NOME_DIA[S.dia]}`}</button></div>`, c => c.querySelector('#bOk').onclick = () => {
+    S.diaCompras = 0;
+    if (falido) return epilogo(true);
+    if (ultimo) return epilogo(false);
+    S.dia++; iniciarDia();
+  });
+}
+function listaDiario(arr) {
+  return `<ul class="diario">${arr.map(d => `<li><span class="dia">dia ${d.dia}</span>${esc(d.txt)}${d.causa ? `<span class="causa">${esc(d.causa)}</span>` : ''}</li>`).join('')}</ul>`;
+}
+function mostraDiario() {
+  const fasePrev = S.fase;
+  cartao(`<div class="sobre">Diário de causas</div><h2>O que aconteceu até aqui</h2>
+    ${S.diario.length ? listaDiario(S.diario.slice().reverse()) : '<p class="dica">Nada registrado ainda. As decisões marcantes aparecem aqui, e quando uma delas volta, o diário mostra de onde veio.</p>'}
+    <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">Fechar</button></div>`, c => c.querySelector('#bOk').onclick = () => {
+    if (fasePrev === 'manha') return mostraManha();
+    if (fasePrev === 'noite') return mostraNoite();
+    if (fasePrev === 'titulo') return mostraTitulo();
+    fechaCartao();
+  });
+}
+
+function epilogo(falencia) {
+  trava = true;
+  S.fase = 'fim'; atualizaTopo();
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ok */ }
+  const P = S.me.padrao;
+  const ident = Object.entries(P).sort((a, b) => b[1] - a[1])[0];
+  const textoId = ident[1] === 0 ? 'Tu passou a semana inteira atrás do balcão. Ainda não sabe quem é fora dele.'
+    : { cozinha: 'Tu virou alguém que resolve tudo na bancada. O café tem a tua mão.', social: 'Tu conhece o bairro pelo nome. O café virou ponto de encontro antes de virar negócio.', gestao: 'Tu pensa o café como empresa: margem, processo, concorrência. Falta saber se ele ainda é teu.', descanso: 'Tu aprendeu a parar antes de quebrar. O café cresce devagar, e tu junto.' }[ident[0]];
+  const linhas = [];
+  if (falencia) linhas.push(`O caixa fechou em ${brl(S.caixa)}. O dono do imóvel não esperou. Tu entrega as chaves numa ${NOME_DIA[S.dia - 1].toLowerCase()} de manhã.`);
+  else linhas.push(`O café termina a semana com ${brl(S.caixa)} em caixa e reputação ${Math.round(S.rep)}: ${S.rep >= 60 ? 'virou assunto no bairro' : S.rep >= 40 ? 'já tem gente que volta' : 'ainda é um segredo da rua'}.`);
+  if (S.bia.foiRafa || (S.mem.bia_recusada && !S.bia.contratada)) linhas.push('A Bia serve café do outro lado da rua, no Grão Nobre. Às vezes vocês se cruzam na padaria.');
+  else if (biaAtiva()) linhas.push(S.bia.moral >= 55 ? 'A Bia já fala em "nosso café". Pergunta se dá para pensar em ficar com o turno da tarde sozinha.' : 'A Bia continua, mas conta as horas. Uma proposta melhor e ela vai.');
+  if (S.flags.luciaSumiu) linhas.push('A Dona Lúcia agora toma café na padaria nova. Passa pela tua porta sem olhar.');
+  else if (S.flags.luciaAtendida) linhas.push(S.lucia.afin >= 45 ? 'A Dona Lúcia tem cadeira cativa perto da janela e fala de ti para meio bairro.' : 'A Dona Lúcia ainda aparece, mas não demora mais no balcão.');
+  if (S.flags.showCaio) linhas.push('O show do Caio na sexta lotou o café. Alguém filmou e o vídeo rodou no grupo do bairro.');
+  else if (S.flags.caioNoRafa) linhas.push('O Caio tocou sexta no Grão Nobre. Tu ouviu da calçada.');
+  else linhas.push(S.caio.afin >= 50 ? 'O Caio continua sendo a pessoa para quem tu liga quando o dia dá errado.' : 'O Caio e tu se falam menos. Ninguém decidiu isso.');
+  if (S.rafa.acordo) linhas.push('O Rafa virou cliente e concorrente ao mesmo tempo. O teu pão de queijo é o mais vendido do Grão Nobre.');
+  cartao(`<div class="sobre">${falencia ? 'Fim, por enquanto' : 'Fim da semana'}</div>
+    <h2>${falencia ? 'O café fechou' : 'Sexta, 21h. A semana acabou.'}</h2>
+    ${linhas.map(l => `<p>${esc(l)}</p>`).join('')}
+    <p><b>${esc(textoId)}</b></p>
+    ${falencia ? '<p class="dica">No jogo completo, falir não encerra a história: abre o capítulo "Recomeçar", talvez trabalhando para o Rafa.</p>' : ''}
+    <h4>Teu diário completo</h4>
+    ${S.diario.length ? listaDiario(S.diario) : '<p class="dica">Nenhuma decisão marcante registrada.</p>'}
+    <h4>Para o teste</h4>
+    <p class="dica">Duas pessoas jogando devem contar histórias diferentes. Anota: em que momento tu quis abrir o café de novo? O que te irritou? Qual escolha pesou?</p>
+    <div class="rodape-cartao"><span></span><button class="btn primario" id="bDeNovo">Jogar de novo</button></div>`, c => c.querySelector('#bDeNovo').onclick = () => { S = novoEstado(); R = novoRuntime(); iniciarDia(); });
+}
+
+/* ---------- Laço ---------- */
+let ult = performance.now(), acPainel = 0;
+function laco(t) {
+  const dt = Math.min(0.05, (t - ult) / 1000); ult = t;
+  atualizar(dt);
+  desenhar();
+  atualizaTopo();
+  if (R.rodando) { acPainel += dt; if (acPainel > 0.3) { acPainel = 0; renderPainel(); } }
+  requestAnimationFrame(laco);
+}
+requestAnimationFrame(laco);
+
+// reaproveita o estado se a página for atualizada com o jogo aberto
+const hot = window.claude && window.claude.hot;
+if (hot && hot.snapshot) hot.snapshot(() => (S.fase === 'manha' || S.fase === 'noite' ? { S } : {}));
+const boot = data => {
+  if (data && data.S && data.S.fase) { S = Object.assign(novoEstado(), data.S); R = novoRuntime(); if (S.fase === 'noite') mostraNoite(); else mostraManha(); return; }
+  mostraTitulo();
+};
+if (hot && hot.ready) hot.ready(boot); else boot(hot && hot.data);
+})();
+</script>
