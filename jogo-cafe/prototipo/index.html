@@ -1064,7 +1064,7 @@ function renderExpediente() {
         h += `<span class="estado">Livre. O que vai fazer?</span><div class="receitas">${recs.map(rc => `<button class="bt" data-ac="iniciar" data-i="${i}" data-rec="${rc}" ${semLeite(rc) ? 'disabled' : ''}>${img(rc)}<span>${RECEITAS[rc].nome}</span>${fino ? `<span class="tecla">${{ espresso: 'Q', cappuccino: 'W', mocha: 'E' }[rc]}</span>` : ''}</button>`).join('')}</div>`;
       } else {
         const ps = RECEITAS[s.rec].passos, p = ps[s.passo];
-        h += `<span class="rec">${img(s.rec)} ${RECEITAS[s.rec].nome}${s.perf && !s.porBia ? ' <span style="color:var(--ouro)">★</span>' : ''}</span><div class="etapas">${ps.map((pp, k) => `<span class="etapa ${k < s.passo ? 'feita' : k === s.passo ? 'atual' : ''}">${k < s.passo ? '✓ ' : ''}${pp.nome}</span>`).join('')}</div>`;
+        h += `<span class="rec">${img(s.rec)} ${RECEITAS[s.rec].nome}${s.perf && !s.porBia && s.passo > 0 ? ' <span style="color:var(--ouro)">★</span>' : ''}</span><div class="etapas">${ps.map((pp, k) => `<span class="etapa ${k < s.passo ? 'feita' : k === s.passo ? 'atual' : ''}">${k < s.passo ? '✓ ' : ''}${pp.nome}</span>`).join('')}</div>`;
         const z = zona();
         const comZona = s.st === 'rodando' && s.recurso === 'mao';
         h += `<div class="prog">${comZona ? `<span class="zona" style="left:${z[0] * 100}%;width:${(z[1] - z[0]) * 100}%"></span><span class="cursor" data-cur="${i}"></span>` : `<i data-prog="${i}"></i>`}</div>`;
