@@ -1,56 +1,49 @@
-# Protótipo dos 5 dias (v2)
+# Protótipo dos 5 dias (v3)
 
 Arquivo único (`index.html`), roda no navegador. Link jogável: https://claude.ai/artifact/SSGaFWTBBeJBKVcKaKTJtr
 
-## O que mudou da v1 para a v2
+## O que mudou na v3
 
-| Problema na v1 | Como ficou |
-|---|---|
-| Andar e carregar item era chato | Bancada com **espaços de preparo**. Tu escolhe a receita e segue as etapas pelos botões |
-| Um pedido por vez, sem tempo | Começa com **2 espaços em paralelo**. Melhorias: 3º e 4º espaço, máquina de 2 grupos, moedor elétrico |
-| Item errado não tinha onde ficar | **Bandeja** (4 lugares, melhoria para 7). O que está nela vai para quem pedir. **×** joga fora |
-| Não dava pra ver em que etapa estava | Cada preparo mostra as **etapas** (Moer → Extrair → Vaporizar) e qual é a próxima |
-| Sem tutorial | **Dona Cida**, a antiga dona, ensina no dia 1, passo a passo, com o tempo parado |
-| Muita decisão logo de cara | Dia 1 só aprende. **Fornecedor e melhorias** no dia 2, **preços** no dia 3 |
-| Pouco contexto para decidir | Quadro "Hoje" com previsão de clientes e ingredientes; eventos com **contexto** e com **quem é afetado** em cada escolha |
-| Visual genérico | Pixel art estilo Punch Club: barras de Energia e Ânimo, rua do bairro como mapa, ações mostrando o que sobe e desce |
+**Estrutura**
+- Menu principal: Continuar, Novo jogo, Carregar, Som e Fechar.
+- Menu dentro do jogo (botão Menu ou `Esc`): voltar, salvar em 3 espaços, carregar, som, sair para o menu principal e fechar.
+- Salvamento automático no começo de cada manhã e de cada noite. Durante o expediente o menu pausa o jogo, mas não salva o meio do dia.
 
-## Como funciona
+**Motivo pra continuar jogando**
+- **Objetivo da semana:** pagar a parcela de R$ 300 à Dona Cida na sexta. O topo da tela mostra quanto falta. Cada compra de melhoria disputa esse dinheiro.
+- **Metas do dia:** três por dia, cada uma com bônus em dinheiro e uma estrela. O fim do dia mostra de 0 a 3 estrelas.
+- **Combo:** clientes atendidos a tempo, em sequência, multiplicam a gorjeta (x1,5 no 3, x2 no 6, x3 no 10). Um cliente irritado zera.
+- **Ponto perfeito:** nas etapas de mão (moer, chocolate, vaporizar), tocar de novo quando o cursor passa pela faixa verde deixa o item perfeito (★). Item perfeito rende gorjeta extra.
+- **Clientes com traço:** apressado (espera pouco, paga mais), exigente (só aceita bebida perfeita) e generoso (gorjeta em dobro).
+- **Especialidades:** ao subir Cozinha ou Atendimento para o nível 1 ou 2, tu escolhe uma entre duas especialidades.
+- **Receita nova no meio da semana:** o Mocha, achado no caderno da Dona Cida na quarta. Tem 4 etapas e custa R$ 12.
 
-- **Manhã (6h–9h)** e **noite (18h–22h)**: tu toca nos lugares da rua (Casa, Fornecedor, Café, Praça, Bar, Grão Nobre). Cada ação gasta horas e mexe em barras, habilidades ou pessoas.
-- **Expediente**: pedidos no topo, bancada no meio, bandeja embaixo. Moer e vaporizar ocupam **tuas mãos**; extrair e assar rodam sozinhos. A máquina só extrai um café por vez, até comprar a de dois grupos.
-- **Energia** cai trabalhando e volta dormindo. Abaixo de 30, tuas mãos ficam lentas.
-- **Ânimo** cai com fila grande e cliente irritado, sobe com descanso, amigos e clientes satisfeitos. Quase zerado, tu esgota na manhã seguinte.
-- **Bia** (se contratada) cuida de uma função: forno, moedor ou balcão.
+**Visual e som**
+- Cena com mais resolução, luz das luminárias, luz da janela mudando com a hora, sombras, vinheta e degradês com dithering.
+- Personagens maiores, com sombreado e expressão (sorriem atendidos, franzem a testa quando a paciência acaba).
+- Ícones pixel dos itens nos pedidos, na bandeja, nos botões e nos balões acima dos clientes.
+- Textos corridos numa fonte de alta legibilidade. A fonte pixel fica só para títulos e números.
+- Efeitos sonoros (moedor, vapor, caixa, combo, meta, erro) e textos flutuantes de dinheiro, combo e "PERFEITO!". A tela treme quando alguém vai embora irritado.
 
-Atalhos no teclado: `Q` espresso, `W` cappuccino, `1`–`4` etapa de mão no preparo, `F` assar, `Z X C V B` entregar, `P` pausar.
+## Atalhos
 
-## Cadeias de consequência que dá pra provocar
+`Q` espresso · `W` cappuccino · `E` mocha · `1`–`4` etapa de mão no preparo · `espaço` acertar o ponto · `F` assar · `Z X C V B` entregar · `Esc` menu
 
-- Recusar a Bia no dia 1 → no dia 3 ela aparece no Grão Nobre e o rival puxa parte da tua fila.
-- Contratar e nunca aliviar a Bia → ela pede ajuda → pedir pra aguentar pode levar ela pro Rafa.
-- Preço alto com a Dona Lúcia → ela reclama → manter o preço derruba a relação → ela some.
-- Caminhar com a Dona Lúcia → ela conta da padaria que fechou → oferece trazer o grupo de crochê.
-- Sumir das noites com o Caio → ele avisa que o Rafa chamou pra tocar → promessa quebrada = show no rival.
-- Pedir leite ao Rafa → ele cobra o favor quando propõe comprar teu pão de queijo.
-- Trabalhar sem cuidar do ânimo → esgotamento → perde a manhã.
+## O que a pesquisa disse (e onde entrou)
+
+| Fonte | Ideia | No jogo |
+|---|---|---|
+| Estudos de *game feel* e *juice* | Toda ação precisa de resposta audiovisual, mas em cima de um núcleo que já funciona | Sons, textos flutuantes, tremida, animação na bandeja |
+| Cook, Serve, Delicious | O vício vem da sequência de pedidos perfeitos e do som de cada etapa | Combo, ponto perfeito, dia com 3 estrelas |
+| Coffee Talk | Cortar o que não é essencial; a história avança pelo jeito de servir | Clientes exigentes, Dona Lúcia reage a como foi atendida |
+| Guias de onboarding | Os primeiros minutos precisam de propósito claro e de uma escolha cedo | Parcela de sexta desde a primeira fala, metas visíveis, escolha da Bia no fim do dia 1 |
+| Críticas ao Punch Club | O risco do gênero é virar uma rotina de grind | Metas variam todo dia, receita nova na quarta, eventos com consequência |
+| Técnicas de pixel art 16 bits | Uma direção de luz, sombras em tons frios, dithering nos degradês | Luminárias âmbar, sombras roxas, céu e parede com dithering |
 
 ## Como testar
 
-Peça pra outra pessoa jogar sem explicação. Depois pergunte:
-
-1. O tutorial deixou claro o que fazer? Em que passo travou?
-2. Em que momento tu quis abrir o café de novo?
-3. Comprou alguma melhoria? Sentiu diferença?
-4. Abriu mão de dinheiro por descanso ou por alguém?
+1. O tutorial deixou claro o que fazer? Acertou o ponto perfeito?
+2. Em que momento tu quis jogar mais um dia?
+3. A parcela de sexta mudou o jeito de gastar?
+4. Combo e metas deram vontade de jogar melhor?
 5. Me conta tua semana.
-
-## Ajustes rápidos (topo do `<script>`)
-
-| Constante | Valor | Efeito |
-|---|---|---|
-| `DAY_LEN` | 180 | Duração do expediente em segundos |
-| `RECEITAS` | — | Etapas e tempos de cada bebida |
-| `MELHORIAS` | — | Preço e efeito de cada melhoria |
-| `ALUGUEL` / `SAL` | 40 / 35 e 20 | Custos fixos |
-| `previsao()` | 18 × demanda | Clientes por dia (dia 1 tem 55%) |
