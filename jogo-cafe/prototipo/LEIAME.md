@@ -1,57 +1,56 @@
-# Protótipo dos 5 dias
+# Protótipo dos 5 dias (v2)
 
-Arquivo único (`index.html`), roda no navegador. Implementa a etapa 2 do `CONCEITO.md` em versão rascunho: um café, três receitas, uma funcionária, três personagens sociais, cinco dias.
+Arquivo único (`index.html`), roda no navegador. Link jogável: https://claude.ai/artifact/SSGaFWTBBeJBKVcKaKTJtr
 
-Link jogável: https://claude.ai/artifact/SSGaFWTBBeJBKVcKaKTJtr
+## O que mudou da v1 para a v2
 
-## O que tem
-
-| Sistema | No protótipo |
+| Problema na v1 | Como ficou |
 |---|---|
-| Operação | Moedor → Máquina → (Vaporizador) → Entrega. Forno assa 4 pães por vez. Fila de até 6 clientes com paciência |
-| Gestão | Mover estações (manhã ou no meio do expediente, com tempo a 25%), preço baixo/normal/alto, compras, escala da Bia |
-| Vida | Estresse (acima de 50 deixa tu e as estações mais lentos), nível de cozinha, nível de gestão, esgotamento em 85 |
-| Relações | Dona Lúcia (cliente fiel), Caio (amigo), Rafa (rival), Bia (funcionária). Afinidade + memória de fatos |
-| Eventos | 14 eventos em dados, com gatilho, escolhas, requisitos e consequências agendadas |
-| Diretor | Escolhe até 2 eventos por momento do dia, alternando pesado e leve conforme a tensão |
-| Diário de causas | Registra decisões e, quando uma volta, mostra de onde veio |
-| Final | Epílogo montado a partir do estado. Falência encerra a partida |
+| Andar e carregar item era chato | Bancada com **espaços de preparo**. Tu escolhe a receita e segue as etapas pelos botões |
+| Um pedido por vez, sem tempo | Começa com **2 espaços em paralelo**. Melhorias: 3º e 4º espaço, máquina de 2 grupos, moedor elétrico |
+| Item errado não tinha onde ficar | **Bandeja** (4 lugares, melhoria para 7). O que está nela vai para quem pedir. **×** joga fora |
+| Não dava pra ver em que etapa estava | Cada preparo mostra as **etapas** (Moer → Extrair → Vaporizar) e qual é a próxima |
+| Sem tutorial | **Dona Cida**, a antiga dona, ensina no dia 1, passo a passo, com o tempo parado |
+| Muita decisão logo de cara | Dia 1 só aprende. **Fornecedor e melhorias** no dia 2, **preços** no dia 3 |
+| Pouco contexto para decidir | Quadro "Hoje" com previsão de clientes e ingredientes; eventos com **contexto** e com **quem é afetado** em cada escolha |
+| Visual genérico | Pixel art estilo Punch Club: barras de Energia e Ânimo, rua do bairro como mapa, ações mostrando o que sobe e desce |
+
+## Como funciona
+
+- **Manhã (6h–9h)** e **noite (18h–22h)**: tu toca nos lugares da rua (Casa, Fornecedor, Café, Praça, Bar, Grão Nobre). Cada ação gasta horas e mexe em barras, habilidades ou pessoas.
+- **Expediente**: pedidos no topo, bancada no meio, bandeja embaixo. Moer e vaporizar ocupam **tuas mãos**; extrair e assar rodam sozinhos. A máquina só extrai um café por vez, até comprar a de dois grupos.
+- **Energia** cai trabalhando e volta dormindo. Abaixo de 30, tuas mãos ficam lentas.
+- **Ânimo** cai com fila grande e cliente irritado, sobe com descanso, amigos e clientes satisfeitos. Quase zerado, tu esgota na manhã seguinte.
+- **Bia** (se contratada) cuida de uma função: forno, moedor ou balcão.
+
+Atalhos no teclado: `Q` espresso, `W` cappuccino, `1`–`4` etapa de mão no preparo, `F` assar, `Z X C V B` entregar, `P` pausar.
 
 ## Cadeias de consequência que dá pra provocar
 
-- Recusar a Bia no dia 1 → no dia 3 ela aparece trabalhando no Grão Nobre e o rival puxa parte da tua fila.
-- Contratar a Bia e nunca aliviar → ela pede ajuda → se tu pedir pra aguentar, ela pode ir pro Rafa dois dias depois.
-- Preço alto com a Dona Lúcia → ela reclama → manter o preço derruba a relação → ela some e o grupo de crochê nunca vem.
-- Tratar bem a Dona Lúcia e caminhar com ela → ela conta da padaria que fechou → oferece trazer o grupo (pico de clientes à tarde).
-- Sumir das noites com o Caio → ele avisa que o Rafa chamou ele pra tocar → promessa quebrada = show no rival.
-- Pedir leite emprestado ao Rafa → ele cobra o favor quando propõe comprar teu pão de queijo.
-- Trabalhar sem descansar → esgotamento → perde a manhã.
+- Recusar a Bia no dia 1 → no dia 3 ela aparece no Grão Nobre e o rival puxa parte da tua fila.
+- Contratar e nunca aliviar a Bia → ela pede ajuda → pedir pra aguentar pode levar ela pro Rafa.
+- Preço alto com a Dona Lúcia → ela reclama → manter o preço derruba a relação → ela some.
+- Caminhar com a Dona Lúcia → ela conta da padaria que fechou → oferece trazer o grupo de crochê.
+- Sumir das noites com o Caio → ele avisa que o Rafa chamou pra tocar → promessa quebrada = show no rival.
+- Pedir leite ao Rafa → ele cobra o favor quando propõe comprar teu pão de queijo.
+- Trabalhar sem cuidar do ânimo → esgotamento → perde a manhã.
 
-## Como testar (o que observar)
+## Como testar
 
 Peça pra outra pessoa jogar sem explicação. Depois pergunte:
 
-1. Em que momento tu quis abrir o café de novo? (operação diverte?)
-2. Mudou alguma estação de lugar? Fez diferença? (gestão importa?)
-3. Abriu mão de dinheiro por descanso ou por alguém? (vida importa?)
-4. Alguém te ajudou ou te atrapalhou? (relações importam?)
-5. Me conta tua semana. (as escolhas viram história? duas pessoas, duas histórias)
+1. O tutorial deixou claro o que fazer? Em que passo travou?
+2. Em que momento tu quis abrir o café de novo?
+3. Comprou alguma melhoria? Sentiu diferença?
+4. Abriu mão de dinheiro por descanso ou por alguém?
+5. Me conta tua semana.
 
-## Botões de ajuste
-
-Todos no topo do `<script>`:
+## Ajustes rápidos (topo do `<script>`)
 
 | Constante | Valor | Efeito |
 |---|---|---|
 | `DAY_LEN` | 180 | Duração do expediente em segundos |
-| `ALUGUEL` | 40 | Custo fixo diário |
-| `SAL` | 35 / 20 | Salário da Bia integral / meio |
-| `PRECO_BASE` | 6 / 9 / 5 | Espresso, cappuccino, pão |
-| `BASE_T` | 1.6 / 3 / 2.2 / 7 | Tempos das estações |
-| base de clientes | 18 × demanda | em `iniciarExpediente` (dia 1 tem 70%) |
-
-## Limites conhecidos
-
-- Arte provisória de propósito. O que está sendo testado é o ciclo, não o visual.
-- O progresso salva no começo de cada dia (no navegador de quem joga).
-- Balanceamento inicial. Os números foram ajustados com um robô jogando, não com pessoas.
+| `RECEITAS` | — | Etapas e tempos de cada bebida |
+| `MELHORIAS` | — | Preço e efeito de cada melhoria |
+| `ALUGUEL` / `SAL` | 40 / 35 e 20 | Custos fixos |
+| `previsao()` | 18 × demanda | Clientes por dia (dia 1 tem 55%) |

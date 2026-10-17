@@ -2,221 +2,294 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap">
 <style>
-/* Layout: barra de status no topo, cozinha em canvas no centro, painel de estado ao lado (embaixo no celular). Fases do dia aparecem como cartões por cima. Visual único: noite de bairro, azul-marinho com luz âmbar de balcão. */
+/* Layout: HUD de barras no topo (estilo Punch Club), cena em pixel art, painel de trabalho embaixo e ficha do personagem ao lado (embaixo no celular). Visual único: noite roxa de fliperama com ouro de balcão. */
 :root{
-  --noite:#0e1828; --painel:#15233a; --painel2:#1b2c47; --linha:#2b3f5e;
-  --texto:#eaf0f8; --suave:#9db0ca; --acento:#f0b23a; --acento-esc:#2a1c05;
-  --bom:#62c98f; --ruim:#ec6b5d; --aviso:#e8c35a;
-  --f-disp:"Bricolage Grotesque","Trebuchet MS",sans-serif;
-  --f-corpo:"Atkinson Hyperlegible",system-ui,sans-serif;
-  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --fundo:#15122a; --painel:#241f3d; --painel2:#2f2852; --borda:#0a0814; --luz:#4a4275;
+  --texto:#f3eedc; --suave:#aaa3cc; --ouro:#ffcc4d; --ouro-esc:#3a2600;
+  --verde:#6fdc8c; --vermelho:#ff6b6b; --azul:#6cc4ff; --rosa:#ff8fc7; --laranja:#ffa24d;
+  --f-px:"Pixelify Sans","Courier New",monospace;
+  --f-tit:"Press Start 2P","Courier New",monospace;
   color-scheme:dark;
 }
 html,body{height:100%}
 [hidden]{display:none!important}
-body{background:var(--noite);color:var(--texto);font-family:var(--f-corpo);font-size:15px;line-height:1.45}
-.app{max-width:1280px;margin:0 auto;padding-block:12px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
-.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;background:var(--painel);border:1px solid var(--linha);border-radius:10px;padding:10px 14px}
-.marca{font-family:var(--f-disp);font-weight:800;font-size:20px;letter-spacing:-.01em;color:var(--acento);margin-right:auto}
-.marca small{font-family:var(--f-corpo);font-weight:400;font-size:12px;color:var(--suave);margin-left:8px;letter-spacing:.04em;text-transform:uppercase}
-.stat{display:flex;flex-direction:column;line-height:1.15}
-.stat b{font-family:var(--f-num);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
-.stat span{font-size:11px;color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
-.acoes-topo{display:flex;gap:6px;flex-wrap:wrap}
+body{background:var(--fundo);color:var(--texto);font-family:var(--f-px);font-size:16px;line-height:1.35;
+  background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:6px 6px}
+*{box-sizing:border-box}
+.app{max-width:1240px;margin:0 auto;padding-block:10px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
+.px{background:var(--painel);border:3px solid var(--borda);box-shadow:inset 0 0 0 2px var(--luz),0 4px 0 var(--borda)}
 button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
-.btn{background:var(--painel2);border:1px solid var(--linha);border-radius:8px;padding:7px 12px;font-size:14px}
-.btn:hover:not(:disabled){border-color:var(--acento)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn.primario{background:var(--acento);color:var(--acento-esc);border-color:var(--acento);font-weight:700}
-.principal{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}
-@media (max-width:1000px){.principal{grid-template-columns:minmax(0,1fr)}}
-.palco{position:relative;min-width:0}
-canvas{display:block;width:100%;max-width:100%;aspect-ratio:800/500;border-radius:10px;border:1px solid var(--linha);background:#1a2638;touch-action:manipulation}
-.barra-gestao{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;background:var(--acento);color:var(--acento-esc);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-weight:700}
-.barra-gestao .btn{background:var(--acento-esc);color:var(--acento);border-color:var(--acento-esc)}
-.painel{background:var(--painel);border:1px solid var(--linha);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:14px;min-width:0}
-.painel h3{margin:0 0 6px;font-family:var(--f-disp);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave)}
-.linha-kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:2px 0}
-.linha-kv b{font-family:var(--f-num);font-weight:500;font-variant-numeric:tabular-nums}
-.medidor{height:8px;border-radius:4px;background:var(--painel2);overflow:hidden;margin-top:4px}
-.medidor i{display:block;height:100%;border-radius:4px;transition:width .3s}
-.dica{font-size:13px;color:var(--suave)}
-.dica kbd{font-family:var(--f-num);font-size:12px;background:var(--painel2);border:1px solid var(--linha);border-radius:4px;padding:0 5px;color:var(--texto)}
-.pilula{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--painel2);border:1px solid var(--linha);color:var(--suave)}
-.pilula.ruim{color:var(--ruim);border-color:color-mix(in srgb,var(--ruim) 50%,transparent)}
-.pilula.bom{color:var(--bom);border-color:color-mix(in srgb,var(--bom) 50%,transparent)}
-/* Cartões de fase */
-.veu{position:fixed;inset:0;background:rgba(5,10,20,.72);display:flex;align-items:center;justify-content:center;z-index:20;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.cartao{background:var(--painel);border:1px solid var(--linha);border-radius:14px;width:100%;max-width:600px;max-height:100%;overflow:auto;padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.sobre{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--acento);font-weight:700}
-.cartao h2{font-family:var(--f-disp);font-weight:800;font-size:28px;line-height:1.1;margin:4px 0 12px;text-wrap:balance;letter-spacing:-.015em}
-.cartao h4{font-family:var(--f-disp);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:18px 0 8px}
-.cartao p{margin:0 0 10px;max-width:62ch}
-.fala{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;background:var(--painel2);border-radius:10px;padding:10px 12px;margin:8px 0}
-.fala .quem{font-family:var(--f-disp);font-weight:700;color:var(--acento);white-space:nowrap}
-.escolhas{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-.escolha{text-align:left;background:var(--painel2);border:1px solid var(--linha);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
-.escolha:hover:not(:disabled){border-color:var(--acento)}
-.escolha:disabled{opacity:.5;cursor:not-allowed}
-.escolha b{font-weight:700}
-.escolha span{font-size:13px;color:var(--suave)}
-.escolha .custo{font-family:var(--f-num);font-size:12px;color:var(--acento)}
-.escolha .req{font-size:12px;color:var(--ruim)}
-.horas{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--suave)}
-.horas i{width:14px;height:14px;border-radius:50%;border:2px solid var(--acento);display:inline-block}
-.horas i.cheia{background:var(--acento)}
-.grade-acoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
-.seg{display:inline-flex;border:1px solid var(--linha);border-radius:8px;overflow:hidden}
-.seg button{background:transparent;border:0;padding:6px 12px;font-size:14px;color:var(--suave)}
-.seg button[aria-pressed="true"]{background:var(--acento);color:var(--acento-esc);font-weight:700}
-.config{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
-.config label{font-size:13px;color:var(--suave);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.rodape-cartao{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
-table.contas{width:100%;border-collapse:collapse;font-size:14px}
-table.contas td{padding:5px 0;border-bottom:1px solid var(--linha)}
-table.contas td:last-child{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.bt{background:var(--painel2);border:3px solid var(--borda);box-shadow:inset 0 -3px 0 rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.12);padding:6px 12px;font-size:15px;font-weight:600;letter-spacing:.02em}
+.bt:hover:not(:disabled){filter:brightness(1.15)}
+.bt:active:not(:disabled){transform:translateY(2px);box-shadow:inset 0 -1px 0 rgba(0,0,0,.4)}
+.bt:disabled{opacity:.4;cursor:not-allowed}
+.bt:focus-visible,.ticket:focus-visible,.hot:focus-visible,.acao:focus-visible,.escolha:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.bt.ouro{background:var(--ouro);color:var(--ouro-esc)}
+.bt.verde{background:var(--verde);color:#0d2a16}
+.tecla{font-size:11px;opacity:.75;margin-left:6px;font-weight:400}
+/* HUD */
+.hud{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:10px 14px}
+.marca{font-family:var(--f-tit);font-size:13px;color:var(--ouro);line-height:1.4;margin-right:auto;text-shadow:2px 2px 0 var(--borda)}
+.hstat{display:flex;flex-direction:column;line-height:1.1;min-width:58px}
+.hstat small{font-size:12px;color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
+.hstat b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.barras{display:flex;gap:14px;flex-wrap:wrap}
+.barra-rot{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--suave);text-transform:uppercase;letter-spacing:.05em}
+.barra{width:120px;height:16px;border:3px solid var(--borda);background:#110e20;position:relative}
+.barra i{position:absolute;inset:0 auto 0 0;display:block;transition:width .25s steps(6)}
+.barra i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 9px,rgba(0,0,0,.35) 9px 10px)}
+.ico{width:16px;height:16px;flex:none}
+/* Grade principal */
+.grade{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:10px;align-items:start}
+@media (max-width:980px){.grade{grid-template-columns:minmax(0,1fr)}}
+.coluna{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cena-wrap{position:relative;padding:0;overflow:hidden}
+canvas#cena{display:block;width:100%;aspect-ratio:320/130;image-rendering:pixelated;background:#000}
+.hot{position:absolute;bottom:4%;transform:translateX(-50%);background:var(--painel);border:3px solid var(--borda);box-shadow:inset 0 -3px 0 rgba(0,0,0,.4);padding:3px 8px;font-size:clamp(11px,1.5vw,14px);font-weight:600;white-space:nowrap}
+.hot.ativo{background:var(--ouro);color:var(--ouro-esc)}
+.hot:disabled{opacity:.35;cursor:not-allowed}
+.hot .novo{color:var(--verde);margin-left:4px}
+.hot.ativo .novo{color:#1f5a2a}
+.dialogo{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px}
+.retrato{width:64px;height:64px;image-rendering:pixelated;border:3px solid var(--borda);background:#110e20}
+.dialogo .quem{font-weight:700;color:var(--ouro);margin-bottom:2px}
+.dialogo p{margin:0 0 6px;max-width:68ch}
+.dialogo .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+/* Expediente */
+.trab{padding:10px;display:flex;flex-direction:column;gap:10px}
+.rotulo{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:0 0 6px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tickets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:700px){.tickets{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ticket{background:#f3eedc;color:#231a10;border:3px solid var(--borda);box-shadow:0 3px 0 var(--borda);padding:6px 6px 8px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:96px;position:relative}
+.ticket:hover:not(:disabled){background:#fff7d6}
+.ticket.vazio{background:transparent;border-style:dashed;border-color:var(--luz);box-shadow:none;color:var(--suave);align-items:center;justify-content:center;font-size:13px}
+.ticket .nome{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket .itens{display:flex;gap:4px;flex-wrap:wrap}
+.it{display:inline-flex;align-items:center;gap:3px;font-size:12px;padding:1px 4px;border:2px solid #231a10;background:#fff}
+.it.ok{background:#bff0c9;text-decoration:line-through}
+.it.tem{background:#ffe08a}
+.pac{height:8px;border:2px solid #231a10;background:#ddd;margin-top:auto}
+.pac i{display:block;height:100%}
+.ticket .tag{position:absolute;top:-10px;right:4px;background:var(--rosa);color:#2a0a1a;font-size:11px;padding:0 4px;border:2px solid var(--borda)}
+.bancada{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:10px}
+@media (max-width:760px){.bancada{grid-template-columns:minmax(0,1fr)}}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.slot{background:var(--painel2);border:3px solid var(--borda);padding:8px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.slot h5{margin:0;font-size:13px;color:var(--suave);text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between}
+.slot .rec{font-size:17px;font-weight:700}
+.etapas{display:flex;flex-wrap:wrap;gap:4px}
+.etapa{font-size:12px;padding:1px 5px;border:2px solid var(--borda);background:#1a1630;color:var(--suave)}
+.etapa.feita{background:#244a32;color:var(--verde)}
+.etapa.atual{background:var(--ouro);color:var(--ouro-esc);font-weight:700}
+.prog{height:10px;border:2px solid var(--borda);background:#110e20}
+.prog i{display:block;height:100%;background:var(--azul);width:0}
+.slotbt{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center}
+.estado{font-size:13px;color:var(--suave)}
+.lado{display:flex;flex-direction:column;gap:8px}
+.caixa-lado{background:var(--painel2);border:3px solid var(--borda);padding:8px;display:flex;flex-direction:column;gap:6px}
+.bandeja{display:flex;gap:8px;flex-wrap:wrap}
+.cel{width:72px;height:54px;border:3px solid var(--borda);background:#5a3a22;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;font-size:12px}
+.cel.vazia{background:#2a1d12;color:#7a6a5a}
+.cel .x{position:absolute;top:-9px;right:-9px;width:22px;height:22px;padding:0;line-height:15px;font-size:14px;background:var(--vermelho);color:#2a0606;border:2px solid var(--borda)}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.kv b{font-variant-numeric:tabular-nums}
+.neg{color:var(--vermelho)} .pos{color:var(--verde)}
+.alvo{animation:pisca .9s steps(2) infinite;outline:4px solid var(--ouro)!important;outline-offset:2px;position:relative;z-index:2}
+@keyframes pisca{50%{outline-color:transparent}}
+/* Mapa */
+.local{padding:12px;display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:12px}
+@media (max-width:760px){.local{grid-template-columns:minmax(0,1fr)}}
+.local h2{font-family:var(--f-tit);font-size:15px;line-height:1.4;color:var(--ouro);margin:0 0 6px;text-shadow:2px 2px 0 var(--borda)}
+.local .desc{color:var(--suave);margin:0 0 10px;font-size:15px}
+.acoes-lista{display:flex;flex-direction:column;gap:8px}
+.acao{background:var(--painel2);border:3px solid var(--borda);box-shadow:inset 0 -3px 0 rgba(0,0,0,.35);padding:8px 10px;text-align:left;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center}
+.acao:hover:not(:disabled){filter:brightness(1.15)}
+.acao:disabled{opacity:.45;cursor:not-allowed}
+.acao b{font-size:16px}
+.acao .hr{grid-row:span 2;font-size:15px;font-weight:700;background:var(--borda);color:var(--ouro);padding:3px 7px}
+.efs{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px}
+.ef-up{color:var(--verde)} .ef-dn{color:var(--vermelho)} .ef-nt{color:var(--suave)}
+.req{font-size:13px;color:var(--vermelho);grid-column:1/-1}
+.hoje{background:#1a1630;border:3px solid var(--borda);padding:10px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.hoje h4{margin:0 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave)}
+.alerta{color:var(--laranja)}
+.config{display:flex;flex-direction:column;gap:10px;margin-top:12px;padding-top:10px;border-top:3px dashed var(--luz)}
+.seg{display:inline-flex;border:3px solid var(--borda)}
+.seg button{background:var(--painel2);border:0;padding:4px 10px;font-size:14px;color:var(--suave)}
+.seg button+button{border-left:3px solid var(--borda)}
+.seg button[aria-pressed="true"]{background:var(--ouro);color:var(--ouro-esc);font-weight:700}
+.linha-config{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:14px}
+.linha-config .nota{flex-basis:100%;font-size:13px;color:var(--suave)}
+/* Ficha */
+.ficha{padding:12px;display:flex;flex-direction:column;gap:12px}
+.ficha h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave)}
+.hab{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:14px;margin-bottom:6px}
+.hab .mini{grid-column:1/-1;height:8px;border:2px solid var(--borda);background:#110e20}
+.hab .mini i{display:block;height:100%;background:var(--azul)}
+.hab small{grid-column:1/-1;color:var(--suave);font-size:12px}
+.pessoa{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:center;font-size:14px;margin-bottom:6px}
+.pessoa img{width:36px;height:36px;image-rendering:pixelated;border:2px solid var(--borda)}
+.pessoa small{display:block;color:var(--suave);font-size:12px}
+.dica-geral{font-size:13px;color:var(--suave);margin:0}
+/* Modais */
+.veu{position:fixed;inset:0;background:rgba(6,4,14,.78);display:flex;align-items:center;justify-content:center;z-index:30;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{width:100%;max-width:620px;max-height:100%;overflow:auto;padding:18px}
+.modal .sobre{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro)}
+.modal h2{font-family:var(--f-tit);font-size:17px;line-height:1.45;margin:8px 0 12px;text-wrap:balance;text-shadow:2px 2px 0 var(--borda)}
+.modal h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:16px 0 6px}
+.modal p{margin:0 0 10px;max-width:64ch}
+.fala{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:start;background:#1a1630;border:3px solid var(--borda);padding:8px;margin:8px 0}
+.fala .quem{font-weight:700;color:var(--ouro)}
+.contexto{color:var(--azul);font-size:14px;border-left:4px solid var(--azul);padding-left:8px}
+.escolhas{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.escolha{text-align:left;background:var(--painel2);border:3px solid var(--borda);box-shadow:inset 0 -3px 0 rgba(0,0,0,.35);padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+.escolha:hover:not(:disabled){filter:brightness(1.15)}
+.escolha:disabled{opacity:.45;cursor:not-allowed}
+.escolha b{font-size:16px}
+.escolha span{font-size:14px;color:var(--suave)}
+.escolha .tags{font-size:13px;color:var(--azul)}
+.escolha .req{color:var(--vermelho)}
+.rodape{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+table.contas{width:100%;border-collapse:collapse;font-size:15px}
+table.contas td{padding:4px 0;border-bottom:2px dashed var(--luz)}
+table.contas td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
-.pos{color:var(--bom)} .neg{color:var(--ruim)}
-.diario{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.diario li{background:var(--painel2);border-radius:8px;padding:8px 12px;font-size:14px}
-.diario .dia{font-family:var(--f-num);font-size:12px;color:var(--acento);margin-right:6px}
-.diario .causa{display:block;font-size:12.5px;color:var(--suave);margin-top:3px}
+.diario{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.diario li{background:#1a1630;border:2px solid var(--borda);padding:6px 10px;font-size:14px}
+.diario .dia{color:var(--ouro);margin-right:6px}
+.diario .causa{display:block;font-size:13px;color:var(--suave);margin-top:2px}
 .diario .causa::before{content:"↳ por causa disto: "}
-.compra{display:grid;grid-template-columns:1fr auto auto;gap:8px 12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--linha)}
-.compra small{color:var(--suave)}
-.qtd{display:flex;align-items:center;gap:6px;font-family:var(--f-num)}
-.qtd button{width:30px;height:30px;border-radius:6px;background:var(--painel2);border:1px solid var(--linha)}
-.titulo-jogo{font-family:var(--f-disp);font-weight:800;font-size:clamp(36px,7vw,56px);line-height:.95;letter-spacing:-.03em;color:var(--acento);margin:6px 0 14px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.compra{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 12px;align-items:center;padding:6px 0;border-bottom:2px dashed var(--luz);font-size:15px}
+.compra small{display:block;color:var(--suave);font-size:13px}
+.qtd{display:flex;align-items:center;gap:6px}
+.qtd button{width:30px;height:30px;padding:0}
+.titulo-jogo{font-family:var(--f-tit);font-size:clamp(24px,6vw,38px);line-height:1.25;color:var(--ouro);margin:10px 0 14px;text-shadow:4px 4px 0 var(--borda)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="app">
-  <header class="status">
-    <div class="marca">Café Cantinho<small>protótipo · 5 dias</small></div>
-    <div class="stat"><span>Dia</span><b id="hDia">—</b></div>
-    <div class="stat"><span>Hora</span><b id="hHora">—</b></div>
-    <div class="stat"><span>Caixa</span><b id="hCaixa">—</b></div>
-    <div class="stat"><span>Reputação</span><b id="hRep">—</b></div>
-    <div class="acoes-topo">
-      <button class="btn" id="bGestao" hidden>Gestão (G)</button>
-      <button class="btn" id="bPausa" hidden>Pausar (Esc)</button>
-      <button class="btn" id="bDiario">Diário</button>
+  <header class="hud px">
+    <div class="marca">CAFÉ<br>CANTINHO</div>
+    <div class="hstat"><small>Dia</small><b id="hDia">—</b></div>
+    <div class="hstat"><small>Hora</small><b id="hHora">—</b></div>
+    <div class="hstat"><small>Caixa</small><b id="hCaixa">—</b></div>
+    <div class="hstat"><small>Fama</small><b id="hRep">—</b></div>
+    <div class="barras">
+      <div class="barra-rot"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="#ffcc4d" d="M4 0h2v1H5v2h2v1H6v1H5v1H4v1H3v1H2V6h1V5H1V4h1V3h1V2h1z"/></svg>Energia<div class="barra"><i id="bEnergia"></i></div></div>
+      <div class="barra-rot"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="#ff8fc7" d="M1 1h2v1h2V1h2v1h1v2H7v1H6v1H5v1H3V6H2V5H1V4H0V2h1z"/></svg>Ânimo<div class="barra"><i id="bAnimo"></i></div></div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="bt" id="bPausa" hidden>Pausar</button>
+      <button class="bt" id="bDiario">Diário</button>
+      <button class="bt ouro" id="bFase" hidden></button>
     </div>
   </header>
-  <div class="principal">
-    <div class="palco">
-      <div class="barra-gestao" id="barraGestao" hidden>
-        <span id="txtGestao">Modo gestão: toque numa estação e depois num espaço vazio ou em outra estação para trocar de lugar.</span>
-        <button class="btn" id="bConcluiGestao">Concluir</button>
-      </div>
-      <canvas id="cena" width="800" height="500" aria-label="Cozinha do café"></canvas>
+  <div class="grade">
+    <div class="coluna">
+      <div class="cena-wrap px"><canvas id="cena" width="320" height="130" aria-label="Cena do jogo"></canvas><div id="hots"></div></div>
+      <div class="dialogo px" id="dica" hidden></div>
+      <div class="px" id="trabalho"></div>
     </div>
-    <aside class="painel" id="painel"></aside>
+    <aside class="ficha px" id="ficha"></aside>
   </div>
 </div>
-<div class="veu" id="veu" hidden><div class="cartao" id="cartao" role="dialog" aria-modal="true"></div></div>
+<div class="veu" id="veu" hidden><div class="modal px" id="modal" role="dialog" aria-modal="true"></div></div>
 
 <script>
 (() => {
 'use strict';
 const $ = s => document.querySelector(s);
-const cv = $('#cena'), ctx = cv.getContext('2d');
-const W = 800, H = 500;
+const cv = $('#cena'), cx = cv.getContext('2d');
+const CW = 320, CH = 130;
 
-/* ---------- Constantes de design (dados) ---------- */
+/* ================= DADOS ================= */
 const DAY_LEN = 180, GRACE = 25, DIAS = 5;
 const NOME_DIA = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+const RECEITAS = {
+  espresso: { nome: 'Espresso', usa: { grao: 1 }, passos: [{ id: 'moer', nome: 'Moer', tipo: 'mao', t: 1.2 }, { id: 'extrair', nome: 'Extrair', tipo: 'maq', t: 3 }] },
+  cappuccino: { nome: 'Cappuccino', usa: { grao: 1, leite: 1 }, passos: [{ id: 'moer', nome: 'Moer', tipo: 'mao', t: 1.2 }, { id: 'extrair', nome: 'Extrair', tipo: 'maq', t: 3 }, { id: 'vaporizar', nome: 'Vaporizar leite', tipo: 'mao', t: 1.5 }] },
+};
 const PRECO_BASE = { espresso: 6, cappuccino: 9, pao: 5 };
+const ITEM_CURTO = { espresso: 'Espresso', cappuccino: 'Cappuccino', pao: 'Pão' };
 const PRECO_MULT = { baixo: 0.8, normal: 1, alto: 1.25 };
 const DEMANDA_PRECO = { baixo: 1.2, normal: 1, alto: 0.8 };
 const PAC_PRECO = { baixo: 1.1, normal: 1, alto: 0.85 };
 const ALUGUEL = 40;
 const SAL = { integral: 35, meio: 20 };
+const FORNO_T = 8;
 const PACOTES = {
   grao: { nome: 'Grão de café', qtd: 20, preco: 24, un: 'doses' },
   leite: { nome: 'Leite', qtd: 10, preco: 14, un: 'doses' },
   massa: { nome: 'Massa de pão de queijo', qtd: 12, preco: 9, un: 'unid.' },
 };
-const ITEM_NOME = { po: 'pó de café', espresso: 'espresso', cappuccino: 'cappuccino', pao: 'pão de queijo' };
-const BASE_T = { moedor: 1.6, maquina: 3.0, vapor: 2.2, forno: 7 };
-const ST_DEF = {
-  moedor: { nome: 'Moedor', cor: '#7a4e2d' },
-  maquina: { nome: 'Máquina', cor: '#4b5868' },
-  vapor: { nome: 'Vaporizador', cor: '#5f86ab' },
-  forno: { nome: 'Forno', cor: '#a4532f' },
-  lixo: { nome: 'Lixo', cor: '#56616c' },
+const MELHORIAS = [
+  { id: 'slot3', nome: 'Terceiro espaço de preparo', preco: 90, desc: 'Mais um pedido em andamento ao mesmo tempo.', req: s => s.up.slots === 2, ef: s => { s.up.slots = 3; } },
+  { id: 'slot4', nome: 'Quarto espaço de preparo', preco: 150, desc: 'Quatro pedidos em paralelo.', req: s => s.up.slots === 3, ef: s => { s.up.slots = 4; } },
+  { id: 'maq2', nome: 'Máquina de dois grupos', preco: 140, desc: 'Extrai dois cafés ao mesmo tempo. Hoje a máquina é o gargalo.', req: s => s.up.maquina === 1, ef: s => { s.up.maquina = 2; } },
+  { id: 'moedor', nome: 'Moedor elétrico', preco: 70, desc: 'Moer leva metade do tempo. Tuas mãos ficam livres antes.', req: s => !s.up.moedor, ef: s => { s.up.moedor = true; } },
+  { id: 'bandeja', nome: 'Bandeja grande', preco: 35, desc: 'Bandeja de 4 para 7 espaços. Mais lugar para adiantar e para os erros.', req: s => s.up.bandeja === 4, ef: s => { s.up.bandeja = 7; } },
+  { id: 'forno', nome: 'Forno grande', preco: 80, desc: 'Assa 8 pães de cada vez em vez de 4.', req: s => s.up.forno === 4, ef: s => { s.up.forno = 8; } },
+];
+const NOMES = ['Seu Jair', 'Marina', 'Tonho', 'Rita', 'Juca', 'Paula', 'Beto', 'Dani', 'Lu', 'Seu Zé', 'Carla', 'Nando', 'Tati', 'Gui', 'Neide', 'Raul', 'Bruna', 'Seu Lino', 'Mel', 'Edu', 'Kátia', 'Vini', 'Duda', 'Sônia', 'Léo', 'Ivone', 'Josi', 'Seu Abel'];
+const PERS = {
+  voce: { nome: 'Tu', pele: '#e0a878', cabelo: '#3a2416', roupa: '#ffcc4d', estilo: 'curto' },
+  cida: { nome: 'Dona Cida', pele: '#d9a07a', cabelo: '#ece8f4', roupa: '#c0392b', estilo: 'coque' },
+  bia: { nome: 'Bia', pele: '#c98a5e', cabelo: '#5a2e18', roupa: '#2f8f6f', estilo: 'rabo' },
+  lucia: { nome: 'Dona Lúcia', pele: '#efc6a6', cabelo: '#c3b0de', roupa: '#8e5ca8', estilo: 'curto', oculos: true },
+  caio: { nome: 'Caio', pele: '#8d5a3b', cabelo: '#1c1c1c', roupa: '#3d6fd1', estilo: 'bone' },
+  rafa: { nome: 'Rafa', pele: '#e6b48f', cabelo: '#141414', roupa: '#1f5f4a', estilo: 'topete' },
+  blog: { nome: 'Blogueira', pele: '#f1c9a5', cabelo: '#d2483a', roupa: '#222222', estilo: 'longo' },
+  dimas: { nome: 'Seu Dimas', pele: '#b07850', cabelo: '#777777', roupa: '#7a5a3a', estilo: 'careca' },
 };
-const SLOTS = {
-  b0: { x: 110, y: 76, p: 'parede' }, b1: { x: 210, y: 76, p: 'parede' }, b2: { x: 310, y: 76, p: 'parede' },
-  b3: { x: 410, y: 76, p: 'parede' }, b4: { x: 510, y: 76, p: 'parede' }, b5: { x: 610, y: 76, p: 'parede' },
-  b6: { x: 710, y: 76, p: 'parede' },
-  c0: { x: 140, y: 300, p: 'balcao' }, c1: { x: 255, y: 300, p: 'balcao' },
-  c2: { x: 545, y: 300, p: 'balcao' }, c3: { x: 660, y: 300, p: 'balcao' },
+const LOCAIS = {
+  casa: { nome: 'Casa', x: 26, desc: 'Teu quarto alugado em cima da farmácia. Cama, fogão de duas bocas e silêncio.' },
+  fornecedor: { nome: 'Fornecedor', x: 78, desc: 'Seu Dimas vende grão, leite, massa e umas peças usadas para café.' },
+  cafe: { nome: 'Café', x: 136, desc: 'O Café Cantinho. Seis lugares, uma máquina velha e cheiro de grão torrado.' },
+  praca: { nome: 'Praça', x: 191, desc: 'Bancos, pombos e a Dona Lúcia fazendo a caminhada dela.' },
+  bar: { nome: 'Bar', x: 241, desc: 'Bar do Seu Jorge. Cerveja gelada, sinuca torta e o Caio quase toda noite.' },
+  grao: { nome: 'Grão Nobre', x: 294, desc: 'O café do Rafa. Maior, mais rápido e sempre cheio de estudantes.' },
 };
-const ENTREGA = { x: 400, y: 300 };
-const VAGAS = [400, 326, 474, 252, 548, 178];
-const VAGA_Y = 386;
-const PORTA = { x: 820, y: 470 };
-const SW = 84, SH = 56;
-const LIM = { x0: 60, x1: 740, y0: 126, y1: 256 };
-const CORES_CLIENTE = ['#c0675a', '#5a8fc0', '#7cae6a', '#b98bd0', '#d39a4a', '#5fb3a8', '#9a7b62', '#c77fa0'];
-const SAVE_KEY = 'cafe-cantinho-v1';
 
-function pontoDe(slotId) {
-  const s = SLOTS[slotId];
-  return s.p === 'parede' ? { x: s.x, y: s.y + 48 } : { x: s.x, y: s.y - 44 };
-}
-
-/* ---------- Estado persistente ---------- */
+/* ================= ESTADO ================= */
+const SAVE_KEY = 'cafe-cantinho-v2';
 function novoEstado() {
   return {
-    v: 1, dia: 1, fase: 'titulo', caixa: 300, rep: 30, preco: 'normal',
-    estoque: { grao: 20, leite: 10, massa: 12 }, fornoPaes: 0,
-    me: { estresse: 20, cozXp: 0, gestao: 0, padrao: { cozinha: 0, social: 0, gestao: 0, descanso: 0 } },
-    bia: { contratada: false, regime: null, papel: 'cafe', estresse: 20, moral: 50, saiu: false, aumento: 0 },
-    lucia: { afin: 20, conf: 10 },
-    caio: { afin: 45, semVer: 0, viuHoje: false },
-    rafa: { afin: 0, forca: 1, acordo: null, valor: 0 },
+    v: 2, dia: 1, fase: 'titulo', caixa: 300, rep: 30, preco: 'normal',
+    estoque: { grao: 20, leite: 10, massa: 12 }, preassados: 0,
+    energia: 85, animo: 70,
+    hab: { cozXp: 0, atendXp: 0, gestao: 0 },
+    padrao: { cozinha: 0, social: 0, gestao: 0, descanso: 0 },
+    up: { slots: 2, maquina: 1, moedor: false, bandeja: 4, forno: 4 },
+    bia: { contratada: false, regime: null, papel: 'forno', estresse: 20, moral: 50, saiu: false, aumento: 0 },
+    lucia: { afin: 20 }, caio: { afin: 45, semVer: 0, viuHoje: false }, rafa: { afin: 0, forca: 1, acordo: null, valor: 0 },
     flags: {}, mem: {}, diario: [], agenda: [], vistos: {}, tensao: 0,
-    layout: { moedor: 'b1', maquina: 'b2', vapor: 'b3', forno: 'b5', lixo: 'c3' },
-    mods: {}, amanha: {}, horas: 0, hist: [], snap: null,
+    mods: {}, amanha: {}, horas: 0, local: 'cafe', ontem: null, ultimo: null, snap: null, compras: 0,
   };
 }
 let S = novoEstado();
-let R = novoRuntime();
-let filaEventos = [];
-let trava = false; // true enquanto um cartão que não pode ser interrompido está aberto
-
+let R = null;
+let fila = [];
+let trava = false;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const brl = n => (n < 0 ? '−' : '') + 'R$ ' + Math.abs(Math.round(n)).toLocaleString('pt-BR');
 const rnd = (a, b) => a + Math.random() * (b - a);
-const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nivel = (xp, por) => Math.min(3, Math.floor(xp / por));
+const nCoz = () => nivel(S.hab.cozXp, 60);
+const nAtend = () => nivel(S.hab.atendXp, 50);
 function lembra(k, txt) { S.mem[k] = { dia: S.dia, txt }; }
-function diario(txt, causaKey) {
-  const m = causaKey && S.mem[causaKey];
-  S.diario.push({ dia: S.dia, txt, causa: m ? `dia ${m.dia}, ${m.txt}` : null });
-}
+function diario(txt, causa) { const m = causa && S.mem[causa]; S.diario.push({ dia: S.dia, txt, causa: m ? `dia ${m.dia}, ${m.txt}` : null }); }
 function agendar(dia, id) { S.agenda.push({ dia, id }); }
 function temAgenda(id) { return S.agenda.some(a => a.id === id && a.dia <= S.dia); }
 function tiraAgenda(id) { S.agenda = S.agenda.filter(a => a.id !== id); }
-function nivelCoz() { return Math.min(3, Math.floor(S.me.cozXp / 60)); }
 function biaAtiva() { return S.bia.contratada && !S.bia.saiu; }
 function salarioBia() { return biaAtiva() ? SAL[S.bia.regime] + S.bia.aumento : 0; }
-function precoItem(item, especialNormal) {
-  const m = especialNormal ? 1 : PRECO_MULT[S.preco];
-  return Math.round(PRECO_BASE[item] * m);
-}
-function relacao(a) {
-  if (a < 0) return 'fria';
-  if (a < 25) return 'distante';
-  if (a < 50) return 'cordial';
-  if (a < 75) return 'próxima';
-  return 'muito próxima';
-}
+function preco(item, normal) { return Math.round(PRECO_BASE[item] * (normal ? 1 : PRECO_MULT[S.preco])); }
+function relacao(a) { return a < 0 ? 'fria' : a < 25 ? 'distante' : a < 50 ? 'cordial' : a < 75 ? 'próxima' : 'muito próxima'; }
+function liberado(o) { return { fornecedor: S.dia >= 2, preco: S.dia >= 3 }[o]; }
 function demanda() {
   let d = (0.6 + S.rep / 100) * DEMANDA_PRECO[S.preco] * (1 - 0.06 * S.rafa.forca);
   if (S.mods.chuva) d *= 0.75;
@@ -224,953 +297,864 @@ function demanda() {
   if (S.mods.caioNoRafa) d *= 0.85;
   return d;
 }
+function previsao() { return Math.max(6, Math.round(18 * demanda() * (S.mods.meioDia ? 0.5 : 1) * (S.dia === 1 ? 0.55 : 1))); }
+function necessidade(n) { return { grao: Math.ceil(n * 1.0), leite: Math.ceil(n * 0.46), pao: Math.ceil(n * 0.45) }; }
+function normaliza() {
+  S.energia = clamp(S.energia, 0, 100); S.animo = clamp(S.animo, 0, 100); S.rep = clamp(S.rep, 0, 100);
+  S.bia.estresse = clamp(S.bia.estresse, 0, 100); S.bia.moral = clamp(S.bia.moral, 0, 100);
+  for (const k of ['lucia', 'caio', 'rafa']) S[k].afin = clamp(S[k].afin, -50, 100);
+}
 
-/* ---------- Eventos (dados + regras) ---------- */
+/* ================= EVENTOS ================= */
 const EV = [
-  {
-    id: 'bia_emprego', quando: 'pos', forcado: true, peso: 'pesado', cond: s => s.dia === 1,
-    texto: () => ({
-      titulo: 'Alguém bate no vidro',
-      corpo: ['Tu vira a placa para "fechado". Uma moça que passou a tarde olhando a fila bate no vidro da porta.'],
-      falas: [['Bia', 'Sou a Bia. Trabalhei dois anos numa padaria. Vi que tu tá sozinho aí dentro. Precisa de ajuda?']],
-    }),
+  { id: 'bia_emprego', quando: 'pos', forcado: true, peso: 'pesado', quem: 'bia', cond: s => s.dia === 1,
+    texto: s => ({ titulo: 'Alguém bate no vidro', corpo: [`Tu vira a placa. Hoje foram ${s.ultimo.atendidos} atendidos e ${s.ultimo.irritados} foram embora sem atendimento. Uma moça que passou a tarde olhando a fila bate no vidro.`], falas: [['bia', 'Sou a Bia. Trabalhei dois anos numa padaria. A Dona Cida disse que tu ia ficar sozinho aqui. Precisa de ajuda?']], contexto: 'Com a Bia, uma tarefa fica automática: forno, moer ou entregar. Ela custa todo dia que trabalhar, mesmo nos dias fracos. Teu caixa hoje: ' + brl(s.caixa) + '.' }),
     escolhas: () => [
-      { t: 'Contratar em tempo integral', sub: 'Ela cuida de uma estação o expediente inteiro.', custo: 'R$ 35 por dia',
-        ef: s => { s.bia.contratada = true; s.bia.regime = 'integral'; lembra('bia_contratada', 'tu contratou a Bia no primeiro dia'); diario('Contratei a Bia em tempo integral.'); return 'A Bia começa amanhã. De manhã, tu escolhe em qual estação ela fica.'; } },
-      { t: 'Contratar meio período', sub: 'Ela ajuda só na primeira metade do expediente.', custo: 'R$ 20 por dia',
-        ef: s => { s.bia.contratada = true; s.bia.regime = 'meio'; lembra('bia_contratada', 'tu contratou a Bia no primeiro dia'); diario('Contratei a Bia em meio período.'); return 'A Bia topa. "Meio período já ajuda. Se precisar de mais, me fala."'; } },
-      { t: 'Agora não dá', sub: 'O caixa ainda está apertado.',
-        ef: s => { lembra('bia_recusada', 'tu disse à Bia que não dava pra contratar'); agendar(3, 'bia_no_rival'); diario('Disse para a Bia que não dava pra contratar ninguém.'); return 'Ela agradece, meio sem graça, e some na esquina.'; } },
-    ],
-  },
-  {
-    id: 'bia_no_rival', quando: 'manha', forcado: true, peso: 'pesado', cond: () => temAgenda('bia_no_rival'),
-    texto: () => ({
-      titulo: 'Avental de outra cor',
-      corpo: ['Indo comprar pão, tu passa pelo Grão Nobre, o café do Rafa. A Bia está lá dentro, de avental verde, despachando uma fila.'],
-      falas: [['Bia', 'Oi! O Rafa precisava de gente. Tu tinha dito que não dava, né? Sem ressentimento.']],
-    }),
+      { t: 'Contratar em tempo integral', sub: 'Ela fica o expediente todo.', tags: 'Caixa −R$ 35/dia · uma tarefa automática', ef: s => { s.bia.contratada = true; s.bia.regime = 'integral'; lembra('bia_contratada', 'tu contratou a Bia'); diario('Contratei a Bia em tempo integral.'); return 'A Bia começa amanhã. No Café, de manhã, tu escolhe o que ela faz.'; } },
+      { t: 'Contratar meio período', sub: 'Só na primeira metade do expediente.', tags: 'Caixa −R$ 20/dia', ef: s => { s.bia.contratada = true; s.bia.regime = 'meio'; lembra('bia_contratada', 'tu contratou a Bia'); diario('Contratei a Bia em meio período.'); return '"Meio período já ajuda. Se precisar de mais, me fala."'; } },
+      { t: 'Agora não dá', sub: 'O caixa ainda está apertado.', tags: 'Bia · isso pode voltar', ef: s => { lembra('bia_recusada', 'tu disse à Bia que não dava pra contratar'); agendar(3, 'bia_no_rival'); diario('Disse para a Bia que não dava pra contratar ninguém.'); return 'Ela agradece, meio sem graça, e some na esquina.'; } },
+    ] },
+  { id: 'bia_no_rival', quando: 'manha', forcado: true, peso: 'pesado', quem: 'bia', cond: () => temAgenda('bia_no_rival'),
+    texto: () => ({ titulo: 'Avental de outra cor', corpo: ['Passando pela esquina, tu vê a Bia de avental verde no Grão Nobre, o café do Rafa, despachando uma fila.'], falas: [['bia', 'Oi! O Rafa precisava de gente. Tu tinha dito que não dava, né? Sem ressentimento.']], contexto: 'O Grão Nobre ficou mais forte: parte dos teus clientes vai para lá.' }),
     escolhas: () => [
-      { t: 'Desejar boa sorte', sub: 'E seguir o dia.', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; diario('A Bia agora trabalha no Grão Nobre. O café do Rafa ficou mais rápido e puxa parte da tua clientela.', 'bia_recusada'); return 'O Grão Nobre ganhou braço. Tu vai sentir isso na fila.'; } },
-      { t: 'Perguntar como é trabalhar lá', sub: 'Saber o que o rival paga.', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; s.flags.sabeSalarioRafa = true; diario('A Bia agora trabalha no Grão Nobre. O Rafa paga R$ 50 por dia.', 'bia_recusada'); return '"R$ 50 por dia e ele fecha às seis." Tu guarda o número.'; } },
-    ],
-  },
-  {
-    id: 'bia_sobrecarregada', quando: 'pos', forcado: true, peso: 'pesado', cond: s => biaAtiva() && s.bia.estresse >= 60,
-    texto: s => ({
-      titulo: 'A Bia no estoque',
-      corpo: ['Depois de fechar, tu encontra a Bia sentada numa caixa de leite, olhando para o nada.'],
-      falas: [['Bia', s.bia.papel === 'cafe' ? 'Desculpa. É que eu fico na máquina o dia inteiro e ainda saio tarde. Tá puxado.' : 'Desculpa. Forno o dia todo, calor o dia todo. Tá puxado.']],
-    }),
-    escolhas: s => [
-      { t: 'Dar folga amanhã', sub: 'Tu toca o café sozinho por um dia.', ef: s => { s.amanha.biaFolga = true; s.bia.estresse -= 40; s.bia.moral += 10; lembra('bia_folga', 'tu deu folga à Bia quando ela estava no limite'); diario('Dei folga para a Bia amanhã.'); return 'Ela sorri de verdade pela primeira vez na semana.'; } },
-      { t: 'Aumentar o salário dela', sub: 'Mais R$ 15 por dia.', custo: '+R$ 15/dia', ef: s => { s.bia.aumento += 15; s.bia.moral += 15; s.bia.estresse -= 10; diario('Dei aumento de R$ 15 por dia para a Bia.'); return 'Ela agradece. O cansaço continua, mas agora tem motivo.'; } },
-      { t: 'Só café amanhã', sub: 'Tirar o pão de queijo do cardápio por um dia para aliviar.', ef: s => { s.amanha.semPao = true; s.bia.estresse -= 20; diario('Tirei o pão de queijo do cardápio por um dia para aliviar a Bia.'); return 'Menos coisa para fazer. Menos coisa para vender também.'; } },
-      { t: 'Pedir pra ela aguentar até sexta', sub: 'A semana está quase no fim.', ef: s => { s.bia.moral -= 15; lembra('bia_aguenta', 'tu pediu para a Bia aguentar até sexta'); agendar(s.dia + 2, 'bia_demissao'); diario('Pedi para a Bia aguentar até sexta.'); return 'Ela diz que tudo bem. Não parece tudo bem.'; } },
-    ],
-  },
-  {
-    id: 'bia_demissao', quando: 'manha', forcado: true, peso: 'pesado', cond: s => temAgenda('bia_demissao') && biaAtiva() && s.bia.estresse >= 45,
-    texto: () => ({
-      titulo: 'A Bia chega sem avental',
-      corpo: ['A Bia chega cedo, mas não amarra o avental.'],
-      falas: [['Bia', 'O Rafa me ofereceu um lugar no Grão Nobre. Menos horas. Eu aceitei. Desculpa.']],
-    }),
-    escolhas: s => [
-      { t: 'Desejar boa sorte', ef: s => { tiraAgenda('bia_demissao'); s.bia.saiu = true; s.bia.foiRafa = true; s.rafa.forca += 2; diario('A Bia pediu demissão e foi para o Grão Nobre.', 'bia_aguenta'); return 'Tu volta a fazer tudo sozinho. E o rival ganhou uma funcionária treinada por ti.'; } },
-      { t: 'Oferecer o dobro para ela ficar', sub: 'Salário dobra até o fim da semana.', req: s => ({ ok: s.caixa >= 120, motivo: 'Precisa de pelo menos R$ 120 em caixa' }),
-        ef: s => { tiraAgenda('bia_demissao'); s.bia.aumento += SAL[s.bia.regime]; s.bia.estresse -= 15; diario('Dobrei o salário da Bia para ela não ir para o Grão Nobre.', 'bia_aguenta'); return 'Ela fica. O caixa sente.'; } },
-    ],
-  },
-  {
-    id: 'leite_estragou', quando: 'manha', peso: 'pesado', min: 2, cond: s => s.dia <= 4,
-    texto: () => ({ titulo: 'A geladeira desligou', corpo: ['Caiu a luz de madrugada. Todo o leite estragou.'] }),
+      { t: 'Desejar boa sorte', tags: 'Rival mais forte', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; diario('A Bia agora trabalha no Grão Nobre. O café do Rafa ficou mais rápido e puxa parte da minha clientela.', 'bia_recusada'); return 'O Grão Nobre ganhou braço. Tu vai sentir isso na fila.'; } },
+      { t: 'Perguntar quanto o Rafa paga', tags: 'Rival mais forte · informação', ef: s => { tiraAgenda('bia_no_rival'); s.rafa.forca += 2; diario('A Bia agora trabalha no Grão Nobre. O Rafa paga R$ 50 por dia.', 'bia_recusada'); return '"R$ 50 por dia e ele fecha às seis." Tu guarda o número.'; } },
+    ] },
+  { id: 'bia_cansada', quando: 'pos', forcado: true, peso: 'pesado', quem: 'bia', cond: s => biaAtiva() && s.bia.estresse >= 60,
+    texto: s => ({ titulo: 'A Bia no estoque', corpo: ['Depois de fechar, tu encontra a Bia sentada numa caixa de leite, olhando para o nada.'], falas: [['bia', 'Desculpa. Tá puxado. Eu fico na mesma função o dia inteiro e ainda saio tarde.']], contexto: `Cansaço da Bia: ${Math.round(s.bia.estresse)} de 100. Cansada, ela trabalha mais devagar.` }),
+    escolhas: () => [
+      { t: 'Dar folga amanhã', sub: 'Tu toca o café sozinho por um dia.', tags: 'Bia ↑ · amanhã sem ajuda', ef: s => { s.amanha.biaFolga = true; s.bia.estresse -= 40; s.bia.moral += 10; diario('Dei folga para a Bia amanhã.'); return 'Ela sorri de verdade pela primeira vez na semana.'; } },
+      { t: 'Aumentar o salário dela', tags: 'Caixa −R$ 15/dia · Bia ↑', ef: s => { s.bia.aumento += 15; s.bia.moral += 15; s.bia.estresse -= 10; diario('Dei aumento de R$ 15 por dia para a Bia.'); return 'Ela agradece. O cansaço continua, mas agora tem motivo.'; } },
+      { t: 'Pedir pra ela aguentar até sexta', tags: 'Bia ↓ · isso pode voltar', ef: s => { s.bia.moral -= 15; lembra('bia_aguenta', 'tu pediu para a Bia aguentar até sexta'); agendar(s.dia + 2, 'bia_demissao'); diario('Pedi para a Bia aguentar até sexta.'); return 'Ela diz que tudo bem. Não parece tudo bem.'; } },
+    ] },
+  { id: 'bia_demissao', quando: 'manha', forcado: true, peso: 'pesado', quem: 'bia', cond: s => temAgenda('bia_demissao') && biaAtiva() && s.bia.estresse >= 45,
+    texto: () => ({ titulo: 'A Bia chega sem avental', corpo: ['A Bia chega cedo, mas não amarra o avental.'], falas: [['bia', 'O Rafa me ofereceu um lugar no Grão Nobre. Menos horas. Eu aceitei. Desculpa.']] }),
+    escolhas: () => [
+      { t: 'Desejar boa sorte', tags: 'Sem a Bia · rival mais forte', ef: s => { tiraAgenda('bia_demissao'); s.bia.saiu = true; s.bia.foiRafa = true; s.rafa.forca += 2; diario('A Bia pediu demissão e foi para o Grão Nobre.', 'bia_aguenta'); return 'Tu volta a fazer tudo sozinho. E o rival ganhou uma funcionária treinada por ti.'; } },
+      { t: 'Oferecer o dobro para ela ficar', tags: 'Caixa ↓↓', req: s => ({ ok: s.caixa >= 120, motivo: 'Precisa de R$ 120 em caixa' }), ef: s => { tiraAgenda('bia_demissao'); s.bia.aumento += SAL[s.bia.regime]; s.bia.estresse -= 15; diario('Dobrei o salário da Bia para ela não ir para o Grão Nobre.', 'bia_aguenta'); return 'Ela fica. O caixa sente.'; } },
+    ] },
+  { id: 'leite', quando: 'manha', peso: 'pesado', min: 2, quem: 'voce', cond: s => s.dia <= 4,
     pre: s => { s.estoque.leite = 0; },
-    escolhas: s => [
-      { t: 'Comprar no mercado, mais caro', sub: '10 doses por R$ 30 (o dobro do fornecedor).', req: s => ({ ok: s.caixa >= 30, motivo: 'Precisa de R$ 30' }), ef: s => { s.caixa -= 30; s.estoque.leite += 10; diario('Perdi o leite e comprei no mercado pelo dobro.'); return 'Problema resolvido. Margem menor hoje.'; } },
-      { t: 'Tirar o cappuccino do cardápio hoje', sub: 'Quem pedir cappuccino vai levar espresso.', ef: s => { s.mods.semCappuccino = true; diario('Fiquei sem leite e tirei o cappuccino do cardápio por um dia.'); return 'Mais simples. A Dona Lúcia não vai gostar.'; } },
-      { t: 'Pedir leite emprestado para o Rafa', sub: 'O dono do café rival, na esquina.', ef: s => { s.estoque.leite += 6; s.rafa.afin += 8; lembra('favor_rafa', 'o Rafa te emprestou leite'); diario('O Rafa me emprestou leite quando a geladeira pifou.'); return 'Ele empresta seis caixas. "Tranquilo. Um dia tu me ajuda."'; } },
-    ],
-  },
-  {
-    id: 'chuva', quando: 'manha', peso: 'leve', min: 2, cond: () => true,
-    texto: () => ({ titulo: 'Chuva forte', corpo: ['Chove desde cedo. Pouca gente na rua, mas quem entra para se abrigar não tem pressa.'] }),
-    escolhas: () => [{ t: 'Abrir assim mesmo', sub: 'Menos clientes, mais paciência.', ef: s => { s.mods.chuva = true; return 'Dia calmo à vista.'; } }],
-  },
-  {
-    id: 'elogio', quando: 'pos', peso: 'leve', min: 2, cond: s => s.tensao >= 2,
-    texto: s => ({ titulo: 'Um bilhete no balcão', corpo: ['Um senhor deixou um guardanapo dobrado ao lado da xícara: "Melhor espresso do bairro. Volto amanhã."', biaAtiva() ? 'A Bia cola o bilhete na parede da cozinha.' : 'Tu cola o bilhete na parede da cozinha.'] }),
-    escolhas: () => [{ t: 'Guardar o bilhete', ef: s => { s.rep += 2; s.me.estresse -= 10; diario('Alguém deixou um bilhete dizendo que é o melhor espresso do bairro.'); return 'Às vezes é isso que segura a semana.'; } }],
-  },
-  {
-    id: 'lucia_preco', quando: 'pos', peso: 'pesado', cond: s => s.flags.luciaPagouAlto && s.lucia.afin > 5,
-    texto: () => ({
-      titulo: 'Dona Lúcia volta ao balcão',
-      corpo: ['Ela já tinha ido embora. Volta, ajeita a bolsa e fala baixo.'],
-      falas: [['Dona Lúcia', 'Meu filho, onze reais no cappuccino? Eu venho aqui todo dia. Desde antes de tu chegar, quando isso aqui era uma loja de chaves.']],
-    }),
-    escolhas: s => [
-      { t: 'Manter o preço', sub: 'É o que o café precisa agora.', ef: s => { s.lucia.afin -= 12; lembra('lucia_preco', 'tu manteve o preço alto mesmo com a reclamação da Dona Lúcia'); diario('Mantive o preço alto. A Dona Lúcia saiu chateada.'); return 'Ela não discute. Só diz "tá bom" do jeito que as pessoas dizem quando não está.'; } },
-      { t: 'Preço antigo só para ela', sub: 'Cliente fiel paga o preço normal.', ef: s => { s.flags.luciaPrecoAntigo = true; s.lucia.afin += 8; s.lucia.conf += 10; lembra('lucia_desconto', 'tu deu à Dona Lúcia o preço antigo'); diario('Dei à Dona Lúcia o preço antigo, só para ela.'); return 'Ela aperta tua mão. "Tu é dos bons."'; } },
-      { t: 'Explicar as contas para ela', sub: 'Aluguel, leite, grão. Sem rodeio.', req: s => ({ ok: s.lucia.afin >= 30 || s.me.padrao.social >= 1, motivo: 'Ela ainda não te conhece o bastante (converse com ela antes)' }),
-        ef: s => { s.lucia.afin += 3; s.lucia.conf += 15; s.rep += 3; diario('Expliquei as contas do café para a Dona Lúcia. Ela entendeu e comentou com as amigas.'); return 'Ela escuta tudo. "Então é isso. Vou falar pras meninas que tu é honesto."'; } },
-    ],
-  },
-  {
-    id: 'lucia_clube', quando: 'pos', peso: 'leve', min: 3, cond: s => s.lucia.afin >= 45 && s.dia <= 4,
-    texto: s => ({
-      titulo: 'O grupo de crochê',
-      corpo: ['Dona Lúcia demora no balcão depois de pagar.'],
-      falas: [['Dona Lúcia', (s.flags.luciaContou ? 'Lembra que te contei da padaria que fechou? ' : 'A padaria onde a gente se encontrava fechou. ') + 'Meu grupo de crochê ficou sem lugar. Posso trazer as meninas amanhã à tarde? São cinco.']],
-    }),
+    texto: () => ({ titulo: 'A geladeira desligou', corpo: ['Caiu a luz de madrugada. Todo o leite estragou.'], contexto: 'Sem leite, não sai cappuccino. Mais ou menos um terço dos pedidos é cappuccino.' }),
     escolhas: () => [
-      { t: 'Aceitar', sub: 'Cinco clientes juntas no meio da tarde.', ef: s => { s.amanha.clube = true; s.lucia.afin += 5; lembra('clube_aceito', 'tu aceitou receber o grupo de crochê da Dona Lúcia'); diario('Aceitei receber o grupo de crochê da Dona Lúcia.'); return 'Ela sai animada. Amanhã, lá pelas três, chegam cinco senhoras de uma vez.'; } },
-      { t: 'Dizer que o café é pequeno demais', ef: s => { s.lucia.afin -= 5; diario('Recusei o grupo de crochê da Dona Lúcia.'); return '"Entendo." Ela entende. Mas lembra.'; } },
-    ],
-  },
-  {
-    id: 'caio_show', quando: 'pos', peso: 'leve', min: 2, cond: s => s.caio.afin >= 55 && s.dia <= 4,
-    texto: () => ({
-      titulo: 'Caio e o violão',
-      corpo: ['O Caio aparece no fim do expediente com o violão nas costas.'],
-      falas: [['Caio', 'E se eu tocar aqui na sexta? Tu não me paga nada, só me dá café. Eu chamo a galera.']],
-    }),
+      { t: 'Comprar no mercado, mais caro', sub: '10 doses por R$ 30, o dobro do Seu Dimas.', tags: 'Caixa −R$ 30', req: s => ({ ok: s.caixa >= 30, motivo: 'Precisa de R$ 30' }), ef: s => { s.caixa -= 30; s.estoque.leite += 10; diario('Perdi o leite e comprei no mercado pelo dobro.'); return 'Resolvido. Margem menor hoje.'; } },
+      { t: 'Tirar o cappuccino do cardápio hoje', sub: 'Quem pedir vai levar espresso.', tags: 'Dona Lúcia ↓', ef: s => { s.mods.semCappuccino = true; diario('Fiquei sem leite e tirei o cappuccino do cardápio por um dia.'); return 'Mais simples. A Dona Lúcia não vai gostar.'; } },
+      { t: 'Pedir leite emprestado para o Rafa', sub: 'O dono do café rival.', tags: 'Rafa ↑ · ele vai lembrar', ef: s => { s.estoque.leite += 6; s.rafa.afin += 8; lembra('favor_rafa', 'o Rafa te emprestou leite'); diario('O Rafa me emprestou leite quando a geladeira pifou.'); return '"Tranquilo. Um dia tu me ajuda."'; } },
+    ] },
+  { id: 'chuva', quando: 'manha', peso: 'leve', min: 2, quem: 'voce', cond: () => true,
+    texto: () => ({ titulo: 'Chuva forte', corpo: ['Chove desde cedo. Pouca gente na rua, mas quem entra para se abrigar não tem pressa.'], contexto: 'Hoje: 25% menos clientes, 30% mais paciência.' }),
+    escolhas: () => [{ t: 'Abrir assim mesmo', ef: s => { s.mods.chuva = true; return 'Dia calmo à vista.'; } }] },
+  { id: 'elogio', quando: 'pos', peso: 'leve', min: 2, quem: 'voce', cond: s => s.tensao >= 2,
+    texto: () => ({ titulo: 'Um bilhete no balcão', corpo: ['Um senhor deixou um guardanapo dobrado ao lado da xícara: "Melhor espresso do bairro. Volto amanhã."'] }),
+    escolhas: () => [{ t: 'Colar o bilhete na parede', tags: 'Ânimo ↑ · Fama ↑', ef: s => { s.rep += 2; s.animo += 10; diario('Alguém deixou um bilhete dizendo que é o melhor espresso do bairro.'); return 'Às vezes é isso que segura a semana.'; } }] },
+  { id: 'lucia_preco', quando: 'pos', peso: 'pesado', quem: 'lucia', cond: s => s.flags.luciaPagouAlto && s.lucia.afin > 5,
+    texto: () => ({ titulo: 'Dona Lúcia volta ao balcão', corpo: ['Ela já tinha ido embora. Volta, ajeita a bolsa e fala baixo.'], falas: [['lucia', 'Meu filho, onze reais no cappuccino? Eu venho aqui todo dia. Desde quando isso aqui era da Cida.']], contexto: 'A Dona Lúcia vem todo dia e conhece meio bairro.' }),
     escolhas: () => [
-      { t: 'Topar o show de sexta', sub: 'Muito mais gente na sexta. Prepare-se.', ef: s => { s.flags.showCaio = true; s.caio.afin += 8; lembra('show_caio', 'tu topou o show do Caio'); diario('Combinei com o Caio um show no café na sexta.'); return '"Fechado! Vai lotar, tu vai ver."'; } },
-      { t: 'Recusar', sub: 'Sexta já é corrida.', ef: s => { s.caio.afin -= 6; diario('Recusei o show do Caio.'); return 'Ele dá de ombros. "Beleza. Outra hora."'; } },
-    ],
-  },
-  {
-    id: 'caio_sumindo', quando: 'manha', peso: 'pesado', min: 3, cond: s => s.caio.semVer >= 2 && !s.flags.showCaio,
-    texto: s => ({
-      titulo: 'Mensagem do Caio',
-      corpo: [`Faz ${s.caio.semVer} noites que tu não aparece no bar do Seu Jorge. Chega uma mensagem:`],
-      falas: [['Caio', 'Sumiu, hein. Sei que o café tá puxado. Ah, o Rafa me chamou pra tocar no Grão Nobre na sexta. Tô pensando.']],
-    }),
+      { t: 'Manter o preço', tags: 'Dona Lúcia ↓↓ · ela vai lembrar', ef: s => { s.lucia.afin -= 12; lembra('lucia_preco', 'tu manteve o preço alto mesmo com a reclamação da Dona Lúcia'); diario('Mantive o preço alto. A Dona Lúcia saiu chateada.'); return 'Ela só diz "tá bom" do jeito que as pessoas dizem quando não está.'; } },
+      { t: 'Preço antigo só para ela', tags: 'Dona Lúcia ↑ · menos por xícara', ef: s => { s.flags.luciaPrecoAntigo = true; s.lucia.afin += 8; diario('Dei à Dona Lúcia o preço antigo, só para ela.'); return 'Ela aperta tua mão. "Tu é dos bons."'; } },
+      { t: 'Explicar as contas para ela', tags: 'Dona Lúcia ↑ · Fama ↑', req: s => ({ ok: s.lucia.afin >= 30 || s.padrao.social >= 1, motivo: 'Ela ainda não te conhece o bastante (caminhe com ela na praça)' }), ef: s => { s.lucia.afin += 3; s.rep += 3; diario('Expliquei as contas do café para a Dona Lúcia. Ela comentou com as amigas.'); return '"Então é isso. Vou falar pras meninas que tu é honesto."'; } },
+    ] },
+  { id: 'lucia_clube', quando: 'pos', peso: 'leve', min: 3, quem: 'lucia', cond: s => s.lucia.afin >= 45 && s.dia <= 4,
+    texto: s => ({ titulo: 'O grupo de crochê', corpo: ['Dona Lúcia demora no balcão depois de pagar.'], falas: [['lucia', (s.flags.luciaContou ? 'Lembra da padaria que fechou? ' : 'A padaria onde a gente se encontrava fechou. ') + 'Posso trazer as meninas do crochê amanhã à tarde? São cinco.']], contexto: 'Cinco clientes chegando juntas, com paciência de sobra. Pedem cappuccino e pão.' }),
     escolhas: () => [
-      { t: 'Prometer aparecer hoje à noite', sub: 'Tu vai precisar cumprir.', ef: s => { s.flags.promessaCaio = s.dia; lembra('promessa_caio', 'tu prometeu ao Caio que ia aparecer'); return '"Vou cobrar, hein."'; } },
-      { t: 'Mandar um áudio pedindo desculpa', ef: s => { s.caio.afin += 3; return 'Ele responde com um emoji de joinha. Difícil saber o que significa.'; } },
-      { t: 'Deixar pra lá', sub: 'Não dá para dar conta de tudo.', ef: s => { s.flags.caioNoRafa = true; lembra('caio_largado', 'tu deixou a mensagem do Caio sem resposta'); diario('Deixei a mensagem do Caio sem resposta.'); return 'Silêncio do outro lado.'; } },
-    ],
-  },
-  {
-    id: 'rafa_proposta', quando: 'manha', peso: 'pesado', min: 3, cond: s => !s.rafa.acordo,
-    texto: s => ({
-      titulo: 'Rafa, do Grão Nobre',
-      corpo: ['O dono do café rival aparece antes de tu abrir, com as mãos no bolso.'],
-      falas: [['Rafa', 'Vou direto: teu pão de queijo é melhor que o meu. Me fornece 8 por dia que eu te pago R$ 40.' + (s.mem.favor_rafa ? ' E, convenhamos, tu me deve aquela do leite.' : '')]],
-    }),
-    escolhas: s => [
-      { t: 'Aceitar', sub: 'Toda manhã: 8 massas e 1 hora para entregar. R$ 40 por dia.', ef: s => { s.rafa.acordo = 'pao'; s.rafa.valor = 40; s.rafa.afin += 10; s.rafa.forca += 1; lembra('acordo_rafa', 'tu aceitou fornecer pão de queijo para o Rafa'); diario('Fechei acordo: forneço 8 pães de queijo por dia ao Grão Nobre por R$ 40.'); return 'Dinheiro garantido. E agora o teu pão também atrai gente para o rival.'; } },
-      { t: 'Recusar', ef: s => { s.rafa.afin -= s.mem.favor_rafa ? 15 : 5; diario('Recusei fornecer pão de queijo para o Rafa.', s.mem.favor_rafa ? 'favor_rafa' : null); return s.mem.favor_rafa ? '"Depois daquela do leite? Tá certo." Ele sai sem se despedir.' : '"Pensa com carinho." Ele sai assobiando.'; } },
-      { t: 'Contraproposta: R$ 60', sub: 'Exige saber negociar.', req: s => ({ ok: s.me.gestao >= 1, motivo: 'Precisa de gestão nível 1 (estude à noite)' }),
-        ef: s => { if (s.rafa.afin >= 0) { s.rafa.acordo = 'pao'; s.rafa.valor = 60; s.rafa.forca += 1; lembra('acordo_rafa', 'tu fechou com o Rafa a R$ 60'); diario('Negociei com o Rafa: 8 pães de queijo por dia a R$ 60.'); return 'Ele ri. "Tu aprende rápido." Aperto de mão.'; } s.rafa.afin -= 5; diario('Tentei negociar com o Rafa e ele recusou.'); return '"Com a nossa história? Não."'; } },
-    ],
-  },
-  {
-    id: 'critico', quando: 'pos', peso: 'pesado', min: 3, cond: s => s.rep >= 45 && s.dia <= 4,
-    texto: () => ({
-      titulo: 'Uma cliente pede o dono',
-      corpo: ['Ela fotografa a xícara antes de beber.'],
-      falas: [['Cliente', 'Escrevo o "Comendo pela Cidade". Volto amanhã. Não vou dizer a hora.']],
-    }),
+      { t: 'Aceitar', tags: 'Dona Lúcia ↑ · pico de clientes amanhã', ef: s => { s.amanha.clube = true; s.lucia.afin += 5; diario('Aceitei receber o grupo de crochê da Dona Lúcia.'); return 'Amanhã, lá pelas três, chegam cinco senhoras de uma vez. Pense em pré-assar pão.'; } },
+      { t: 'Dizer que o café é pequeno demais', tags: 'Dona Lúcia ↓', ef: s => { s.lucia.afin -= 5; diario('Recusei o grupo de crochê da Dona Lúcia.'); return '"Entendo." Ela entende. Mas lembra.'; } },
+    ] },
+  { id: 'caio_show', quando: 'pos', peso: 'leve', min: 2, quem: 'caio', cond: s => s.caio.afin >= 55 && s.dia <= 4,
+    texto: () => ({ titulo: 'Caio e o violão', corpo: ['O Caio aparece no fim do expediente com o violão nas costas.'], falas: [['caio', 'E se eu tocar aqui na sexta? Tu não me paga nada, só me dá café. Eu chamo a galera.']], contexto: 'Sexta teria 40% mais clientes.' }),
     escolhas: () => [
-      { t: 'Agradecer e se preparar', sub: 'Amanhã ela vem. Espresso e pão de queijo, provavelmente.', ef: s => { s.amanha.critico = true; diario('Uma blogueira de comida avisou que volta amanhã.'); return 'Ela vai pedir rápido e esperar pouco. Planeje a manhã.'; } },
-      { t: 'Pedir para ela vir num dia mais calmo', ef: s => { s.rep -= 1; diario('Pedi para a blogueira vir outro dia.'); return '"Não funciona assim." Ela não volta.'; } },
-    ],
-  },
-  {
-    id: 'esgotamento', quando: 'manha', forcado: true, peso: 'pesado', cond: s => s.me.estresse >= 85,
-    texto: () => ({ titulo: 'O corpo cobrou', corpo: ['O despertador toca e tu não consegue levantar. A cabeça lateja, o peito aperta. A manhã inteira vai embora.'] }),
+      { t: 'Topar o show de sexta', tags: 'Caio ↑ · sexta lotada', ef: s => { s.flags.showCaio = true; s.caio.afin += 8; diario('Combinei com o Caio um show no café na sexta.'); return '"Fechado! Vai lotar, tu vai ver."'; } },
+      { t: 'Recusar', tags: 'Caio ↓', ef: s => { s.caio.afin -= 6; diario('Recusei o show do Caio.'); return '"Beleza. Outra hora."'; } },
+    ] },
+  { id: 'caio_sumindo', quando: 'manha', peso: 'pesado', min: 3, quem: 'caio', cond: s => s.caio.semVer >= 2 && !s.flags.showCaio,
+    texto: s => ({ titulo: 'Mensagem do Caio', corpo: [`Faz ${s.caio.semVer} noites que tu não aparece no bar. Chega uma mensagem:`], falas: [['caio', 'Sumiu, hein. Sei que o café tá puxado. Ah, o Rafa me chamou pra tocar no Grão Nobre na sexta. Tô pensando.']] }),
+    escolhas: () => [
+      { t: 'Prometer aparecer hoje à noite', tags: 'Tu vai precisar cumprir', ef: s => { s.flags.promessaCaio = s.dia; lembra('promessa_caio', 'tu prometeu ao Caio que ia aparecer'); return '"Vou cobrar, hein."'; } },
+      { t: 'Mandar um áudio pedindo desculpa', tags: 'Caio ↑ (pouco)', ef: s => { s.caio.afin += 3; return 'Ele responde com um joinha. Difícil saber o que significa.'; } },
+      { t: 'Deixar pra lá', tags: 'Caio ↓ · sexta mais fraca', ef: s => { s.flags.caioNoRafa = true; lembra('caio_largado', 'tu deixou a mensagem do Caio sem resposta'); diario('Deixei a mensagem do Caio sem resposta.'); return 'Silêncio do outro lado.'; } },
+    ] },
+  { id: 'rafa_proposta', quando: 'manha', peso: 'pesado', min: 3, quem: 'rafa', cond: s => !s.rafa.acordo,
+    texto: s => ({ titulo: 'Rafa, do Grão Nobre', corpo: ['O dono do café rival aparece antes de tu abrir, mãos no bolso.'], falas: [['rafa', 'Vou direto: teu pão de queijo é melhor que o meu. Me fornece 8 por dia que eu te pago R$ 40.' + (s.mem.favor_rafa ? ' E tu me deve aquela do leite.' : '')]], contexto: 'Cada entrega custa 8 massas (uns R$ 6) e 1 hora da tua manhã.' }),
+    escolhas: () => [
+      { t: 'Aceitar', tags: 'Caixa +R$ 40/dia · −1h toda manhã · rival mais forte', ef: s => { s.rafa.acordo = 'pao'; s.rafa.valor = 40; s.rafa.afin += 10; s.rafa.forca += 1; lembra('acordo_rafa', 'tu aceitou fornecer pão para o Rafa'); diario('Fechei acordo: 8 pães de queijo por dia ao Grão Nobre por R$ 40.'); return 'Dinheiro garantido. E agora o teu pão também atrai gente para o rival.'; } },
+      { t: 'Recusar', tags: 'Rafa ↓', ef: s => { s.rafa.afin -= s.mem.favor_rafa ? 15 : 5; diario('Recusei fornecer pão para o Rafa.', s.mem.favor_rafa ? 'favor_rafa' : null); return s.mem.favor_rafa ? '"Depois daquela do leite? Tá certo." Ele sai sem se despedir.' : '"Pensa com carinho." Ele sai assobiando.'; } },
+      { t: 'Contraproposta: R$ 60', tags: 'Exige Gestão 1', req: s => ({ ok: s.hab.gestao >= 1, motivo: 'Precisa de Gestão nível 1 (estude em casa à noite)' }), ef: s => { if (s.rafa.afin >= 0) { s.rafa.acordo = 'pao'; s.rafa.valor = 60; s.rafa.forca += 1; lembra('acordo_rafa', 'tu fechou com o Rafa a R$ 60'); diario('Negociei com o Rafa: 8 pães por dia a R$ 60.'); return '"Tu aprende rápido." Aperto de mão.'; } s.rafa.afin -= 5; diario('Tentei negociar com o Rafa e ele recusou.'); return '"Com a nossa história? Não."'; } },
+    ] },
+  { id: 'critico', quando: 'pos', peso: 'pesado', min: 3, quem: 'blog', cond: s => s.rep >= 45 && s.dia <= 4,
+    texto: () => ({ titulo: 'Uma cliente pede o dono', corpo: ['Ela fotografa a xícara antes de beber.'], falas: [['blog', 'Escrevo o "Comendo pela Cidade". Volto amanhã. Não vou dizer a hora.']], contexto: 'Se ela for bem atendida, a fama sobe muito. Se esperar demais, cai.' }),
+    escolhas: () => [
+      { t: 'Agradecer e se preparar', tags: 'Fama ↑↑ ou ↓↓ amanhã', ef: s => { s.amanha.critico = true; diario('Uma blogueira de comida avisou que volta amanhã.'); return 'Ela vai pedir espresso e pão. Planeje a manhã.'; } },
+      { t: 'Pedir para ela vir num dia mais calmo', tags: 'Fama ↓ (pouco)', ef: s => { s.rep -= 1; diario('Pedi para a blogueira vir outro dia.'); return '"Não funciona assim." Ela não volta.'; } },
+    ] },
+  { id: 'esgotamento', quando: 'manha', forcado: true, peso: 'pesado', quem: 'voce', cond: s => s.animo <= 15,
     pre: s => { s.horas = 0; lembra('esgotou', 'tu passou do limite e esgotou'); },
-    escolhas: s => [
-      { t: 'Abrir o café mesmo assim', sub: 'Descansa um pouco, mas segue no limite.', ef: s => { s.me.estresse -= 20; diario('Esgotei. Perdi a manhã e abri o café no limite.'); return 'Tu abre. Devagar.'; } },
-      { t: 'Ligar para o Caio', sub: 'Ele cuida das compras e te dá um respiro.', req: s => ({ ok: s.caio.afin >= 50, motivo: 'A amizade com o Caio precisa estar próxima' }), ef: s => { s.me.estresse -= 40; s.caio.afin += 5; s.estoque.grao += 10; diario('Esgotei. O Caio veio, fez as compras e ficou comigo.', 'esgotou'); return 'Ele chega com pão, grão e nenhuma pergunta.'; } },
-      { t: 'Abrir só à tarde', sub: 'Expediente pela metade.', ef: s => { s.me.estresse -= 50; s.mods.meioDia = true; diario('Esgotei e abri o café só à tarde.'); return 'Metade do dia. Metade da fila. Metade da receita.'; } },
-    ],
-  },
+    texto: () => ({ titulo: 'O corpo cobrou', corpo: ['O despertador toca e tu não consegue levantar. A cabeça lateja. A manhã inteira vai embora.'], contexto: 'Ânimo quase zerado. Tu perdeu as horas da manhã.' }),
+    escolhas: () => [
+      { t: 'Abrir o café mesmo assim', tags: 'Ânimo ↑ (pouco)', ef: s => { s.animo += 20; diario('Esgotei. Perdi a manhã e abri no limite.'); return 'Tu abre. Devagar.'; } },
+      { t: 'Ligar para o Caio', tags: 'Ânimo ↑↑ · Caio ↑', req: s => ({ ok: s.caio.afin >= 50, motivo: 'A amizade com o Caio precisa estar próxima' }), ef: s => { s.animo += 40; s.caio.afin += 5; s.estoque.grao += 10; diario('Esgotei. O Caio veio, fez as compras e ficou comigo.', 'esgotou'); return 'Ele chega com pão, grão e nenhuma pergunta.'; } },
+      { t: 'Abrir só à tarde', tags: 'Ânimo ↑↑ · metade do dia', ef: s => { s.animo += 45; s.mods.meioDia = true; diario('Esgotei e abri só à tarde.'); return 'Metade do dia, metade da fila, metade da receita.'; } },
+    ] },
 ];
-
-/* Diretor de histórias: escolhe o que acontece e quando, olhando a tensão recente */
 function diretor(quando) {
   const ok = e => e.quando === quando && !S.vistos[e.id] && S.dia >= (e.min || 1) && e.cond(S);
-  const forcados = EV.filter(e => e.forcado && ok(e));
-  const opc = EV.filter(e => !e.forcado && ok(e));
-  const out = forcados.slice(0, 2);
+  const forc = EV.filter(e => e.forcado && ok(e)), opc = EV.filter(e => !e.forcado && ok(e));
+  const out = forc.slice(0, 2);
   if (out.length < 2 && opc.length && Math.random() < 0.8) {
     let pool = opc;
-    if (S.tensao >= 3) { const leves = opc.filter(e => e.peso === 'leve'); if (leves.length) pool = leves; }
-    else if (S.tensao <= 0) { const pes = opc.filter(e => e.peso === 'pesado'); if (pes.length) pool = pes; }
+    if (S.tensao >= 3) { const l = opc.filter(e => e.peso === 'leve'); if (l.length) pool = l; }
+    else if (S.tensao <= 0) { const p = opc.filter(e => e.peso === 'pesado'); if (p.length) pool = p; }
     out.push(pick(pool));
   }
-  out.forEach(e => { S.tensao += e.peso === 'pesado' ? 2 : -1; S.tensao = Math.max(0, S.tensao); });
+  out.forEach(e => { S.tensao = Math.max(0, S.tensao + (e.peso === 'pesado' ? 2 : -1)); });
   return out.map(e => e.id);
 }
 
-/* ---------- Runtime do expediente ---------- */
+/* ================= AÇÕES DO MAPA ================= */
+const ROT_EF = { energia: 'Energia', animo: 'Ânimo', coz: 'Cozinha', atend: 'Atendimento', gestao: 'Gestão', caixa: 'Caixa', lucia: 'Dona Lúcia', caio: 'Caio', bia: 'Bia', pao: 'Pães prontos', rapidez: 'Rapidez amanhã', info: 'Informação' };
+const ACOES = [
+  { id: 'dormir_mais', local: 'casa', fase: 'manha', h: 1, t: 'Dormir mais uma hora', ef: [['energia', 1]], run: () => { S.energia += 12; S.padrao.descanso++; return 'Mais uma hora de cama. Ninguém precisa saber.'; } },
+  { id: 'compras', local: 'fornecedor', fase: 'manha', h: 1, t: 'Fazer compras e ver melhorias', ef: [['caixa', -1]], abre: 'compras' },
+  { id: 'treinar', local: 'cafe', fase: 'ambas', h: 1, t: 'Treinar receitas', ef: [['coz', 1], ['energia', -1]], run: () => { S.hab.cozXp += 25; S.energia -= 6; S.padrao.cozinha++; return `Vinte espressos para o ralo até acertar o tempo. Cozinha: ${nCoz() >= 3 ? 'nível máximo' : (S.hab.cozXp % 60) + '/60 para o próximo nível'}.`; } },
+  { id: 'preassar', local: 'cafe', fase: 'manha', h: 1, t: 'Pré-assar pão de queijo', ef: [['pao', 1]], req: () => ({ ok: S.estoque.massa >= S.up.forno, motivo: `Precisa de ${S.up.forno} massas` }), run: () => { S.estoque.massa -= S.up.forno; S.preassados += S.up.forno; return `${S.preassados} pães esperando na vitrine quando abrir.`; } },
+  { id: 'cafe_bia', local: 'cafe', fase: 'manha', h: 1, t: 'Tomar café da manhã com a Bia', ef: [['bia', 1], ['animo', 1]], req: () => ({ ok: biaAtiva(), motivo: 'Ninguém na equipe ainda' }), run: () => { S.bia.estresse -= 12; S.bia.moral += 8; S.animo += 4; S.padrao.social++; return S.bia.estresse > 50 ? 'Ela admite que está cansada. Ajuda falar.' : 'Ela conta de um cliente que pediu "um espresso grande, mas pequeno".'; } },
+  { id: 'organizar', local: 'cafe', fase: 'noite', h: 1, t: 'Organizar a cozinha', ef: [['rapidez', 1], ['energia', -1]], run: () => { S.amanha.organizado = true; S.energia -= 8; S.padrao.gestao++; return 'Etiquetas, potes no lugar. Amanhã tudo fica 8% mais rápido.'; } },
+  { id: 'lucia', local: 'praca', fase: 'manha', h: 1, t: 'Caminhar com a Dona Lúcia', ef: [['lucia', 1], ['animo', 1], ['atend', 1]], req: () => ({ ok: !!S.flags.luciaAtendida && S.lucia.afin > 5, motivo: S.flags.luciaAtendida ? 'Ela anda distante' : 'Tu ainda não conhece a Dona Lúcia' }), run: () => { S.lucia.afin += 8; S.animo += 6; S.hab.atendXp += 10; S.padrao.social++; if (!S.flags.luciaContou) { S.flags.luciaContou = true; diario('A Dona Lúcia contou que a padaria onde o grupo de crochê dela se encontrava fechou.'); return '"A padaria onde a gente fazia crochê fechou. Agora a gente fica rodando."'; } return 'Vocês falam do bairro, do neto dela, do preço do tomate.'; } },
+  { id: 'correr', local: 'praca', fase: 'noite', h: 1, t: 'Correr na praça', ef: [['animo', 1], ['energia', -1]], run: () => { S.animo += 10; S.energia -= 8; S.padrao.descanso++; return 'Três voltas e a cabeça esvazia.'; } },
+  { id: 'descansar', local: 'casa', fase: 'noite', h: 1, t: 'Descansar', ef: [['animo', 1]], run: () => { S.animo += 12; S.padrao.descanso++; return 'Banho, sofá, nada.'; } },
+  { id: 'estudar', local: 'casa', fase: 'noite', h: 1, t: 'Estudar gestão', ef: [['gestao', 1], ['animo', -1]], req: () => ({ ok: S.hab.gestao < 2, motivo: 'Nível máximo no protótipo' }), run: () => { S.hab.gestao++; S.animo -= 4; S.padrao.gestao++; return `Planilha e café requentado. Gestão nível ${S.hab.gestao}: compras mais baratas e novas opções em negociações.`; } },
+  { id: 'bar', local: 'bar', fase: 'noite', h: 2, t: 'Tomar uma com o Caio', ef: [['animo', 2], ['caio', 1], ['energia', -1]], run: () => { S.animo += 20; S.energia -= 5; S.caio.afin += 12; S.caio.viuHoje = true; S.padrao.social++; if (S.flags.promessaCaio) { S.flags.promessaCaio = false; diario('Cumpri a promessa e fui ver o Caio.', 'promessa_caio'); return '"Achei que tu ia furar."'; } return S.caio.afin >= 55 ? 'Vocês ficam até o Seu Jorge apagar a luz.' : 'O Caio conta da banda nova. Tu esquece do café por duas horas.'; } },
+  { id: 'espiar', local: 'grao', fase: 'noite', h: 1, t: 'Espiar o Grão Nobre', ef: [['info', 0]], req: () => ({ ok: !S.flags.espiou, motivo: 'Tu já foi lá esta semana' }), run: () => { S.flags.espiou = true; S.padrao.gestao++; diario('Fui ver o Grão Nobre. Espresso a R$ 8, fila de estudantes, ninguém sabe o nome de ninguém.'); return 'Espresso a R$ 8, fila de estudantes de fone de ouvido. Rápido, mas frio.'; } },
+];
+
+/* ================= PIXEL ART ================= */
+function r(x, y, w, h, c) { cx.fillStyle = c; cx.fillRect(Math.round(x), Math.round(y), w, h); }
+function sprite(x, y, p, o = {}) {
+  const bob = o.bob ? Math.round(Math.sin(o.bob) * 0.6) : 0;
+  const X = Math.round(x) - 5, Y = Math.round(y) - 18 + bob;
+  if (!o.semPernas) { r(X + 1, Math.round(y) - 1, 8, 1, 'rgba(0,0,0,.35)'); r(X + 2, Y + 14, 2, 4 - bob, '#2a2340'); r(X + 6, Y + 14, 2, 4 - bob, '#2a2340'); }
+  r(X + 1, Y + 7, 8, 8, p.roupa);
+  if (o.avental) r(X + 3, Y + 9, 4, 6, o.avental);
+  r(X, Y + 8, 1, 5, p.roupa); r(X + 9, Y + 8, 1, 5, p.roupa);
+  r(X + 2, Y + 1, 6, 6, p.pele);
+  const c = p.cabelo;
+  if (p.estilo === 'coque') { r(X + 2, Y, 6, 2, c); r(X + 4, Y - 2, 3, 2, c); r(X + 1, Y + 1, 1, 3, c); }
+  else if (p.estilo === 'rabo') { r(X + 2, Y, 6, 2, c); r(X + 8, Y + 1, 2, 4, c); }
+  else if (p.estilo === 'bone') { r(X + 1, Y, 8, 2, '#d23b3b'); r(X + 7, Y + 2, 3, 1, '#d23b3b'); }
+  else if (p.estilo === 'topete') { r(X + 2, Y - 1, 6, 2, c); r(X + 5, Y - 2, 3, 1, c); }
+  else if (p.estilo === 'longo') { r(X + 1, Y, 8, 2, c); r(X + 1, Y + 2, 1, 6, c); r(X + 8, Y + 2, 1, 6, c); }
+  else if (p.estilo === 'careca') { r(X + 2, Y + 1, 1, 2, c); r(X + 7, Y + 1, 1, 2, c); }
+  else { r(X + 2, Y, 6, 2, c); r(X + 2, Y + 2, 1, 1, c); }
+  r(X + 3, Y + 3, 1, 1, '#1a1020'); r(X + 6, Y + 3, 1, 1, '#1a1020');
+  if (p.oculos) { r(X + 2, Y + 3, 3, 1, '#333'); r(X + 5, Y + 3, 3, 1, '#333'); }
+}
+const retCache = {};
+function retrato(id) {
+  if (retCache[id]) return retCache[id];
+  const p = PERS[id] || PERS.voce;
+  const c = document.createElement('canvas'); c.width = 24; c.height = 24;
+  const g = c.getContext('2d');
+  const q = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  q(0, 0, 24, 24, '#2f2852'); q(0, 16, 24, 8, '#251f42');
+  q(4, 17, 16, 7, p.roupa); q(10, 17, 4, 3, p.pele);
+  q(7, 5, 10, 11, p.pele); q(6, 9, 1, 3, p.pele); q(17, 9, 1, 3, p.pele);
+  const h = p.cabelo;
+  if (p.estilo === 'coque') { q(6, 3, 12, 4, h); q(9, 0, 6, 3, h); q(6, 7, 1, 4, h); q(17, 7, 1, 4, h); }
+  else if (p.estilo === 'rabo') { q(6, 3, 12, 4, h); q(17, 5, 3, 9, h); }
+  else if (p.estilo === 'bone') { q(5, 2, 14, 4, '#d23b3b'); q(14, 5, 7, 2, '#d23b3b'); }
+  else if (p.estilo === 'topete') { q(6, 2, 12, 4, h); q(11, 0, 6, 2, h); }
+  else if (p.estilo === 'longo') { q(5, 3, 14, 4, h); q(5, 7, 2, 10, h); q(17, 7, 2, 10, h); }
+  else if (p.estilo === 'careca') { q(6, 7, 1, 4, h); q(17, 7, 1, 4, h); }
+  else { q(6, 3, 12, 4, h); q(6, 7, 1, 2, h); }
+  q(9, 10, 2, 2, '#1a1020'); q(13, 10, 2, 2, '#1a1020'); q(10, 14, 4, 1, '#7a3a3a');
+  if (p.oculos) { q(8, 9, 4, 1, '#333'); q(12, 9, 4, 1, '#333'); q(8, 12, 4, 1, '#333'); q(12, 12, 4, 1, '#333'); }
+  return (retCache[id] = c.toDataURL());
+}
+function cenaRua(t) {
+  const noite = S.fase === 'noite';
+  const ceu = noite ? ['#0b0d2a', '#1b1748', '#2c2160'] : ['#ff9a6a', '#ffc58a', '#bfe2ff'];
+  for (let i = 0; i < 3; i++) r(0, i * 18, CW, 18, ceu[i]);
+  if (noite) { for (let i = 0; i < 40; i++) { const sx = (i * 73) % CW, sy = (i * 37) % 50; if ((Math.floor(t * 2) + i) % 7) r(sx, sy, 1, 1, '#fff'); } r(280, 10, 8, 8, '#f3eedc'); r(282, 10, 6, 6, '#1b1748'); }
+  else { r(40, 12, 12, 12, '#fff3b0'); r(42, 10, 8, 16, '#fff3b0'); r(38, 14, 16, 8, '#fff3b0'); }
+  for (let i = 0; i < 12; i++) r(i * 28, 34 + (i * 13) % 14, 26, 40, noite ? '#221c48' : '#d79c86');
+  const jan = noite ? '#ffd56b' : '#8fb7d8';
+  const predio = (x, w, h, cor, telhado) => { r(x, 104 - h, w, h, cor); r(x - 1, 104 - h - 3, w + 2, 3, telhado); for (let yy = 104 - h + 5; yy < 92; yy += 9) for (let xx = x + 4; xx < x + w - 6; xx += 9) r(xx, yy, 5, 5, (xx + yy) % 3 ? jan : (noite ? '#3a3260' : '#6b8fae')); };
+  predio(4, 44, 54, noite ? '#5a3f6a' : '#c97b63', '#3b2a40');
+  predio(56, 44, 46, noite ? '#4a5a6a' : '#7aa0a8', '#2c3a44');
+  r(62, 76, 32, 5, '#e8d9b8');
+  predio(106, 60, 58, noite ? '#7a4a3a' : '#b5653f', '#4a2a1a');
+  for (let i = 0; i < 10; i++) r(106 + i * 6, 64, 6, 6, i % 2 ? '#f3eedc' : '#c0392b');
+  r(118, 76, 36, 16, noite ? '#ffd56b' : '#e8d9b8'); r(132, 80, 8, 24, '#4a2a1a');
+  r(170, 84, 44, 20, '#3f7a3a'); r(178, 66, 10, 18, '#2f6a2a'); r(174, 70, 18, 10, '#4f9a44'); r(196, 70, 12, 14, '#4f9a44'); r(200, 84, 3, 8, '#5a3a20'); r(181, 84, 3, 8, '#5a3a20'); r(186, 94, 16, 3, '#7a5a3a');
+  predio(218, 46, 44, noite ? '#3a4a3a' : '#9a8a5a', '#2a2a1a');
+  r(224, 70, 34, 6, noite ? '#ff6b9a' : '#d24a6a');
+  predio(270, 48, 56, noite ? '#1f3f34' : '#2f7a5f', '#173027');
+  r(274, 60, 40, 6, '#e8d9b8');
+  r(0, 104, CW, 6, noite ? '#4a4466' : '#b8aaa0'); r(0, 110, CW, 20, noite ? '#25213a' : '#5a5560');
+  for (let x = 4; x < CW; x += 24) r(x, 119, 12, 2, noite ? '#6a6488' : '#e8e0d0');
+  const lx = LOCAIS[S.local] ? LOCAIS[S.local].x : 136;
+  sprite(lx, 108, PERS.voce, { bob: t * 3 });
+}
+function cenaCafe(t) {
+  // parede (0-60)
+  r(0, 0, CW, 70, '#6e4a5e');
+  for (let y = 40; y < 70; y += 6) for (let x = (y / 6) % 2 ? 0 : 6; x < CW; x += 12) r(x, y, 6, 6, '#5d3d50');
+  r(0, 38, CW, 2, '#3a2232');
+  r(8, 6, 46, 26, '#2a2340'); r(10, 8, 42, 22, '#9fd0ff'); r(30, 8, 2, 22, '#2a2340'); r(10, 18, 42, 2, '#2a2340'); r(14, 24, 10, 6, '#c97b63'); r(36, 22, 12, 8, '#7aa0a8');
+  r(64, 4, 54, 28, '#5a3a20'); r(66, 6, 50, 24, '#24302a');
+  for (let i = 0; i < 3; i++) { r(70, 10 + i * 7, 26 - i * 4, 2, '#e8e4d4'); r(104, 10 + i * 7, 8, 2, '#ffcc4d'); }
+  r(136, 14, 60, 3, '#5a3a20'); for (let i = 0; i < 6; i++) { r(140 + i * 9, 6, 6, 8, ['#c97b63', '#e8d9b8', '#7a5a3a'][i % 3]); r(140 + i * 9, 5, 6, 1, '#3a2232'); }
+  // bancada do fundo (44-60)
+  r(130, 44, 150, 4, '#d8c8b0'); r(130, 48, 150, 22, '#7a4a2a');
+  const ext = R && R.slots.some(s => s.rec && s.st === 'rodando' && s.recurso === 'maq');
+  r(170, 26, 36, 18, '#9aa4b0'); r(172, 28, 32, 5, '#c8d0d8'); r(178, 37, 4, 4, '#3a3a40'); r(194, 37, 4, 4, '#3a3a40');
+  if (ext) for (let i = 0; i < 3; i++) { const yy = 24 - ((t * 20 + i * 6) % 16); r(176 + i * 8 + Math.round(Math.sin(t * 4 + i)), yy, 2, 2, 'rgba(255,255,255,.75)'); }
+  r(150, 30, 12, 14, '#5a3a2a'); r(148, 26, 16, 5, '#7a5a3a');
+  const assando = R && R.forno.st === 'assando';
+  r(222, 22, 36, 22, '#3a3a44'); r(226, 26, 28, 14, assando ? '#ff9a3a' : '#5a5a66'); if (assando && Math.floor(t * 4) % 2) r(230, 32, 20, 4, '#ffcc4d');
+  if (R) { const v = Math.min(R.vitrine, 8); for (let i = 0; i < v; i++) r(264 + (i % 4) * 4, 40 - Math.floor(i / 4) * 3, 3, 3, '#e8b84a'); }
+  // equipe atrás do balcão (pés escondidos em y=74)
+  const ocupado = R && R.maos >= 0;
+  sprite(150, 74, PERS.voce, { avental: '#f3eedc', bob: ocupado ? t * 16 : t * 2, semPernas: true });
+  if (R && (R.tut >= 0 || (S.dia === 1 && S.fase === 'expediente'))) sprite(112, 74, PERS.cida, { avental: '#f3eedc', bob: t * 1.5, semPernas: true });
+  if (R && biaTrabalhando()) { const bx = S.bia.papel === 'forno' ? 240 : S.bia.papel === 'moer' ? 170 : 96; sprite(bx, 74, PERS.bia, { avental: '#f3eedc', bob: t * 6, semPernas: true }); }
+  // balcão da frente (70-90)
+  r(0, 70, CW, 4, '#e4d6bd'); r(0, 74, CW, 16, '#8a5734'); for (let x = 10; x < CW; x += 40) r(x, 76, 2, 12, '#6a4024');
+  // chão
+  r(0, 90, CW, 40, '#4a3020'); for (let y = 94; y < CH; y += 6) r(0, y, CW, 1, '#3a2418');
+  r(298, 50, 20, 40, '#3a2232'); r(300, 52, 16, 38, '#5a3a4a'); r(312, 70, 2, 3, '#ffcc4d');
+  if (R) {
+    R.clientes.slice().sort((a, b) => (a.vaga < 0) - (b.vaga < 0)).forEach(c => {
+      const p = c.pers || { pele: c.pele, cabelo: c.cabelo, roupa: c.cor, estilo: c.estilo };
+      sprite(c.x, 108, p, { bob: c.estado === 'andando' || c.estado === 'saindo' ? t * 10 : 0 });
+      if (c.vaga >= 0 && c.estado !== 'saindo') { const k = c.pacMax > 900 ? 1 : clamp(c.pac / c.pacMax, 0, 1); r(c.x - 7, 84, 14, 3, '#110e20'); r(c.x - 6, 85, Math.round(12 * k), 1, k > 0.5 ? '#6fdc8c' : k > 0.25 ? '#ffcc4d' : '#ff6b6b'); }
+    });
+    R.fx.forEach(f => { cx.globalAlpha = 1 - f.t / 1.2; r(f.x - 1, 80 - f.t * 14, 3, 3, f.cor); r(f.x - 3, 82 - f.t * 14, 7, 1, f.cor); cx.globalAlpha = 1; });
+  }
+}
+
+/* ================= EXPEDIENTE ================= */
 function novoRuntime() {
   return {
-    t: 0, rodando: false, pausa: false, gestao: false, sel: null, fim: false, len: DAY_LEN,
-    p: { x: 400, y: 200, hold: null, alvo: null, passo: 0 },
-    est: { moedor: { st: 'idle', t: 0, dur: 0 }, maquina: { st: 'idle', t: 0, dur: 0 }, vapor: { st: 'idle', t: 0, dur: 0 }, forno: { st: 'idle', t: 0, dur: 0 }, lixo: { st: 'idle' } },
-    clientes: [], vagas: Array(6).fill(null), agenda: [], fx: [], toast: null, nid: 1,
-    stats: { receita: 0, atendidos: 0, recusados: 0, irritados: 0, gorjeta: 0, rep0: S ? S.rep : 30 },
-    biaTrab: false,
+    t: 0, len: DAY_LEN, rodando: false, pausa: false, tut: -1, hold: false,
+    slots: [], maos: -1, biaOc: -1, biaTick: 0,
+    forno: { st: 'idle', t: 0, dur: 0, qtd: 0, bia: false }, vitrine: 0, bandeja: [],
+    clientes: [], agenda: [], fx: [], nid: 1, msg: null,
+    stats: { receita: 0, gorjeta: 0, atendidos: 0, irritados: 0, recusados: 0, usou: { grao: 0, leite: 0, massa: 0 }, clube: 0 },
   };
 }
-function procMult() {
-  let m = 1 - 0.07 * nivelCoz();
-  m *= 1 + Math.max(0, S.me.estresse - 50) / 100;
-  if (S.mods.organizado) m *= 0.92;
-  return m;
-}
+function biaTrabalhando() { return biaAtiva() && !S.mods.biaFolga && (S.bia.regime === 'integral' || (R && R.t < R.len / 2)); }
+function maoMult() { let m = 1 - 0.08 * nCoz(); if (S.energia < 30) m *= 1.4; if (S.mods.organizado) m *= 0.92; return m; }
 function biaMult() { return 1 + Math.max(0, S.bia.estresse - 50) / 80; }
-function biaTrabalhando() {
-  return biaAtiva() && !S.mods.biaFolga && (S.bia.regime === 'integral' || R.t < R.len / 2);
-}
-function toast(txt) { R.toast = { txt, t: 0 }; }
-function fx(x, y, txt, cor) { R.fx.push({ x, y, txt, cor, t: 0 }); }
-
-function iniciarExpediente() {
-  R = novoRuntime();
-  R.rodando = true;
+function msg(t) { if (R) R.msg = { t, ate: performance.now() + 2400 }; }
+function abrirCafe() {
+  R = novoRuntime(); R.rodando = true;
   R.len = S.mods.meioDia ? DAY_LEN / 2 : DAY_LEN;
+  R.slots = Array.from({ length: S.up.slots }, () => ({ rec: null }));
+  R.bandeja = Array(S.up.bandeja).fill(null);
+  R.vitrine = S.preassados; S.preassados = 0;
   R.biaTrab = biaAtiva() && !S.mods.biaFolga;
-  const n = Math.max(6, Math.round(18 * demanda() * (R.len / DAY_LEN) * (S.dia === 1 ? 0.7 : 1)));
-  for (let i = 0; i < n; i++) R.agenda.push({ t: 4 + (R.len - 30) * (i + Math.random() * 0.85) / n, tipo: 'normal' });
-  if (S.lucia.afin > 5) R.agenda.push({ t: R.len * 0.22, tipo: 'lucia' });
-  else if (!S.flags.luciaSumiu) { S.flags.luciaSumiu = true; diario('A Dona Lúcia não veio. Disseram que ela agora toma café na padaria nova.', S.mem.lucia_preco ? 'lucia_preco' : 'lucia_esperou'); }
-  if (S.mods.critico) R.agenda.push({ t: R.len * rnd(0.3, 0.65), tipo: 'critico' });
-  if (S.mods.clube) for (let i = 0; i < 5; i++) R.agenda.push({ t: R.len * 0.55 + i * 1.8, tipo: 'clube' });
-  R.agenda.sort((a, b) => a.t - b.t);
-  S.flags.luciaPagouAlto = false;
+  S.fase = 'expediente'; S.flags.luciaPagouAlto = false; $('#hots').innerHTML = '';
+  hudSig = '';
+  if (S.dia === 1) { R.tut = 0; R.hold = true; tutEntra(); }
+  else agendarClientes(0);
+  render();
 }
-
+function agendarClientes(t0) {
+  const n = previsao();
+  const span = R.len - t0 - 28;
+  for (let i = 0; i < n; i++) R.agenda.push({ t: t0 + 3 + span * (i + Math.random() * 0.85) / n, tipo: 'normal' });
+  if (S.lucia.afin > 5) R.agenda.push({ t: t0 + span * 0.25, tipo: 'lucia' });
+  else if (!S.flags.luciaSumiu && S.flags.luciaAtendida) { S.flags.luciaSumiu = true; diario('A Dona Lúcia não veio. Disseram que ela agora toma café na padaria nova.', S.mem.lucia_preco ? 'lucia_preco' : 'lucia_esperou'); }
+  if (S.mods.critico) R.agenda.push({ t: t0 + span * rnd(0.3, 0.65), tipo: 'critico' });
+  if (S.mods.clube) for (let i = 0; i < 5; i++) R.agenda.push({ t: t0 + span * 0.55 + i * 1.5, tipo: 'clube' });
+  R.agenda.sort((a, b) => a.t - b.t);
+}
 function gerarPedido() {
-  const opts = [['espresso', 0.4], ['cappuccino', 0.35], ['pao', 0.25]].filter(([i]) => !(i === 'pao' && S.mods.semPao));
-  const tot = opts.reduce((a, o) => a + o[1], 0);
-  const sorteia = () => { let r = Math.random() * tot; for (const [i, w] of opts) { if ((r -= w) <= 0) return i; } return opts[0][0]; };
+  const opts = [['espresso', 0.4], ['cappuccino', 0.35], ['pao', 0.25]];
+  const sorteia = () => { let x = Math.random(); for (const [i, w] of opts) if ((x -= w) <= 0) return i; return 'espresso'; };
   const ped = [sorteia()];
-  if (Math.random() < 0.3) ped.push(!S.mods.semPao && Math.random() < 0.6 ? 'pao' : sorteia());
+  if (Math.random() < 0.3) ped.push(Math.random() < 0.6 ? 'pao' : sorteia());
   return ped.map(i => (i === 'cappuccino' && S.mods.semCappuccino ? 'espresso' : i));
 }
-
-function spawn(a) {
-  const v = R.vagas.indexOf(null);
-  if (v < 0) {
-    R.stats.recusados++; S.rep -= 0.5;
-    fx(760, 420, 'fila cheia, foi embora', '#ec6b5d');
-    if (a.tipo === 'lucia') { S.lucia.afin -= 6; }
-    if (a.tipo === 'critico') { S.rep -= 10; diario('A blogueira viu a fila cheia e foi embora. A resenha saiu falando da espera.'); }
-    return;
-  }
-  let pac = 38 * PAC_PRECO[S.preco] * (S.mods.chuva ? 1.3 : 1);
-  let ped = gerarPedido(), nome = null, cor = pick(CORES_CLIENTE);
-  if (a.tipo === 'lucia') { ped = [S.mods.semCappuccino ? 'espresso' : 'cappuccino']; nome = 'Dona Lúcia'; pac = 42; cor = '#b98bd0'; }
-  if (a.tipo === 'critico') { ped = S.mods.semPao ? ['espresso'] : ['espresso', 'pao']; nome = 'Blogueira'; pac = 28; cor = '#e0e0e0'; }
-  if (a.tipo === 'clube') { ped = [Math.random() < 0.6 ? (S.mods.semCappuccino ? 'espresso' : 'cappuccino') : (S.mods.semPao ? 'espresso' : 'pao')]; nome = 'Crochê'; pac = 52; cor = pick(['#c77fa0', '#b98bd0', '#d39a4a']); }
-  const c = { id: R.nid++, x: PORTA.x, y: PORTA.y, tx: VAGAS[v], ty: VAGA_Y, vaga: v, ped: ped.slice(), rest: ped.slice(), pac, pacMax: pac, estado: 'chegando', cor, nome, tipo: a.tipo };
-  R.vagas[v] = c.id;
+const PELES = ['#f1c9a5', '#e0a878', '#c98a5e', '#8d5a3b', '#6a4028'];
+const CABELOS = ['#1c1c1c', '#3a2416', '#7a4a2a', '#d2a040', '#888888'];
+const ROUPAS = ['#c0675a', '#5a8fc0', '#7cae6a', '#b98bd0', '#d39a4a', '#5fb3a8', '#e0e0e0', '#c77fa0'];
+function ativos() { return R.clientes.filter(c => c.estado !== 'saindo'); }
+function spawn(a, forcado) {
+  if (ativos().length >= 9 && !forcado) { R.stats.recusados++; S.rep -= 0.5; msg('Fila cheia: um cliente desistiu na porta.'); return; }
+  let pac = 45 * PAC_PRECO[S.preco] * (S.mods.chuva ? 1.3 : 1) * (1 + 0.07 * nAtend());
+  const c = { id: R.nid++, x: 330, tx: 330, estado: 'andando', vaga: -1, tipo: a.tipo, nome: a.nome || pick(NOMES), ped: a.ped || gerarPedido(), pele: pick(PELES), cabelo: pick(CABELOS), cor: pick(ROUPAS), estilo: pick(['curto', 'longo', 'curto', 'rabo', 'careca', 'bone']) };
+  if (a.tipo === 'lucia') { c.ped = [S.mods.semCappuccino ? 'espresso' : 'cappuccino']; c.nome = 'Dona Lúcia'; c.pers = PERS.lucia; pac = 55; }
+  if (a.tipo === 'critico') { c.ped = ['espresso', 'pao']; c.nome = 'Blogueira'; c.pers = PERS.blog; pac = 32; }
+  if (a.tipo === 'clube') { c.ped = [Math.random() < 0.6 ? (S.mods.semCappuccino ? 'espresso' : 'cappuccino') : 'pao']; c.nome = 'Crochê'; c.pele = '#efc6a6'; c.cabelo = '#cccccc'; pac = 70; }
+  if (R.tut >= 0) pac = 999;
+  c.ok = c.ped.map(() => false); c.pac = pac; c.pacMax = pac;
   R.clientes.push(c);
+  reposiciona();
 }
-
-function interagir(id) {
-  const p = R.p, h = p.hold;
-  if (id === 'entrega') return entregar();
-  const s = R.est[id];
-  if (id === 'moedor') {
-    if (s.st === 'ready' && !h) { p.hold = 'po'; s.st = 'idle'; }
-    else if (s.st === 'idle' && !h) { if (S.estoque.grao > 0) { S.estoque.grao--; s.st = 'working'; s.t = 0; s.dur = BASE_T.moedor * procMult(); } else toast('Acabou o grão. Compre de manhã.'); }
-    else if (s.st === 'working') toast('Moendo...');
-    else if (h) toast('Mãos ocupadas.');
-  } else if (id === 'maquina') {
-    if (s.st === 'ready' && !h) { p.hold = 'espresso'; s.st = 'idle'; }
-    else if (s.st === 'ready' && h === 'po') { p.hold = 'espresso'; s.st = 'working'; s.t = 0; s.dur = BASE_T.maquina * procMult(); s.bia = false; toast('Trocou: deixou o pó e pegou o espresso.'); }
-    else if (s.st === 'idle' && h === 'po') { p.hold = null; s.st = 'working'; s.t = 0; s.dur = BASE_T.maquina * procMult(); s.bia = false; }
-    else if (s.st === 'idle' && !h) toast('A máquina precisa de pó do moedor.');
-    else if (s.st === 'working') toast(s.bia ? 'A Bia está usando a máquina.' : 'Extraindo...');
-    else toast('Isso não vai na máquina.');
-  } else if (id === 'vapor') {
-    if (s.st === 'ready' && !h) { p.hold = 'cappuccino'; s.st = 'idle'; }
-    else if (s.st === 'ready' && h === 'espresso' && S.estoque.leite > 0) { S.estoque.leite--; p.hold = 'cappuccino'; s.st = 'working'; s.t = 0; s.dur = BASE_T.vapor * procMult(); toast('Trocou: deixou o espresso e pegou o cappuccino.'); }
-    else if (s.st === 'idle' && h === 'espresso') { if (S.mods.semCappuccino) toast('Cappuccino fora do cardápio hoje.'); else if (S.estoque.leite > 0) { S.estoque.leite--; p.hold = null; s.st = 'working'; s.t = 0; s.dur = BASE_T.vapor * procMult(); } else toast('Acabou o leite.'); }
-    else if (s.st === 'idle') toast('Traga um espresso para virar cappuccino.');
-    else if (s.st === 'working') toast('Vaporizando...');
-  } else if (id === 'forno') {
-    if (!h && S.fornoPaes > 0) { p.hold = 'pao'; S.fornoPaes--; }
-    else if (!h && s.st === 'idle') { if (S.mods.semPao) toast('Pão de queijo fora do cardápio hoje.'); else if (S.estoque.massa >= 4) { S.estoque.massa -= 4; s.st = 'working'; s.t = 0; s.dur = BASE_T.forno * procMult(); toast('Assando 4 pães.'); } else toast('Falta massa (precisa de 4).'); }
-    else if (s.st === 'working') toast('Assando...');
-    else toast('Mãos ocupadas.');
-  } else if (id === 'lixo') {
-    if (h) { toast('Jogou fora: ' + ITEM_NOME[h] + '.'); p.hold = null; } else toast('Lixo.');
-  }
+function reposiciona() {
+  ativos().forEach((c, i) => {
+    const alvo = i < 5 ? 40 + i * 50 : 292 - (i - 5) * 8;
+    c.vaga = i < 5 ? i : -1;
+    if (c.tx !== alvo) { c.tx = alvo; c.estado = 'andando'; }
+  });
 }
-
-function entregar() {
-  const h = R.p.hold;
-  if (!h) return toast('Pegue um pedido pronto primeiro.');
-  if (h === 'po') return toast('Pó não se serve. Leve à máquina.');
-  const cands = R.clientes.filter(c => c.estado === 'espera' && c.rest.includes(h)).sort((a, b) => a.pac - b.pac);
-  if (!cands.length) return toast('Ninguém está esperando ' + ITEM_NOME[h] + '.');
-  const c = cands[0];
-  c.rest.splice(c.rest.indexOf(h), 1);
-  R.p.hold = null;
-  if (c.rest.length) { fx(c.x, c.y - 50, 'falta 1', '#f0b23a'); return; }
-  pagar(c);
+function balcao() { return ativos().slice(0, 5); }
+function iniciar(i, rec) {
+  const s = R.slots[i];
+  if (!s || s.rec) return;
+  if (rec === 'cappuccino' && S.mods.semCappuccino) return msg('Sem leite hoje: cappuccino fora do cardápio.');
+  const usa = RECEITAS[rec].usa;
+  for (const k in usa) if (S.estoque[k] < usa[k]) return msg(k === 'grao' ? 'Acabou o grão.' : 'Acabou o leite.');
+  for (const k in usa) { S.estoque[k] -= usa[k]; R.stats.usou[k] += usa[k]; }
+  Object.assign(s, { rec, passo: 0, st: null, t: 0, dur: 0, recurso: null, porBia: false });
+  preparaPasso(s);
+  render();
 }
-
+function preparaPasso(s) {
+  const p = RECEITAS[s.rec].passos[s.passo];
+  if (!p) { s.st = 'pronto'; colocaBandeja(s); return; }
+  s.st = p.tipo === 'mao' ? 'espera_mao' : 'espera_maq';
+}
+function fazerMao(i) {
+  const s = R.slots[i];
+  if (!s || !s.rec || s.st !== 'espera_mao') return;
+  if (R.maos >= 0) return msg('Tuas mãos estão ocupadas.');
+  const p = RECEITAS[s.rec].passos[s.passo];
+  let dur = p.t * maoMult(); if (p.id === 'moer' && S.up.moedor) dur *= 0.5;
+  s.st = 'rodando'; s.recurso = 'mao'; s.t = 0; s.dur = dur;
+  R.maos = i; S.energia -= 0.4;
+  render();
+}
+function colocaBandeja(s) {
+  const j = R.bandeja.indexOf(null);
+  if (j < 0) { s.st = 'pronto'; return false; }
+  R.bandeja[j] = s.rec; s.rec = null; s.st = null;
+  if (!s.porBia) S.hab.cozXp += 2;
+  return true;
+}
+function assar() {
+  if (R.forno.st !== 'idle') return;
+  const q = S.up.forno;
+  if (S.estoque.massa < q) return msg(`Falta massa (precisa de ${q}).`);
+  S.estoque.massa -= q; R.stats.usou.massa += q;
+  Object.assign(R.forno, { st: 'assando', t: 0, dur: FORNO_T * (S.mods.organizado ? 0.92 : 1), qtd: q, bia: false });
+  render();
+}
+function descartar(j) { if (R.bandeja[j]) { R.bandeja[j] = null; render(); } }
+function entregar(id) {
+  const c = R.clientes.find(x => x.id === id);
+  if (!c || c.estado === 'saindo' || c.vaga < 0) return;
+  let deu = 0;
+  c.ped.forEach((it, k) => {
+    if (c.ok[k]) return;
+    if (it === 'pao') { if (R.vitrine > 0) { R.vitrine--; c.ok[k] = true; deu++; } }
+    else { const j = R.bandeja.indexOf(it); if (j >= 0) { R.bandeja[j] = null; c.ok[k] = true; deu++; } }
+  });
+  if (!deu) { msg('Nada do pedido de ' + c.nome + ' está pronto ainda.'); return; }
+  if (c.ok.every(Boolean)) pagar(c);
+  render();
+}
 function pagar(c) {
   const normal = c.tipo === 'lucia' && S.flags.luciaPrecoAntigo;
-  let total = c.ped.reduce((a, i) => a + precoItem(i, normal), 0);
-  const frac = c.pac / c.pacMax;
-  let gorj = frac > 0.7 ? Math.round(rnd(1, 3)) : 0;
+  const total = c.ped.reduce((a, i) => a + preco(i, normal), 0);
+  const frac = c.pacMax > 900 ? 1 : c.pac / c.pacMax;
+  const gorj = frac > 0.7 ? Math.round(rnd(1, 3)) : 0;
   S.caixa += total + gorj; R.stats.receita += total; R.stats.gorjeta += gorj; R.stats.atendidos++;
-  S.rep += frac > 0.5 ? 0.7 : 0.25;
-  fx(c.x, c.y - 50, '+' + brl(total + gorj), '#62c98f');
+  S.rep += frac > 0.5 ? 0.7 : 0.25; S.animo += frac > 0.5 ? 1 : 0; S.hab.atendXp += 4;
+  R.fx.push({ x: c.x, t: 0, cor: '#6fdc8c' });
   if (c.tipo === 'lucia') {
     S.lucia.afin += frac > 0.5 ? 6 : 2;
-    if (!S.flags.luciaAtendida) { S.flags.luciaAtendida = true; diario('Conheci a Dona Lúcia. Pede cappuccino e chega sempre no meio da manhã.'); }
+    if (!S.flags.luciaAtendida) { S.flags.luciaAtendida = true; diario('Conheci a Dona Lúcia, cliente da época da Dona Cida. Pede cappuccino no meio da manhã.'); }
     if (S.preco === 'alto' && !normal) S.flags.luciaPagouAlto = true;
-    if (S.mods.semCappuccino) { S.lucia.afin -= 3; fx(c.x, c.y - 66, '"sem o meu cappuccino?"', '#e8c35a'); }
+    if (S.mods.semCappuccino) S.lucia.afin -= 3;
   }
-  if (c.tipo === 'critico') { S.rep += frac > 0.4 ? 10 : 3; diario(frac > 0.4 ? 'A blogueira foi atendida rápido. A resenha saiu elogiando o café.' : 'A blogueira foi atendida, mas esperou. A resenha saiu morna.'); }
-  if (c.tipo === 'clube') { S.lucia.afin += 2; R.stats.clube = (R.stats.clube || 0) + 1; }
+  if (c.tipo === 'critico') { S.rep += frac > 0.4 ? 10 : 3; diario(frac > 0.4 ? 'A blogueira foi atendida rápido. A resenha elogiou o café.' : 'A blogueira esperou. A resenha saiu morna.'); }
+  if (c.tipo === 'clube') { S.lucia.afin += 2; R.stats.clube++; }
   sair(c);
 }
-function sair(c) {
-  c.estado = 'saindo'; c.tx = PORTA.x; c.ty = PORTA.y;
-  if (R.vagas[c.vaga] === c.id) R.vagas[c.vaga] = null;
-}
-
+function sair(c) { c.estado = 'saindo'; c.tx = 340; c.vaga = -1; reposiciona(); }
 function atualizar(dt) {
-  if (!R.rodando || R.pausa) return;
-  dt *= R.gestao ? 0.25 : 1;
-  R.t += dt;
-  while (R.agenda.length && R.agenda[0].t <= R.t) spawn(R.agenda.shift());
-  // jogador
-  const p = R.p;
-  if (!R.gestao) {
-    const vel = 230 / (1 + Math.max(0, S.me.estresse - 50) / 100);
-    let dx = 0, dy = 0;
-    if (teclas.has('ArrowLeft') || teclas.has('a')) dx--;
-    if (teclas.has('ArrowRight') || teclas.has('d')) dx++;
-    if (teclas.has('ArrowUp') || teclas.has('w')) dy--;
-    if (teclas.has('ArrowDown') || teclas.has('s')) dy++;
-    if (dx || dy) { p.alvo = null; const l = Math.hypot(dx, dy); p.x += dx / l * vel * dt; p.y += dy / l * vel * dt; p.passo += dt; }
-    else if (p.alvo) {
-      const ddx = p.alvo.x - p.x, ddy = p.alvo.y - p.y, d = Math.hypot(ddx, ddy);
-      if (d < 5) { const id = p.alvo.st; p.alvo = null; if (id) interagir(id); }
-      else { const st = Math.min(d, vel * dt); p.x += ddx / d * st; p.y += ddy / d * st; p.passo += dt; }
-    }
-    p.x = clamp(p.x, LIM.x0, LIM.x1); p.y = clamp(p.y, LIM.y0, LIM.y1);
+  if (!R || !R.rodando || R.pausa) return;
+  const tdt = R.hold ? 0 : dt;
+  R.t += tdt;
+  while (!R.hold && R.agenda.length && R.agenda[0].t <= R.t) spawn(R.agenda.shift());
+  if (R.maos >= 0) { const s = R.slots[R.maos]; s.t += dt; if (s.t >= s.dur) { R.maos = -1; s.recurso = null; s.passo++; preparaPasso(s); render(); } }
+  let usando = R.slots.filter(s => s.rec && s.st === 'rodando' && s.recurso === 'maq').length;
+  R.slots.forEach(s => {
+    if (!s.rec) return;
+    if (s.st === 'espera_maq' && usando < S.up.maquina) { s.st = 'rodando'; s.recurso = 'maq'; s.t = 0; s.dur = RECEITAS[s.rec].passos[s.passo].t; usando++; render(); }
+    else if (s.st === 'rodando' && s.recurso === 'maq') { s.t += dt; if (s.t >= s.dur) { s.recurso = null; s.passo++; preparaPasso(s); render(); } }
+    else if (s.st === 'rodando' && s.recurso === 'bia') { s.t += dt; if (s.t >= s.dur) { s.recurso = null; R.biaOc = -1; s.passo++; preparaPasso(s); render(); } }
+    else if (s.st === 'pronto') { if (colocaBandeja(s)) render(); }
+  });
+  const f = R.forno;
+  if (f.st === 'assando') { f.t += dt; if (f.t >= f.dur) { f.st = 'idle'; R.vitrine += f.qtd; if (!f.bia) S.hab.cozXp += 2; f.bia = false; render(); } }
+  if (biaTrabalhando() && !R.hold) {
+    if (S.bia.papel === 'forno' && f.st === 'idle' && R.vitrine <= 2 && S.estoque.massa >= S.up.forno) { S.estoque.massa -= S.up.forno; R.stats.usou.massa += S.up.forno; Object.assign(f, { st: 'assando', t: 0, dur: FORNO_T * 1.15 * biaMult(), qtd: S.up.forno, bia: true }); render(); }
+    if (S.bia.papel === 'moer' && R.biaOc < 0) { const i = R.slots.findIndex(s => s.rec && s.st === 'espera_mao' && RECEITAS[s.rec].passos[s.passo].id === 'moer'); if (i >= 0) { const s = R.slots[i]; s.st = 'rodando'; s.recurso = 'bia'; s.t = 0; s.dur = 1.6 * biaMult() * (S.up.moedor ? 0.5 : 1); s.porBia = true; R.biaOc = i; render(); } }
+    if (S.bia.papel === 'balcao') { R.biaTick += dt; if (R.biaTick > 1.4 * biaMult()) { R.biaTick = 0; for (const c of balcao()) { const pode = c.ped.some((it, k) => !c.ok[k] && (it === 'pao' ? R.vitrine > 0 : R.bandeja.includes(it))); if (pode) { entregar(c.id); break; } } } }
   }
-  // estações
-  for (const id of ['moedor', 'maquina', 'vapor', 'forno']) {
-    const s = R.est[id];
-    if (s.st === 'working') {
-      s.t += dt;
-      if (s.t >= s.dur) {
-        if (id === 'forno') { S.fornoPaes += 4; s.st = 'idle'; if (!s.bia) S.me.cozXp += 3; }
-        else { s.st = 'ready'; if (!s.bia && id !== 'moedor') S.me.cozXp += 3; }
-        s.bia = false;
-      }
-    }
-  }
-  // Bia
-  if (biaTrabalhando()) {
-    if (S.bia.papel === 'cafe') {
-      const m = R.est.maquina;
-      if (m.st === 'idle' && S.estoque.grao > 0) { S.estoque.grao--; m.st = 'working'; m.t = 0; m.dur = 5 * biaMult(); m.bia = true; }
-    } else if (S.bia.papel === 'forno') {
-      const f = R.est.forno;
-      if (f.st === 'idle' && S.fornoPaes <= 2 && S.estoque.massa >= 4 && !S.mods.semPao) { S.estoque.massa -= 4; f.st = 'working'; f.t = 0; f.dur = BASE_T.forno * 1.1 * biaMult(); f.bia = true; }
-    }
-  }
-  // clientes
   let esperando = 0;
   for (const c of R.clientes) {
-    const ddx = c.tx - c.x, ddy = c.ty - c.y, d = Math.hypot(ddx, ddy);
-    if (d > 2) { const st = Math.min(d, 140 * dt); c.x += ddx / d * st; c.y += ddy / d * st; }
-    else if (c.estado === 'chegando') c.estado = 'espera';
-    if (c.estado === 'espera') {
-      esperando++;
-      c.pac -= dt;
+    const d = c.tx - c.x;
+    if (Math.abs(d) > 0.5) c.x += Math.sign(d) * Math.min(Math.abs(d), 60 * dt);
+    else if (c.estado === 'andando') { c.estado = c.vaga >= 0 ? 'balcao' : 'fila'; render(); }
+    if (c.estado === 'balcao' || c.estado === 'fila' || (c.estado === 'andando' && c.vaga >= 0)) {
+      if (c.vaga >= 0) esperando++;
+      c.pac -= tdt * (c.vaga < 0 ? 0.5 : 1);
       if (c.pac <= 0) {
-        R.stats.irritados++; S.rep -= 1.5; S.me.estresse += 3;
-        fx(c.x, c.y - 50, 'foi embora irritado', '#ec6b5d');
+        R.stats.irritados++; S.rep -= 1.5; S.animo -= 4; msg(c.nome + ' cansou de esperar e foi embora.');
         if (c.tipo === 'lucia') { S.lucia.afin -= 10; lembra('lucia_esperou', 'a Dona Lúcia foi embora sem ser atendida'); diario('A Dona Lúcia cansou de esperar e foi embora.'); }
-        if (c.tipo === 'critico') { S.rep -= 10; diario('A blogueira cansou de esperar. A resenha saiu falando mal do atendimento.'); }
-        if (c.tipo === 'clube') S.lucia.afin -= 3;
-        sair(c);
+        if (c.tipo === 'critico') { S.rep -= 10; diario('A blogueira cansou de esperar. A resenha falou mal do atendimento.'); }
+        sair(c); render();
       }
     }
   }
-  R.clientes = R.clientes.filter(c => !(c.estado === 'saindo' && Math.hypot(c.tx - c.x, c.ty - c.y) < 3));
-  S.me.estresse = clamp(S.me.estresse + dt * (0.03 + 0.015 * esperando), 0, 100);
-  S.rep = clamp(S.rep, 0, 100);
-  for (const f of R.fx) f.t += dt;
-  R.fx = R.fx.filter(f => f.t < 1.4);
-  if (R.toast) { R.toast.t += dt; if (R.toast.t > 2.2) R.toast = null; }
-  // fim do dia
-  if (R.t >= R.len) {
-    const ativos = R.clientes.filter(c => c.estado !== 'saindo').length;
-    if ((!ativos && !R.agenda.length) || R.t >= R.len + GRACE) {
-      R.clientes.filter(c => c.estado !== 'saindo').forEach(c => { R.stats.irritados++; sair(c); });
-      R.agenda = [];
-      fimExpediente();
-    }
+  R.clientes = R.clientes.filter(c => !(c.estado === 'saindo' && c.x > 335));
+  S.energia -= tdt * 0.1; if (esperando > 3) S.animo -= tdt * 0.06;
+  normaliza();
+  R.fx.forEach(x => { x.t += dt; }); R.fx = R.fx.filter(x => x.t < 1.2);
+  if (R.tut >= 0) tutChecar();
+  if (!R.hold && R.t >= R.len) {
+    if ((!ativos().length && !R.agenda.length) || R.t >= R.len + GRACE) { ativos().forEach(c => { R.stats.irritados++; sair(c); }); R.agenda = []; fimExpediente(); }
   }
 }
 
-/* ---------- Desenho ---------- */
-const DPR = Math.min(2, window.devicePixelRatio || 1);
-cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-const fundo = document.createElement('canvas');
-fundo.width = W * DPR; fundo.height = H * DPR;
-(function pintaFundo() {
-  const g = fundo.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0);
-  // parede
-  g.fillStyle = '#26456b'; g.fillRect(0, 0, W, 46);
-  g.fillStyle = '#1d3757'; g.fillRect(0, 40, W, 6);
-  for (let x = 30; x < W; x += 150) { g.fillStyle = '#6b4a30'; g.fillRect(x, 16, 90, 5); g.fillStyle = '#e8d9b8'; for (let k = 0; k < 4; k++) g.fillRect(x + 8 + k * 20, 6, 10, 10); }
-  // azulejo da cozinha
-  for (let y = 46; y < 282; y += 30) for (let x = 0; x < W; x += 30) {
-    g.fillStyle = ((x + y) / 30) % 2 ? '#e7edf4' : '#dde6f0'; g.fillRect(x, y, 30, 30);
-    g.strokeStyle = 'rgba(58,105,170,.35)'; g.lineWidth = 1.2;
-    g.beginPath(); g.moveTo(x + 15, y + 5); g.lineTo(x + 25, y + 15); g.lineTo(x + 15, y + 25); g.lineTo(x + 5, y + 15); g.closePath(); g.stroke();
-    g.fillStyle = 'rgba(58,105,170,.45)'; g.beginPath(); g.arc(x + 15, y + 15, 2, 0, 7); g.fill();
-  }
-  // salão (madeira)
-  for (let y = 320; y < H; y += 18) { g.fillStyle = (y / 18) % 2 ? '#6c4832' : '#76503a'; g.fillRect(0, y, W, 18); g.fillStyle = 'rgba(0,0,0,.12)'; for (let x = (y * 7) % 120; x < W; x += 120) g.fillRect(x, y, 2, 18); }
-  // mesas
-  [[90, 440], [210, 470], [620, 455]].forEach(([x, y]) => { g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(x + 3, y + 6, 30, 12, 0, 0, 7); g.fill(); g.fillStyle = '#c99a62'; g.beginPath(); g.ellipse(x, y, 30, 14, 0, 0, 7); g.fill(); g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(x - 6, y - 2, 4, 0, 7); g.fill(); });
-  // porta
-  g.fillStyle = '#3a2618'; g.fillRect(770, 410, 30, 90); g.fillStyle = '#f0b23a'; g.fillRect(774, 414, 4, 82);
-  // balcão
-  g.fillStyle = '#8a5734'; g.fillRect(40, 286, 720, 36);
-  g.fillStyle = '#e4d6bd'; g.fillRect(36, 278, 728, 14);
-  g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(40, 316, 720, 6);
-})();
+/* ================= TUTORIAL ================= */
+const TUT = [
+  { fala: 'Olha o primeiro cliente: o Seu Jair, que vem aqui desde o meu tempo. Ele quer um <b>espresso</b>. Toca em <b>Espresso</b> no Preparo 1.', entra: () => spawn({ tipo: 'tut', nome: 'Seu Jair', ped: ['espresso'] }, true), alvo: '[data-ac="iniciar"][data-i="0"][data-rec="espresso"]', ok: () => R.slots[0].rec === 'espresso' || R.bandeja.includes('espresso') },
+  { fala: 'Isso gastou 1 dose de grão. Agora <b>Moer</b>. Moer é trabalho de mão: enquanto tu mói, não faz outra coisa.', alvo: '[data-ac="mao"][data-i="0"]', ok: () => !R.slots[0].rec || R.slots[0].passo >= 1 },
+  { fala: 'Agora a máquina extrai sozinha. Olha as etapas no cartão: <b>Moer</b> já foi, agora <b>Extrair</b>. Tuas mãos ficam livres pra outra coisa.', alvo: '[data-slot="0"]', ok: () => R.bandeja.includes('espresso') || R.stats.atendidos >= 1 },
+  { fala: 'Pronto, foi pra <b>bandeja</b> lá embaixo. Agora toca no <b>pedido do Seu Jair</b>, lá em cima, pra entregar.', alvo: '.ticket[data-id]', ok: () => R.stats.atendidos >= 1 },
+  { fala: 'A Marina quer <b>cappuccino</b>: é espresso com <b>leite vaporizado</b>. Mesmo começo, uma etapa a mais no fim. Faz sozinho agora, eu tô olhando.', entra: () => spawn({ tipo: 'tut', nome: 'Marina', ped: ['cappuccino'] }, true), alvo: '[data-ac="iniciar"][data-rec="cappuccino"]', ok: () => R.stats.atendidos >= 2 },
+  { fala: 'O Tonho quer <b>pão de queijo</b>. Esse sai do <b>forno</b>, 4 de uma vez. Toca em <b>Assar</b>, espera e entrega.', entra: () => spawn({ tipo: 'tut', nome: 'Tonho', ped: ['pao'] }, true), alvo: '[data-ac="assar"]', ok: () => R.stats.atendidos >= 3 },
+  { fala: 'Sobraram 3 pães na vitrine: o próximo que pedir já leva. A bandeja é igual: fez a mais ou errado, deixa lá que alguém vai pedir. Encheu? O <b>×</b> joga fora. No pedido, o que fica <b>amarelo</b> já está pronto.', botao: 'Entendi' },
+  { fala: 'Último truque: tu tem <b>2 espaços de preparo</b>. Enquanto a máquina extrai um, tu já mói o outro. Agora vou abrir a porta de verdade. Eu fico aqui do lado.', botao: 'Bora abrir' },
+];
+function tutEntra() { const p = TUT[R.tut]; if (p && p.entra) p.entra(); render(); }
+function tutChecar() { const p = TUT[R.tut]; if (p && p.ok && p.ok()) { R.tut++; if (R.tut >= TUT.length) tutFim(); else tutEntra(); } }
+function tutBotao() { R.tut++; if (R.tut >= TUT.length) tutFim(); else tutEntra(); }
+function tutFim() { R.tut = -1; R.hold = false; R.cidaDica = true; agendarClientes(R.t); msg('A Dona Cida virou a placa: aberto!'); render(); }
 
-function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
-function desenhaItem(item, x, y, s = 1) {
-  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
-  if (item === 'po') { ctx.fillStyle = '#5a3a22'; ctx.beginPath(); ctx.ellipse(0, 3, 9, 5, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#7a5232'; ctx.beginPath(); ctx.ellipse(0, 0, 6, 4, 0, 0, 7); ctx.fill(); }
-  if (item === 'espresso') { ctx.fillStyle = '#f4f1ea'; rr(-6, -4, 12, 10, 3); ctx.fill(); ctx.fillStyle = '#c88a48'; ctx.beginPath(); ctx.ellipse(0, -3, 5, 2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#f4f1ea'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(7, 1, 3, -1.4, 1.4); ctx.stroke(); }
-  if (item === 'cappuccino') { ctx.fillStyle = '#f4f1ea'; rr(-8, -5, 16, 13, 4); ctx.fill(); ctx.fillStyle = '#b07a46'; ctx.beginPath(); ctx.ellipse(0, -4, 7, 3, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, -4, 3.5, 1.6, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#f4f1ea'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(9, 1, 3.5, -1.4, 1.4); ctx.stroke(); }
-  if (item === 'pao') { ctx.fillStyle = '#d9a441'; ctx.beginPath(); ctx.arc(0, 0, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#f1cf7a'; ctx.beginPath(); ctx.arc(-2, -2, 3, 0, 7); ctx.fill(); }
-  ctx.restore();
-}
-function desenhaEstacao(id, slotId) {
-  const s = SLOTS[slotId], d = ST_DEF[id], e = R.est[id];
-  const x = s.x - SW / 2, y = s.y - SH / 2;
-  ctx.fillStyle = 'rgba(0,0,0,.22)'; rr(x + 3, y + 5, SW, SH, 8); ctx.fill();
-  ctx.fillStyle = d.cor; rr(x, y, SW, SH, 8); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,.12)'; rr(x + 4, y + 4, SW - 8, 10, 4); ctx.fill();
-  ctx.save(); ctx.translate(s.x, s.y + 2); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2.5;
-  if (id === 'moedor') { ctx.beginPath(); ctx.moveTo(-10, -12); ctx.lineTo(10, -12); ctx.lineTo(5, 2); ctx.lineTo(-5, 2); ctx.closePath(); ctx.fill(); ctx.fillRect(-7, 4, 14, 8); }
-  if (id === 'maquina') { ctx.fillRect(-16, -12, 32, 8); ctx.fillRect(-3, -4, 6, 6); ctx.strokeRect(-9, 6, 18, 6); }
-  if (id === 'vapor') { ctx.beginPath(); ctx.arc(-6, -2, 6, 0, 7); ctx.arc(4, -6, 7, 0, 7); ctx.arc(8, 2, 5, 0, 7); ctx.fill(); ctx.fillRect(-2, 6, 4, 8); }
-  if (id === 'forno') { ctx.strokeRect(-16, -12, 32, 24); ctx.fillStyle = e.st === 'working' ? '#ffb347' : 'rgba(255,255,255,.3)'; ctx.fillRect(-11, -6, 22, 13); }
-  if (id === 'lixo') { ctx.fillRect(-9, -8, 18, 4); ctx.beginPath(); ctx.moveTo(-8, -3); ctx.lineTo(8, -3); ctx.lineTo(6, 13); ctx.lineTo(-6, 13); ctx.closePath(); ctx.fill(); }
-  ctx.restore();
-  ctx.fillStyle = '#10213a'; ctx.font = '700 11px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.textAlign = 'center';
-  const ly = s.p === 'parede' ? y + SH + 13 : y + SH + 13;
-  ctx.fillStyle = s.p === 'parede' ? '#1d3757' : '#f2e6d0'; ctx.fillText(d.nome, s.x, ly);
-  if (e.st === 'working') { const k = clamp(e.t / e.dur, 0, 1); ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(x + 8, y - 10, SW - 16, 6, 3); ctx.fill(); ctx.fillStyle = e.bia ? '#7fc4ff' : '#f0b23a'; rr(x + 8, y - 10, (SW - 16) * k, 6, 3); ctx.fill(); }
-  if (e.st === 'ready') { const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180); ctx.strokeStyle = `rgba(98,201,143,${0.5 + pulse * 0.5})`; ctx.lineWidth = 3; rr(x - 2, y - 2, SW + 4, SH + 4, 10); ctx.stroke(); desenhaItem(id === 'moedor' ? 'po' : id === 'maquina' ? 'espresso' : 'cappuccino', s.x + SW / 2 - 10, y + 8, 1); }
-  if (id === 'forno' && S.fornoPaes > 0) { ctx.fillStyle = '#f0b23a'; ctx.beginPath(); ctx.arc(x + SW - 4, y + 4, 11, 0, 7); ctx.fill(); ctx.fillStyle = '#2a1c05'; ctx.font = '700 12px "IBM Plex Mono", monospace'; ctx.fillText(S.fornoPaes, x + SW - 4, y + 8); }
-  if (R.gestao && R.sel === id) { ctx.strokeStyle = '#f0b23a'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]); rr(x - 4, y - 4, SW + 8, SH + 8, 10); ctx.stroke(); ctx.setLineDash([]); }
-}
-function desenhaPessoa(x, y, cor, opts = {}) {
-  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + 12, 13, 5, 0, 0, 7); ctx.fill();
-  const bob = opts.passo ? Math.sin(opts.passo * 14) * 1.5 : 0;
-  ctx.fillStyle = cor; rr(x - 11, y - 8 + bob, 22, 22, 9); ctx.fill();
-  if (opts.avental) { ctx.fillStyle = opts.avental; rr(x - 7, y - 2 + bob, 14, 15, 4); ctx.fill(); }
-  ctx.fillStyle = opts.pele || '#e2b48c'; ctx.beginPath(); ctx.arc(x, y - 16 + bob, 9, 0, 7); ctx.fill();
-  ctx.fillStyle = opts.cabelo || '#3b2a1e'; ctx.beginPath(); ctx.arc(x, y - 19 + bob, 9, Math.PI, 0); ctx.fill();
-}
-function desenhar() {
-  ctx.clearRect(0, 0, W, H);
-  ctx.drawImage(fundo, 0, 0, W, H);
-  // entrega
-  ctx.fillStyle = '#f0b23a'; rr(ENTREGA.x - 42, ENTREGA.y - 20, 84, 34, 8); ctx.fill();
-  ctx.fillStyle = '#2a1c05'; ctx.font = '700 12px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ENTREGA', ENTREGA.x, ENTREGA.y + 2);
-  ctx.beginPath(); ctx.arc(ENTREGA.x, ENTREGA.y - 12, 5, Math.PI, 0); ctx.fill();
-  // slots vazios no modo gestão
-  if (R.gestao) {
-    const ocupados = new Set(Object.values(S.layout));
-    for (const [sid, s] of Object.entries(SLOTS)) if (!ocupados.has(sid)) { ctx.strokeStyle = 'rgba(240,178,58,.8)'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); rr(s.x - SW / 2, s.y - SH / 2, SW, SH, 8); ctx.stroke(); ctx.setLineDash([]); }
-  }
-  for (const [id, sid] of Object.entries(S.layout)) desenhaEstacao(id, sid);
-  // pessoas, ordenadas por y
-  const ents = [];
-  for (const c of R.clientes) ents.push({ y: c.y, f: () => desenhaCliente(c) });
-  if (R.rodando && biaTrabalhando()) {
-    const pt = pontoDe(S.layout[S.bia.papel === 'cafe' ? 'maquina' : 'forno']);
-    const bx = clamp(pt.x + 34, LIM.x0, LIM.x1), by = pt.y;
-    ents.push({ y: by, f: () => { desenhaPessoa(bx, by, '#3d6fa8', { avental: '#2f7f6a', cabelo: '#6b3a1f', passo: performance.now() / 1000 * 0.3 }); rotulo(bx, by - 34, 'Bia'); } });
-  }
-  ents.push({ y: R.p.y, f: () => { desenhaPessoa(R.p.x, R.p.y, '#2c3e5c', { avental: '#f0b23a', passo: R.p.passo }); if (R.p.hold) { ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.beginPath(); ctx.arc(R.p.x, R.p.y - 40, 13, 0, 7); ctx.fill(); desenhaItem(R.p.hold, R.p.x, R.p.y - 40, 1); } } });
-  ents.sort((a, b) => a.y - b.y).forEach(e => e.f());
-  // fx
-  ctx.textAlign = 'center';
-  for (const f of R.fx) { ctx.globalAlpha = 1 - f.t / 1.4; ctx.fillStyle = f.cor; ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.strokeStyle = 'rgba(10,20,35,.8)'; ctx.lineWidth = 3; ctx.strokeText(f.txt, f.x, f.y - f.t * 26); ctx.fillText(f.txt, f.x, f.y - f.t * 26); }
-  ctx.globalAlpha = 1;
-  if (R.toast) { ctx.font = '700 14px "Atkinson Hyperlegible", system-ui, sans-serif'; const w = ctx.measureText(R.toast.txt).width + 28; ctx.fillStyle = 'rgba(14,24,40,.9)'; rr(W / 2 - w / 2, 52, w, 30, 15); ctx.fill(); ctx.fillStyle = '#eaf0f8'; ctx.fillText(R.toast.txt, W / 2, 72); }
-  if (R.rodando && R.t >= R.len) { ctx.fillStyle = 'rgba(14,24,40,.85)'; rr(W / 2 - 120, 90, 240, 28, 14); ctx.fill(); ctx.fillStyle = '#f0b23a'; ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; ctx.fillText('Placa virada. Atenda quem ficou.', W / 2, 109); }
-  if (R.pausa) { ctx.fillStyle = 'rgba(8,14,26,.6)'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#eaf0f8'; ctx.font = '800 34px "Bricolage Grotesque", sans-serif'; ctx.fillText('Pausado', W / 2, H / 2); ctx.font = '400 14px "Atkinson Hyperlegible", sans-serif'; ctx.fillText('Esc ou o botão Retomar para voltar', W / 2, H / 2 + 26); }
-  if (R.gestao && R.rodando) { ctx.fillStyle = 'rgba(240,178,58,.12)'; ctx.fillRect(0, 0, W, H); }
-}
-function rotulo(x, y, txt) {
-  ctx.font = '700 11px "Atkinson Hyperlegible", system-ui, sans-serif'; const w = ctx.measureText(txt).width + 12;
-  ctx.fillStyle = 'rgba(14,24,40,.82)'; rr(x - w / 2, y - 11, w, 16, 8); ctx.fill(); ctx.fillStyle = '#f0b23a'; ctx.textAlign = 'center'; ctx.fillText(txt, x, y + 1);
-}
-function desenhaCliente(c) {
-  desenhaPessoa(c.x, c.y, c.cor, { pele: c.tipo === 'lucia' ? '#e9c4a4' : undefined, cabelo: c.tipo === 'lucia' || c.tipo === 'clube' ? '#cfcfd6' : undefined, passo: c.estado !== 'espera' ? performance.now() / 1000 : 0 });
-  if (c.nome) rotulo(c.x, c.y + 28, c.nome);
-  if (c.estado === 'espera' && c.rest.length) {
-    const w = 14 + c.rest.length * 22, bx = c.x - w / 2, by = c.y - 66;
-    ctx.fillStyle = '#fbf8f2'; rr(bx, by, w, 26, 8); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(c.x - 5, by + 26); ctx.lineTo(c.x + 5, by + 26); ctx.lineTo(c.x, by + 32); ctx.fill();
-    c.rest.forEach((it, i) => desenhaItem(it, bx + 18 + i * 22, by + 13, 0.95));
-    const k = clamp(c.pac / c.pacMax, 0, 1);
-    ctx.fillStyle = 'rgba(0,0,0,.35)'; rr(c.x - 18, by - 8, 36, 5, 2.5); ctx.fill();
-    ctx.fillStyle = k > 0.5 ? '#62c98f' : k > 0.25 ? '#e8c35a' : '#ec6b5d'; rr(c.x - 18, by - 8, 36 * k, 5, 2.5); ctx.fill();
-  }
-}
-
-/* ---------- Entrada ---------- */
-const teclas = new Set();
-addEventListener('keydown', e => {
-  if (!$('#veu').hidden) return;
-  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-  if (R.rodando) {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(k)) e.preventDefault();
-    if (k === 'Escape') return alternaPausa();
-    if (k === 'g') return alternaGestao();
-    if ((k === 'e' || k === ' ') && !R.gestao && !R.pausa) {
-      let melhor = null, md = 62;
-      for (const [id, sid] of Object.entries(S.layout)) { const pt = pontoDe(sid), d = Math.hypot(pt.x - R.p.x, pt.y - R.p.y); if (d < md) { md = d; melhor = id; } }
-      const de = Math.hypot(ENTREGA.x - R.p.x, ENTREGA.y - 44 - R.p.y); if (de < md) melhor = 'entrega';
-      if (melhor) interagir(melhor);
-      return;
-    }
-  }
-  teclas.add(k);
-});
-addEventListener('keyup', e => teclas.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key));
-addEventListener('blur', () => teclas.clear());
-
-function hitEstacao(x, y) {
-  for (const [id, sid] of Object.entries(S.layout)) { const s = SLOTS[sid]; if (Math.abs(x - s.x) <= SW / 2 + 4 && Math.abs(y - s.y) <= SH / 2 + 8) return id; }
-  return null;
-}
-function hitSlot(x, y) {
-  for (const [sid, s] of Object.entries(SLOTS)) if (Math.abs(x - s.x) <= SW / 2 && Math.abs(y - s.y) <= SH / 2) return sid;
-  return null;
-}
-cv.addEventListener('pointerdown', e => {
-  const r = cv.getBoundingClientRect();
-  const x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
-  if (R.gestao) {
-    const st = hitEstacao(x, y);
-    if (!R.sel) { if (st) R.sel = st; return; }
-    const sid = hitSlot(x, y);
-    if (!sid) { R.sel = null; return; }
-    const dono = Object.keys(S.layout).find(k => S.layout[k] === sid);
-    if (dono === R.sel) { R.sel = null; return; }
-    if (dono) S.layout[dono] = S.layout[R.sel];
-    S.layout[R.sel] = sid; R.sel = null;
-    return;
-  }
-  if (!R.rodando || R.pausa) return;
-  if (Math.abs(x - ENTREGA.x) <= 46 && Math.abs(y - ENTREGA.y) <= 24) { R.p.alvo = { x: ENTREGA.x, y: ENTREGA.y - 44, st: 'entrega' }; return; }
-  const st = hitEstacao(x, y);
-  if (st) { const pt = pontoDe(S.layout[st]); R.p.alvo = { x: clamp(pt.x, LIM.x0, LIM.x1), y: clamp(pt.y, LIM.y0, LIM.y1), st }; return; }
-  if (y > 46 && y < 282) R.p.alvo = { x: clamp(x, LIM.x0, LIM.x1), y: clamp(y, LIM.y0, LIM.y1), st: null };
-});
-
-function alternaPausa() { if (!R.rodando) return; R.pausa = !R.pausa; atualizaTopo(); }
-function alternaGestao() { if (!R.rodando) return; R.gestao = !R.gestao; R.sel = null; $('#barraGestao').hidden = !R.gestao; $('#txtGestao').textContent = 'Gestão no expediente: o tempo corre a 25% e tu fica parado. Toque numa estação e depois num espaço para trocar.'; atualizaTopo(); }
-$('#bPausa').onclick = alternaPausa;
-$('#bGestao').onclick = alternaGestao;
-$('#bConcluiGestao').onclick = () => { if (R.rodando) alternaGestao(); else { R.gestao = false; R.sel = null; $('#barraGestao').hidden = true; mostraManha(); } };
-$('#bDiario').onclick = () => { if (trava) return; if (R.rodando && !R.pausa) alternaPausa(); mostraDiario(); };
-
-/* ---------- Interface: topo e painel ---------- */
+/* ================= RENDER ================= */
+let assinatura = '';
+function render() { assinatura = ''; }
 function horaTxt() {
-  if (S.fase === 'expediente') { const k = clamp(R.t / R.len, 0, 1); const ini = S.mods.meioDia ? 13 : 9; const tot = (S.mods.meioDia ? 4 : 8) * 60 * k; const h = ini + Math.floor(tot / 60), m = Math.floor(tot % 60 / 10) * 10; return `${h}h${String(m).padStart(2, '0')}`; }
-  if (S.fase === 'manha') return `${10 - S.horas}h`;
-  if (S.fase === 'noite') return `${21 - S.horas}h`;
+  if (S.fase === 'expediente' && R) { const k = clamp(R.t / R.len, 0, 1); const ini = S.mods.meioDia ? 13 : 9; const tot = (S.mods.meioDia ? 4 : 8) * 60 * k; return `${ini + Math.floor(tot / 60)}h${String(Math.floor(tot % 60 / 10) * 10).padStart(2, '0')}`; }
+  if (S.fase === 'manha') return `${9 - S.horas}h`;
+  if (S.fase === 'noite') return `${22 - S.horas}h`;
   return '—';
 }
-let ultimoTopo = '';
-function atualizaTopo() {
-  const s = [S.fase === 'titulo' ? '—' : `${S.dia}/5 · ${NOME_DIA[S.dia - 1]}`, horaTxt(), brl(S.caixa), Math.round(S.rep) + '', R.rodando, R.pausa, R.gestao].join('|');
-  if (s === ultimoTopo) return; ultimoTopo = s;
-  $('#hDia').textContent = S.fase === 'titulo' ? '—' : `${S.dia}/5 ${NOME_DIA[S.dia - 1]}`;
+let hudSig = '';
+function hud() {
+  const sig = [S.dia, S.fase, horaTxt(), Math.round(S.caixa), Math.round(S.rep), Math.round(S.energia), Math.round(S.animo), R && R.pausa, S.horas].join('|');
+  if (sig === hudSig) return; hudSig = sig;
+  $('#hDia').textContent = S.fase === 'titulo' ? '—' : `${S.dia}/5 ${NOME_DIA[S.dia - 1].slice(0, 3)}`;
   $('#hHora').textContent = horaTxt();
-  $('#hCaixa').textContent = brl(S.caixa);
-  $('#hCaixa').style.color = S.caixa < 60 ? 'var(--ruim)' : '';
+  $('#hCaixa').textContent = brl(S.caixa); $('#hCaixa').className = S.caixa < 60 ? 'neg' : '';
   $('#hRep').textContent = Math.round(S.rep);
-  $('#bPausa').hidden = !R.rodando; $('#bGestao').hidden = !R.rodando;
-  $('#bPausa').textContent = R.pausa ? 'Retomar (Esc)' : 'Pausar (Esc)';
-  $('#bGestao').textContent = R.gestao ? 'Sair da gestão (G)' : 'Gestão (G)';
+  const be = $('#bEnergia'); be.style.width = S.energia + '%'; be.style.background = S.energia < 30 ? 'var(--vermelho)' : 'var(--ouro)';
+  const ba = $('#bAnimo'); ba.style.width = S.animo + '%'; ba.style.background = S.animo < 25 ? 'var(--vermelho)' : 'var(--rosa)';
+  const bp = $('#bPausa'); bp.hidden = S.fase !== 'expediente'; bp.textContent = R && R.pausa ? 'Retomar (P)' : 'Pausar (P)';
+  const bf = $('#bFase');
+  if (S.fase === 'manha') { bf.hidden = false; bf.textContent = 'Abrir o café →'; }
+  else if (S.fase === 'noite') { bf.hidden = false; bf.textContent = 'Dormir →'; }
+  else bf.hidden = true;
+  ficha();
 }
-function medidor(v, ruimAlto = true) {
-  const k = clamp(v, 0, 100); const cor = ruimAlto ? (k > 70 ? 'var(--ruim)' : k > 50 ? 'var(--aviso)' : 'var(--bom)') : 'var(--acento)';
-  return `<div class="medidor"><i style="width:${k}%;background:${cor}"></i></div>`;
+let fichaSig = '';
+function ficha() {
+  const hab = (nome, xp, por, nv, nota) => `<div class="hab"><span>${nome}</span><b>nv ${nv}</b><div class="mini"><i style="width:${nv >= 3 ? 100 : (xp % por) / por * 100}%"></i></div><small>${nota}</small></div>`;
+  const pessoa = (id, txt, sub) => `<div class="pessoa"><img src="${retrato(id)}" alt=""><div>${txt}<small>${sub}</small></div></div>`;
+  let h = `<div><h3>Habilidades</h3>${hab('Cozinha', S.hab.cozXp, 60, nCoz(), 'Mãos mais rápidas')}${hab('Atendimento', S.hab.atendXp, 50, nAtend(), 'Clientes mais pacientes')}<div class="hab"><span>Gestão</span><b>nv ${S.hab.gestao}</b><small>Compras mais baratas, negociação</small></div></div>
+    <div><h3>Estoque</h3><div class="kv"><span>Grão</span><b class="${S.estoque.grao < 6 ? 'neg' : ''}">${S.estoque.grao}</b></div><div class="kv"><span>Leite</span><b class="${S.estoque.leite < 3 ? 'neg' : ''}">${S.estoque.leite}</b></div><div class="kv"><span>Massa</span><b class="${S.estoque.massa < S.up.forno ? 'neg' : ''}">${S.estoque.massa}</b></div></div>
+    <div><h3>Pessoas</h3>`;
+  if (S.dia === 1 && S.fase !== 'noite') h += pessoa('cida', 'Dona Cida', 'antiga dona, te ensinando');
+  if (biaAtiva()) h += pessoa('bia', 'Bia', `funcionária · cansaço ${Math.round(S.bia.estresse)}`);
+  else if (S.bia.foiRafa || (S.mem.bia_recusada && S.vistos.bia_no_rival)) h += pessoa('bia', 'Bia', 'agora no Grão Nobre');
+  if (S.flags.luciaAtendida) h += pessoa('lucia', 'Dona Lúcia', 'cliente fiel · ' + relacao(S.lucia.afin));
+  h += pessoa('caio', 'Caio', 'amigo · ' + relacao(S.caio.afin));
+  h += pessoa('rafa', 'Rafa', 'rival · ' + relacao(S.rafa.afin));
+  h += `</div><p class="dica-geral">Energia abaixo de 30 deixa tuas mãos lentas. Ânimo quase zerado te derruba na manhã seguinte.</p>`;
+  if (h === fichaSig) return; fichaSig = h;
+  $('#ficha').innerHTML = h;
 }
-function renderPainel() {
-  const e = S.estoque;
-  const baixo = (v, lim) => v <= lim ? ' class="neg"' : '';
-  const nv = nivelCoz();
-  let h = `<div><h3>Estoque</h3>
-    <div class="linha-kv"><span>Grão</span><b${baixo(e.grao, 5)}>${e.grao} doses</b></div>
-    <div class="linha-kv"><span>Leite</span><b${baixo(e.leite, 3)}>${e.leite} doses</b></div>
-    <div class="linha-kv"><span>Massa de pão</span><b${baixo(e.massa, 4)}>${e.massa}</b></div>
-    <div class="linha-kv"><span>Pães prontos no forno</span><b>${S.fornoPaes}</b></div></div>
-  <div><h3>Você</h3>
-    <div class="linha-kv"><span>Estresse</span><b>${Math.round(S.me.estresse)}</b></div>${medidor(S.me.estresse)}
-    <div class="linha-kv" style="margin-top:6px"><span>Cozinha</span><b>nível ${nv}${nv < 3 ? ` · ${S.me.cozXp % 60}/60` : ''}</b></div>
-    <div class="linha-kv"><span>Gestão</span><b>nível ${S.me.gestao}</b></div>
-    ${S.me.estresse > 50 ? `<p class="dica" style="margin:6px 0 0">Acima de 50, tu anda e trabalha mais devagar.</p>` : ''}</div>`;
-  if (biaAtiva()) h += `<div><h3>Equipe</h3>
-    <div class="linha-kv"><span>Bia · ${S.bia.regime === 'integral' ? 'integral' : 'meio período'}</span><b>${S.mods.biaFolga ? 'de folga' : S.bia.papel === 'cafe' ? 'máquina' : 'forno'}</b></div>
-    <div class="linha-kv"><span>Estresse dela</span><b>${Math.round(S.bia.estresse)}</b></div>${medidor(S.bia.estresse)}</div>`;
-  h += `<div><h3>Pessoas</h3>
-    ${S.flags.luciaAtendida ? `<div class="linha-kv"><span>Dona Lúcia</span><span class="pilula">${relacao(S.lucia.afin)}</span></div>` : ''}
-    <div class="linha-kv"><span>Caio (amigo)</span><span class="pilula">${relacao(S.caio.afin)}</span></div>
-    <div class="linha-kv"><span>Rafa (rival)</span><span class="pilula">${relacao(S.rafa.afin)}</span></div>
-    ${S.bia.foiRafa || (S.mem.bia_recusada && S.vistos.bia_no_rival) ? `<div class="linha-kv"><span>Bia</span><span class="pilula ruim">no Grão Nobre</span></div>` : ''}</div>
-  <div class="dica"><h3>Como jogar</h3>Toque numa estação para ir até ela e usar. Teclado: <kbd>WASD</kbd> ou setas e <kbd>E</kbd>.<br>Grão → <b>Moedor</b> → pó → <b>Máquina</b> → espresso. Espresso → <b>Vaporizador</b> → cappuccino. <b>Forno</b> assa 4 pães. Leve à <b>Entrega</b>.</div>`;
-  $('#painel').innerHTML = h;
-}
-
-/* ---------- Cartões ---------- */
-function cartao(html, aoMontar) {
-  $('#cartao').innerHTML = html; $('#veu').hidden = false;
-  if (aoMontar) aoMontar($('#cartao'));
-  const foco = $('#cartao').querySelector('button:not(:disabled)'); if (foco) foco.focus({ preventScroll: true });
-  $('#cartao').scrollTop = 0;
-}
-function fechaCartao() { $('#veu').hidden = true; }
-function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-
-function mostraTitulo() {
-  trava = false;
-  S.fase = 'titulo'; atualizaTopo(); renderPainel();
-  let salvo = null; try { salvo = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { salvo = null; }
-  cartao(`<div class="sobre">Protótipo jogável · 5 dias</div>
-    <div class="titulo-jogo">Café<br>Cantinho</div>
-    <p>Tu acabou de abrir um café minúsculo num bairro onde ninguém te conhece. Tem R$ 300, equipamento usado e cinco dias para provar que isso pode dar certo.</p>
-    <p class="dica">Cada dia tem manhã (planejar), expediente (operar), noite (viver) e fechamento (contas e consequências). O que tu faz fora da cozinha muda o que acontece dentro dela.</p>
-    <div class="rodape-cartao">
-      ${salvo && salvo.dia ? `<button class="btn" id="bCont">Continuar do dia ${salvo.dia}</button>` : '<span></span>'}
-      <button class="btn primario" id="bNovo">Abrir as portas</button>
-    </div>`, c => {
-    c.querySelector('#bNovo').onclick = () => { S = novoEstado(); R = novoRuntime(); iniciarDia(); };
-    const bc = c.querySelector('#bCont'); if (bc) bc.onclick = () => { S = Object.assign(novoEstado(), salvo); R = novoRuntime(); iniciarDia(true); };
-  });
-}
-
-function salvar() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { /* sem armazenamento: segue sem salvar */ } }
-
-function iniciarDia(continuando) {
-  if (!continuando) { S.mods = S.amanha || {}; S.amanha = {}; }
-  if (S.dia === 5 && S.flags.showCaio) S.mods.showCaio = true;
-  if (S.dia === 5 && S.flags.caioNoRafa) S.mods.caioNoRafa = true;
-  S.fase = 'manha'; S.horas = 3;
-  S.agenda = S.agenda.filter(a => {
-    if (a.dia > S.dia) return true;
-    if (a.id === 'bia_demissao' && !(biaAtiva() && S.bia.estresse >= 45)) { diario('A Bia aguentou até o fim da semana.', 'bia_aguenta'); return false; }
-    return a.dia === S.dia;
-  });
-  if (!continuando) salvar();
-  S.snap = { rep: S.rep, caixa: S.caixa, lucia: S.lucia.afin, caio: S.caio.afin, bia: S.bia.estresse, rafa: S.rafa.afin, est: S.me.estresse, nd: S.diario.length };
-  S.caio.viuHoje = false;
-  R = novoRuntime();
-  // acordo com o Rafa
-  if (S.rafa.acordo) {
-    if (S.estoque.massa >= 8) { S.estoque.massa -= 8; S.horas -= 1; S.flags.entregouRafa = true; }
-    else { S.rafa.acordo = null; S.rafa.afin -= 15; S.flags.entregouRafa = false; diario('Faltou massa para a entrega do Rafa. Ele cancelou o acordo.', 'acordo_rafa'); }
-  }
-  filaEventos = diretor('manha');
-  atualizaTopo(); renderPainel();
-  proximoEvento(mostraManha);
-}
-
-function proximoEvento(depois) {
-  const id = filaEventos.shift();
-  if (!id) return depois();
-  trava = true;
-  const e = EV.find(x => x.id === id);
-  S.vistos[id] = true;
-  if (e.pre) e.pre(S);
-  const tx = e.texto(S);
-  const esc_ = e.escolhas(S);
-  cartao(`<div class="sobre">Dia ${S.dia} · ${S.fase === 'manha' ? 'manhã' : 'fim do expediente'} · acontecimento</div>
-    <h2>${esc(tx.titulo)}</h2>
-    ${(tx.corpo || []).map(p => `<p>${esc(p)}</p>`).join('')}
-    ${(tx.falas || []).map(([q, f]) => `<div class="fala"><span class="quem">${esc(q)}</span><span>${esc(f)}</span></div>`).join('')}
-    <div class="escolhas">${esc_.map((c, i) => { const r = c.req ? c.req(S) : { ok: true }; return `<button class="escolha" data-i="${i}" ${r.ok ? '' : 'disabled'}><b>${esc(c.t)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}${c.custo ? `<span class="custo">${esc(c.custo)}</span>` : ''}${r.ok ? '' : `<span class="req">${esc(r.motivo)}</span>`}</button>`; }).join('')}</div>`,
-    c => c.querySelectorAll('.escolha').forEach(b => b.onclick = () => {
-      const res = esc_[+b.dataset.i].ef(S);
-      normaliza(); renderPainel(); atualizaTopo();
-      cartao(`<div class="sobre">Dia ${S.dia} · consequência</div><h2>${esc(tx.titulo)}</h2><p>${esc(res)}</p>
-        <p class="dica">Registrado no diário. Algumas escolhas voltam dias depois.</p>
-        <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">Continuar</button></div>`, c2 => c2.querySelector('#bOk').onclick = () => proximoEvento(depois));
-    }));
-}
-function normaliza() {
-  S.me.estresse = clamp(S.me.estresse, 0, 100); S.bia.estresse = clamp(S.bia.estresse, 0, 100); S.bia.moral = clamp(S.bia.moral, 0, 100);
-  S.rep = clamp(S.rep, 0, 100); S.lucia.afin = clamp(S.lucia.afin, -50, 100); S.caio.afin = clamp(S.caio.afin, -50, 100); S.rafa.afin = clamp(S.rafa.afin, -50, 100);
-}
-
-function pips() { return `<div class="horas">${[0, 1, 2].map(i => `<i class="${i < S.horas ? 'cheia' : ''}"></i>`).join('')}<span>${S.horas} ${S.horas === 1 ? 'hora livre' : 'horas livres'}</span></div>`; }
-function botaoAcao(a) {
-  const r = a.req ? a.req() : { ok: true };
-  const semTempo = a.h > S.horas;
-  const dis = !r.ok || semTempo;
-  return `<button class="escolha" data-a="${a.id}" ${dis ? 'disabled' : ''}><b>${esc(a.t)}</b><span>${esc(a.sub)}</span><span class="custo">${a.h} h</span>${!r.ok ? `<span class="req">${esc(r.motivo)}</span>` : semTempo ? '<span class="req">Sem tempo</span>' : ''}</button>`;
-}
-const ACOES_MANHA = [
-  { id: 'comprar', h: 1, t: 'Ir ao fornecedor', sub: 'Comprar grão, leite e massa.' },
-  { id: 'preassar', h: 1, t: 'Pré-assar pão de queijo', sub: 'Abre com 8 pães prontos no forno. Usa 8 massas.', req: () => ({ ok: S.estoque.massa >= 8 && !S.mods.semPao, motivo: S.mods.semPao ? 'Pão fora do cardápio hoje' : 'Precisa de 8 massas' }), ef: () => { S.estoque.massa -= 8; S.fornoPaes += 8; } },
-  { id: 'treinar', h: 1, t: 'Treinar receitas', sub: 'Cozinha mais rápida (+25 de experiência). Cansa um pouco.', ef: () => { S.me.cozXp += 25; S.me.estresse += 5; S.me.padrao.cozinha++; } },
-  { id: 'lucia', h: 1, t: 'Caminhar na praça com a Dona Lúcia', sub: 'Ela gosta de conversar. Tu relaxa.', req: () => ({ ok: !!S.flags.luciaAtendida && S.lucia.afin > 5, motivo: S.flags.luciaAtendida ? 'Ela anda distante' : 'Tu ainda não conhece a Dona Lúcia' }),
-    ef: () => { S.lucia.afin += 8; S.me.estresse -= 5; S.me.padrao.social++; if (!S.flags.luciaContou) { S.flags.luciaContou = true; diario('A Dona Lúcia me contou que a padaria onde o grupo de crochê dela se encontrava fechou.'); return 'Ela conta que a padaria onde o grupo de crochê se reunia fechou. "Agora a gente fica rodando."'; } return 'Vocês falam do bairro, do neto dela, do preço do tomate.'; } },
-  { id: 'bia', h: 1, t: 'Tomar café da manhã com a Bia', sub: 'Ouvir como ela está. Baixa o estresse dela.', req: () => ({ ok: biaAtiva(), motivo: 'Ninguém na equipe ainda' }), ef: () => { S.bia.estresse -= 12; S.bia.moral += 8; S.me.padrao.social++; return S.bia.estresse > 50 ? 'Ela admite que está cansada. Ajuda falar.' : 'Ela ri contando de um cliente que pediu "um espresso grande, mas pequeno".'; } },
-];
-function mostraManha(msg) {
-  trava = false;
-  S.fase = 'manha'; atualizaTopo(); renderPainel();
-  const tutorial = S.dia === 1 ? `<p class="dica">Primeiro dia. Teu tempo antes de abrir é curto: cada ação gasta horas. As configurações do lado direito não gastam tempo.</p>` : '';
-  cartao(`<div class="sobre">Dia ${S.dia} · ${NOME_DIA[S.dia - 1]} · manhã</div>
-    <h2>Antes de abrir</h2>
-    ${msg ? `<div class="fala"><span class="quem">→</span><span>${esc(msg)}</span></div>` : ''}
-    ${tutorial}
-    ${pips()}
-    ${S.flags.entregouRafa && S.rafa.acordo ? '<p class="dica">Uma hora já foi para entregar os 8 pães do Rafa.</p>' : ''}
-    <h4>Gasta tempo</h4>
-    <div class="grade-acoes">${ACOES_MANHA.map(botaoAcao).join('')}</div>
-    <h4>Não gasta tempo</h4>
-    <div class="config">
-      <label>Preços <span class="seg" id="segPreco">${['baixo', 'normal', 'alto'].map(p => `<button aria-pressed="${S.preco === p}" data-p="${p}">${p}</button>`).join('')}</span></label>
-      ${biaAtiva() && !S.mods.biaFolga ? `<label>Bia fica no <span class="seg" id="segBia">${[['cafe', 'café'], ['forno', 'forno']].map(([v, n]) => `<button aria-pressed="${S.bia.papel === v}" data-v="${v}">${n}</button>`).join('')}</span></label>` : ''}
-      <button class="btn" id="bLayout">Reorganizar a cozinha</button>
-    </div>
-    <p class="dica" style="margin-top:8px">Hoje: espresso ${brl(precoItem('espresso'))} · cappuccino ${brl(precoItem('cappuccino'))} · pão ${brl(precoItem('pao'))}. Preço alto rende mais por cliente, mas vem menos gente e com menos paciência.${S.mods.chuva ? ' Está chovendo.' : ''}${S.mods.critico ? ' A blogueira vem hoje.' : ''}${S.mods.clube ? ' O grupo de crochê vem à tarde.' : ''}${S.mods.showCaio ? ' Hoje tem show do Caio: vai lotar.' : ''}</p>
-    <div class="rodape-cartao"><span class="dica">${S.estoque.grao < 8 ? 'Pouco grão em estoque.' : ''}</span><button class="btn primario" id="bAbrir">Abrir o café</button></div>`, c => {
-    c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
-      const a = ACOES_MANHA.find(x => x.id === b.dataset.a);
-      if (a.id === 'comprar') return mostraCompras();
-      S.horas -= a.h; const r = a.ef(); normaliza(); mostraManha(r || null);
+function sigExpediente() { return JSON.stringify([R.slots.map(s => [s.rec, s.passo, s.st]), R.maos, R.bandeja, R.vitrine, R.forno.st, balcao().map(c => [c.id, c.ok]), ativos().length, R.tut, S.estoque, R.msg && R.msg.t, S.energia < 30]); }
+function renderExpediente() {
+  const sig = sigExpediente();
+  if (sig !== assinatura) {
+    assinatura = sig;
+    const tk = balcao(), extra = ativos().length - 5;
+    const fino = matchMedia('(pointer:fine)').matches;
+    let h = `<div class="trab"><div><div class="rotulo"><span>Pedidos no balcão · toque para entregar</span><span class="${extra > 2 ? 'neg' : ''}">${extra > 0 ? `+${extra} na fila` : ''}</span></div><div class="tickets">`;
+    for (let i = 0; i < 5; i++) {
+      const c = tk[i];
+      if (!c) { h += `<div class="ticket vazio">livre</div>`; continue; }
+      const itens = c.ped.map((it, k) => `<span class="it ${c.ok[k] ? 'ok' : (it === 'pao' ? (R.vitrine > 0 ? 'tem' : '') : (R.bandeja.includes(it) ? 'tem' : ''))}">${ITEM_CURTO[it]}</span>`).join('');
+      const tag = { lucia: 'fiel', critico: 'blog', clube: 'crochê' }[c.tipo];
+      h += `<button class="ticket" data-ac="entregar" data-id="${c.id}">${tag ? `<span class="tag">${tag}</span>` : ''}<span class="nome">${esc(c.nome)}${fino ? `<span class="tecla">${'ZXCVB'[i]}</span>` : ''}</span><span class="itens">${itens}</span><span class="pac"><i data-pac="${c.id}"></i></span></button>`;
+    }
+    h += `</div></div><div class="bancada"><div><div class="rotulo"><span>Bancada · ${R.slots.length} espaços de preparo</span><span>Máquina: ${S.up.maquina} ${S.up.maquina > 1 ? 'grupos' : 'grupo'}</span></div><div class="slots">`;
+    R.slots.forEach((s, i) => {
+      h += `<div class="slot" data-slot="${i}"><h5><span>Preparo ${i + 1}</span>${fino ? `<span class="tecla">${i + 1}</span>` : ''}</h5>`;
+      if (!s.rec) {
+        h += `<span class="estado">Livre. O que vai fazer?</span>
+          <button class="bt slotbt" data-ac="iniciar" data-i="${i}" data-rec="espresso"><span>Espresso</span><span class="tecla">1 grão${fino ? ' · Q' : ''}</span></button>
+          <button class="bt slotbt" data-ac="iniciar" data-i="${i}" data-rec="cappuccino" ${S.mods.semCappuccino ? 'disabled' : ''}><span>Cappuccino</span><span class="tecla">grão + leite${fino ? ' · W' : ''}</span></button>`;
+      } else {
+        const ps = RECEITAS[s.rec].passos, p = ps[s.passo];
+        h += `<span class="rec">${RECEITAS[s.rec].nome}</span><div class="etapas">${ps.map((pp, k) => `<span class="etapa ${k < s.passo ? 'feita' : k === s.passo ? 'atual' : ''}">${k < s.passo ? '✓ ' : ''}${pp.nome}</span>`).join('')}</div><div class="prog"><i data-prog="${i}"></i></div>`;
+        if (s.st === 'espera_mao') h += `<button class="bt ouro slotbt" data-ac="mao" data-i="${i}" ${R.maos >= 0 ? 'disabled' : ''}><span>${p.nome}</span><span class="tecla">${R.maos >= 0 ? 'mãos ocupadas' : 'contigo'}</span></button>`;
+        else if (s.st === 'espera_maq') h += `<span class="estado">Esperando a máquina liberar…</span>`;
+        else if (s.st === 'rodando') h += `<span class="estado">${s.recurso === 'mao' ? 'Tu está fazendo…' : s.recurso === 'bia' ? 'A Bia está moendo…' : 'A máquina está extraindo…'}</span>`;
+        else if (s.st === 'pronto') h += `<span class="estado neg">Bandeja cheia! Entregue ou jogue algo fora.</span>`;
+      }
+      h += `</div>`;
     });
-    c.querySelectorAll('#segPreco button').forEach(b => b.onclick = () => { S.preco = b.dataset.p; mostraManha(); });
-    c.querySelectorAll('#segBia button').forEach(b => b.onclick = () => { S.bia.papel = b.dataset.v; mostraManha(); });
-    c.querySelector('#bLayout').onclick = () => { fechaCartao(); R.gestao = true; R.sel = null; $('#txtGestao').textContent = 'Modo gestão: toque numa estação e depois num espaço vazio ou em outra estação para trocar de lugar. Estações perto da Entrega economizam passos.'; $('#barraGestao').hidden = false; };
-    c.querySelector('#bAbrir').onclick = abrirCafe;
-  });
+    h += `</div></div><div class="lado">
+      <div class="caixa-lado"><div class="rotulo" style="margin:0"><span>Forno</span><span>vitrine: ${R.vitrine} pães</span></div>
+        ${R.forno.st === 'assando' ? `<div class="prog"><i data-forno-prog style="background:var(--laranja)"></i></div><span class="estado">${R.forno.bia ? 'A Bia está assando' : 'Assando'} ${R.forno.qtd} pães…</span>` : `<button class="bt slotbt" data-ac="assar" ${S.estoque.massa < S.up.forno ? 'disabled' : ''}><span>Assar ${S.up.forno}</span><span class="tecla">${S.up.forno} massas${fino ? ' · F' : ''}</span></button>`}</div>
+      <div class="caixa-lado"><div class="rotulo" style="margin:0"><span>Tuas mãos</span><span>${R.maos >= 0 ? 'ocupadas' : 'livres'}</span></div><div class="prog"><i data-maos style="background:var(--ouro)"></i></div>${S.energia < 30 ? '<span class="estado neg">Cansado: mãos lentas</span>' : ''}</div>
+      <div class="caixa-lado"><div class="kv"><span>Grão</span><b class="${S.estoque.grao < 4 ? 'neg' : ''}">${S.estoque.grao}</b></div><div class="kv"><span>Leite</span><b class="${S.estoque.leite < 2 ? 'neg' : ''}">${S.estoque.leite}</b></div><div class="kv"><span>Massa</span><b class="${S.estoque.massa < S.up.forno ? 'neg' : ''}">${S.estoque.massa}</b></div></div>
+    </div></div>
+    <div><div class="rotulo"><span>Bandeja · ${R.bandeja.filter(Boolean).length}/${R.bandeja.length}</span><span>o que está aqui vai pra quem pedir</span></div><div class="bandeja">`;
+    R.bandeja.forEach((it, j) => { h += it ? `<div class="cel"><b>${ITEM_CURTO[it]}</b><button class="x" data-ac="descartar" data-j="${j}" aria-label="Jogar fora">×</button></div>` : `<div class="cel vazia">vazio</div>`; });
+    h += `</div></div>${R.msg && performance.now() < R.msg.ate ? `<div class="estado" style="color:var(--laranja)">${esc(R.msg.t)}</div>` : ''}</div>`;
+    $('#trabalho').innerHTML = h;
+    const dica = $('#dica');
+    if (R.tut >= 0) {
+      const p = TUT[R.tut];
+      dica.hidden = false;
+      dica.innerHTML = `<img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida <span class="tecla">passo ${R.tut + 1} de ${TUT.length}</span></div><p>${p.fala}</p>${p.botao ? `<div class="acoes"><button class="bt ouro" id="bTut">${p.botao}</button></div>` : ''}</div>`;
+      const bt = $('#bTut'); if (bt) bt.onclick = tutBotao;
+      if (p.alvo) { const el = $('#trabalho').querySelector(p.alvo); if (el) el.classList.add('alvo'); }
+    } else if (S.dia === 1 && R.cidaDica && R.t < 30) {
+      dica.hidden = false;
+      dica.innerHTML = `<img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div><p>Não precisa esperar um terminar para começar outro. Olha os pedidos: o que estiver <b>amarelo</b> já dá pra entregar.</p></div>`;
+    } else dica.hidden = true;
+  }
+  R.slots.forEach((s, i) => { const el = document.querySelector(`[data-prog="${i}"]`); if (el && s.rec) { const k = s.st === 'rodando' ? s.t / s.dur : 0; el.style.width = clamp((s.passo + k) / RECEITAS[s.rec].passos.length * 100, 0, 100) + '%'; } });
+  const fp = document.querySelector('[data-forno-prog]'); if (fp) fp.style.width = clamp(R.forno.t / R.forno.dur * 100, 0, 100) + '%';
+  const mp = document.querySelector('[data-maos]'); if (mp) mp.style.width = R.maos >= 0 ? clamp(R.slots[R.maos].t / R.slots[R.maos].dur * 100, 0, 100) + '%' : '0%';
+  balcao().forEach(c => { const el = document.querySelector(`[data-pac="${c.id}"]`); if (el) { const k = c.pacMax > 900 ? 1 : clamp(c.pac / c.pacMax, 0, 1); el.style.width = k * 100 + '%'; el.style.background = k > 0.5 ? '#3aa860' : k > 0.25 ? '#d9a520' : '#d44'; } });
+  if (R.msg && performance.now() >= R.msg.ate) { R.msg = null; render(); }
+  if (R.cidaDica && R.t >= 30) { R.cidaDica = false; render(); }
+}
+$('#trabalho').addEventListener('click', e => {
+  const b = e.target.closest('[data-ac]'); if (!b || b.disabled) return;
+  const ac = b.dataset.ac;
+  if (S.fase === 'expediente' && R && !R.pausa) {
+    if (ac === 'iniciar') iniciar(+b.dataset.i, b.dataset.rec);
+    else if (ac === 'mao') fazerMao(+b.dataset.i);
+    else if (ac === 'assar') assar();
+    else if (ac === 'descartar') descartar(+b.dataset.j);
+    else if (ac === 'entregar') entregar(+b.dataset.id);
+  } else if (S.fase === 'manha' || S.fase === 'noite') acaoMapa(b);
+});
+addEventListener('keydown', e => {
+  if (!$('#veu').hidden || S.fase !== 'expediente' || !R) return;
+  const k = e.key.toLowerCase();
+  if (k === 'escape' || k === 'p') { alternaPausa(); return; }
+  if (R.pausa) return;
+  if (/^[1-4]$/.test(k)) { const i = +k - 1; const s = R.slots[i]; if (s && s.rec && s.st === 'espera_mao') fazerMao(i); return; }
+  if (k === 'q' || k === 'w') { const i = R.slots.findIndex(s => !s.rec); if (i >= 0) iniciar(i, k === 'q' ? 'espresso' : 'cappuccino'); return; }
+  if (k === 'f') { assar(); return; }
+  const ti = 'zxcvb'.indexOf(k); if (ti >= 0) { const c = balcao()[ti]; if (c) entregar(c.id); }
+});
+function alternaPausa() { if (!R || !R.rodando) return; R.pausa = !R.pausa; render(); hudSig = ''; }
+$('#bPausa').onclick = alternaPausa;
+$('#bDiario').onclick = () => { if (trava) return; if (R && R.rodando && !R.pausa) alternaPausa(); mostraDiario(); };
+$('#bFase').onclick = () => { if (trava) return; if (S.fase === 'manha') abrirCafe(); else if (S.fase === 'noite') dormir(); };
+
+/* ================= MAPA ================= */
+function hotspots() {
+  const fase = S.fase, div = $('#hots');
+  if (fase !== 'manha' && fase !== 'noite') { div.innerHTML = ''; return; }
+  div.innerHTML = Object.entries(LOCAIS).map(([id, L]) => {
+    const tem = ACOES.some(a => a.local === id && (a.fase === fase || a.fase === 'ambas'));
+    const trancado = !tem || (id === 'fornecedor' && !liberado('fornecedor')) || (S.dia === 1 && fase === 'manha' && id !== 'cafe');
+    const novo = (id === 'fornecedor' && S.dia === 2 && fase === 'manha') || (id === 'cafe' && S.dia === 3 && fase === 'manha');
+    return `<button class="hot ${S.local === id ? 'ativo' : ''}" data-local="${id}" style="left:${L.x / CW * 100}%" ${trancado ? 'disabled' : ''}>${L.nome}${novo ? '<span class="novo">novo</span>' : ''}</button>`;
+  }).join('');
+  div.querySelectorAll('.hot').forEach(b => { b.onclick = () => { S.local = b.dataset.local; mostraLocal(null); }; });
+}
+function efsHtml(ef) { return `<span class="efs">${ef.map(([k, v]) => `<span class="${v > 0 ? 'ef-up' : v < 0 ? 'ef-dn' : 'ef-nt'}">${ROT_EF[k]} ${v > 0 ? '▲'.repeat(v) : v < 0 ? '▼'.repeat(-v) : '•'}</span>`).join('')}</span>`; }
+function painelHoje() {
+  if (S.fase === 'manha') {
+    const n = previsao(), nec = necessidade(n);
+    const falta = (k, v) => S.estoque[k] < v ? ' class="alerta"' : '';
+    let h = `<div class="hoje"><h4>Hoje · ${NOME_DIA[S.dia - 1]}</h4>
+      <div class="kv"><span>Previsão de clientes</span><b>~${n}</b></div>
+      <div class="kv"><span>Grão (precisa ~${nec.grao})</span><b${falta('grao', nec.grao)}>${S.estoque.grao}</b></div>
+      <div class="kv"><span>Leite (precisa ~${nec.leite})</span><b${falta('leite', nec.leite)}>${S.estoque.leite}</b></div>
+      <div class="kv"><span>Pães (precisa ~${nec.pao})</span><b${S.estoque.massa + S.preassados < nec.pao ? ' class="alerta"' : ''}>${S.preassados} prontos · ${S.estoque.massa} massas</b></div>`;
+    if (S.ontem) h += `<div class="kv" style="color:var(--suave)"><span>Ontem tu usou</span><span>${S.ontem.grao} grão · ${S.ontem.leite} leite · ${S.ontem.massa} massa</span></div>`;
+    const av = [];
+    if (S.mods.chuva) av.push('Chovendo: menos gente, mais paciência.');
+    if (S.mods.critico) av.push('A blogueira vem hoje. Espresso e pão.');
+    if (S.mods.clube) av.push('O grupo de crochê chega à tarde.');
+    if (S.mods.showCaio) av.push('Show do Caio: vai lotar.');
+    if (S.mods.biaFolga) av.push('A Bia está de folga.');
+    if (S.mods.semCappuccino) av.push('Sem cappuccino hoje.');
+    if (S.mods.organizado) av.push('Cozinha organizada: 8% mais rápida.');
+    if (S.energia < 40) av.push('Tua energia está baixa: as mãos vão ficar lentas.');
+    if (S.estoque.grao < nec.grao || S.estoque.leite < nec.leite) av.push(liberado('fornecedor') ? 'Estoque curto para o movimento previsto. Passe no Fornecedor.' : 'A Dona Cida deixou o estoque pronto para hoje.');
+    return h + av.map(a => `<span class="alerta">• ${esc(a)}</span>`).join('') + '</div>';
+  }
+  const am = [];
+  if (S.amanha.critico) am.push('A blogueira vem amanhã.');
+  if (S.amanha.clube) am.push('O grupo de crochê vem amanhã.');
+  if (S.amanha.biaFolga) am.push('A Bia está de folga amanhã.');
+  if (S.dia === 4 && S.flags.showCaio) am.push('Sexta tem show do Caio.');
+  if (S.flags.promessaCaio) am.push('Tu prometeu ao Caio que ia aparecer hoje.');
+  if (S.rafa.acordo) am.push('Amanhã cedo: entrega de 8 pães ao Rafa.');
+  return `<div class="hoje"><h4>Esta noite</h4>
+    <div class="kv"><span>Energia</span><b>${Math.round(S.energia)}</b></div><div class="kv"><span>Ânimo</span><b>${Math.round(S.animo)}</b></div>
+    <span style="color:var(--suave)">Dormir devolve 50 de energia, mais 8 por hora livre que sobrar. O ânimo só sobe com o que tu faz.</span>
+    ${am.map(a => `<span class="alerta">• ${esc(a)}</span>`).join('')}</div>`;
+}
+let ultimaMsg = null;
+function mostraLocal(m) {
+  if (m !== undefined) ultimaMsg = m;
+  hotspots(); hudSig = '';
+  const L = LOCAIS[S.local];
+  const acs = ACOES.filter(a => a.local === S.local && (a.fase === S.fase || a.fase === 'ambas'));
+  const dia1 = S.dia === 1 && S.fase === 'manha';
+  let h = `<div class="local"><div><h2>${L.nome}</h2><p class="desc">${L.desc}</p>`;
+  if (ultimaMsg) h += `<div class="fala" style="grid-template-columns:44px minmax(0,1fr)"><img class="retrato" src="${retrato('voce')}" alt="" style="width:44px;height:44px"><div>${esc(ultimaMsg)}</div></div>`;
+  h += `<p class="rotulo">${S.horas} ${S.horas === 1 ? 'hora livre' : 'horas livres'} antes ${S.fase === 'manha' ? 'de abrir (9h)' : 'de dormir (22h)'}</p>`;
+  if (dia1) h += `<p class="desc">Hoje a Dona Cida já preparou tudo. Só abrir.</p>`;
+  else if (!acs.length) h += `<p class="desc">Nada para fazer aqui agora.</p>`;
+  h += `<div class="acoes-lista">${acs.map(a => { const rq = a.req ? a.req() : { ok: true }; const sem = a.h > S.horas; return `<button class="acao" data-ac="mapa" data-id="${a.id}" ${!rq.ok || sem || dia1 ? 'disabled' : ''}><b>${a.t}</b><span class="hr">${a.h}h</span>${efsHtml(a.ef)}${!rq.ok ? `<span class="req">${esc(rq.motivo)}</span>` : sem ? '<span class="req">Sem tempo</span>' : ''}</button>`; }).join('')}</div>`;
+  if (S.local === 'cafe' && S.fase === 'manha' && S.dia > 1) {
+    h += `<div class="config"><span class="rotulo" style="margin:0">Ajustes (não gastam tempo)</span>`;
+    if (liberado('preco')) h += `<div class="linha-config">Preços <span class="seg">${['baixo', 'normal', 'alto'].map(p => `<button data-ac="preco" data-p="${p}" aria-pressed="${S.preco === p}">${p}</button>`).join('')}</span><span class="nota">Espresso ${brl(preco('espresso'))} · Cappuccino ${brl(preco('cappuccino'))} · Pão ${brl(preco('pao'))}. ${S.preco === 'alto' ? 'Alto: +25% por item, 20% menos clientes, menos paciência.' : S.preco === 'baixo' ? 'Baixo: −20% por item, 20% mais clientes, mais paciência.' : 'Para comparar: o Grão Nobre cobra R$ 8 no espresso.'}</span></div>`;
+    else h += `<span class="dica-geral">Preços liberam na quarta, quando tu já souber quanto vende.</span>`;
+    if (biaAtiva() && !S.mods.biaFolga) h += `<div class="linha-config">Bia fica no <span class="seg">${[['forno', 'forno'], ['moer', 'moedor'], ['balcao', 'balcão']].map(([v, n]) => `<button data-ac="papel" data-v="${v}" aria-pressed="${S.bia.papel === v}">${n}</button>`).join('')}</span><span class="nota">${{ forno: 'Ela assa pão sozinha quando a vitrine baixa.', moer: 'Ela mói para ti: tuas mãos ficam só com o leite.', balcao: 'Ela entrega o que estiver pronto, sem tu tocar nos pedidos.' }[S.bia.papel]}</span></div>`;
+    h += `</div>`;
+  }
+  h += `</div>${painelHoje()}</div>`;
+  $('#trabalho').innerHTML = h;
+  dicaMapa();
+}
+function dicaMapa() {
+  const d = $('#dica');
+  let fala = null;
+  if (S.dia === 1 && S.fase === 'manha') fala = 'Bom dia! Hoje eu fico contigo, amanhã o café é teu. Já fiz as compras e deixei tudo no jeito. Quando estiver pronto, toca em <b>Abrir o café</b> lá em cima.';
+  else if (S.dia === 1 && S.fase === 'noite') fala = 'De noite a vida é tua. Toca nos lugares da rua: cada coisa gasta horas e mexe nas tuas barras. <b>Energia</b> volta dormindo. <b>Ânimo</b> só volta se tu cuidar dele. Quando cansar, toca em <b>Dormir</b>.';
+  else if (S.dia === 2 && S.fase === 'manha') fala = 'Bilhete da Dona Cida: "O <b>Fornecedor</b> agora é contigo. Olha no quadro do lado quanto tu vai precisar hoje antes de comprar. O Seu Dimas também tem umas melhorias usadas."';
+  else if (S.dia === 3 && S.fase === 'manha') fala = 'Bilhete da Dona Cida: "Agora tu já sabe quanto vende. No <b>Café</b> dá pra mexer nos <b>preços</b>. Cuidado com os clientes antigos."';
+  if (!fala) { d.hidden = true; return; }
+  d.hidden = false;
+  d.innerHTML = `<img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div><p>${fala}</p></div>`;
+}
+function acaoMapa(b) {
+  const ac = b.dataset.ac;
+  if (ac === 'preco') { S.preco = b.dataset.p; return mostraLocal(); }
+  if (ac === 'papel') { S.bia.papel = b.dataset.v; return mostraLocal(); }
+  if (ac !== 'mapa') return;
+  const a = ACOES.find(x => x.id === b.dataset.id);
+  if (a.abre === 'compras') return mostraCompras();
+  S.horas -= a.h;
+  const res = a.run(); normaliza();
+  mostraLocal(res);
+}
+
+/* ================= MODAIS ================= */
+function modal(html, monta) { $('#modal').innerHTML = html; $('#veu').hidden = false; $('#modal').scrollTop = 0; if (monta) monta($('#modal')); const f = $('#modal').querySelector('button:not(:disabled)'); if (f) f.focus({ preventScroll: true }); }
+function fechaModal() { $('#veu').hidden = true; }
+function listaDiario(arr) { return `<ul class="diario">${arr.map(d => `<li><span class="dia">dia ${d.dia}</span>${esc(d.txt)}${d.causa ? `<span class="causa">${esc(d.causa)}</span>` : ''}</li>`).join('')}</ul>`; }
+function mostraDiario() {
+  modal(`<div class="sobre">Diário de causas</div><h2>O que aconteceu até aqui</h2>${S.diario.length ? listaDiario(S.diario.slice().reverse()) : '<p>Nada registrado ainda. As decisões marcantes aparecem aqui, e quando uma delas volta, o diário mostra de onde veio.</p>'}<div class="rodape"><span></span><button class="bt ouro" id="bOk">Fechar</button></div>`, m => { m.querySelector('#bOk').onclick = fechaModal; });
 }
 function mostraCompras() {
   trava = true;
-  const q = { grao: 0, leite: 0, massa: 0 };
-  const desc = 1 - 0.05 * S.me.gestao;
-  const precoP = k => Math.round(PACOTES[k].preco * desc);
-  const total = () => Object.keys(q).reduce((a, k) => a + q[k] * precoP(k), 0);
-  const render = () => {
-    cartao(`<div class="sobre">Dia ${S.dia} · fornecedor</div><h2>O que levar hoje?</h2>
-      ${S.me.gestao ? `<p class="dica">Teu nível de gestão garante ${S.me.gestao * 5}% de desconto.</p>` : ''}
-      ${Object.entries(PACOTES).map(([k, p]) => `<div class="compra"><div>${p.nome}<br><small>${p.qtd} ${p.un} por ${brl(precoP(k))} · tens ${S.estoque[k]}</small></div>
-        <div class="qtd"><button data-k="${k}" data-d="-1" aria-label="menos">−</button><b>${q[k]}</b><button data-k="${k}" data-d="1" aria-label="mais">+</button></div><b style="font-family:var(--f-num)">${brl(q[k] * precoP(k))}</b></div>`).join('')}
-      <table class="contas" style="margin-top:10px"><tr class="total"><td>Total (caixa: ${brl(S.caixa)})</td><td class="${total() > S.caixa ? 'neg' : ''}">${brl(total())}</td></tr></table>
-      <div class="rodape-cartao"><button class="btn" id="bVolta">Voltar sem ir</button><button class="btn primario" id="bCompra" ${total() > S.caixa || total() === 0 ? 'disabled' : ''}>Comprar (gasta 1 h)</button></div>`, c => {
-      c.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { q[b.dataset.k] = Math.max(0, q[b.dataset.k] + +b.dataset.d); render(); });
-      c.querySelector('#bVolta').onclick = () => mostraManha();
-      c.querySelector('#bCompra').onclick = () => { S.caixa -= total(); for (const k in q) S.estoque[k] += q[k] * PACOTES[k].qtd; S.horas -= 1; S.diaCompras = (S.diaCompras || 0) + total(); mostraManha('Compras feitas.'); };
+  const q = { grao: 0, leite: 0, massa: 0 }, ups = new Set();
+  const desc = 1 - 0.05 * S.hab.gestao;
+  const pp = k => Math.round(PACOTES[k].preco * desc);
+  const total = () => Object.keys(q).reduce((a, k) => a + q[k] * pp(k), 0) + [...ups].reduce((a, id) => a + MELHORIAS.find(m => m.id === id).preco, 0);
+  const n = previsao(), nec = necessidade(n);
+  const draw = () => {
+    const disp = MELHORIAS.filter(m => m.req(S));
+    modal(`<div class="sobre">Fornecedor · gasta 1 hora</div><h2>Seu Dimas</h2>
+      <div class="fala"><img class="retrato" src="${retrato('dimas')}" alt=""><div><div class="quem">Seu Dimas</div>Pra uns ${n} clientes tu vai precisar de uns ${nec.grao} de grão, ${nec.leite} de leite e ${nec.pao} pães.${S.hab.gestao ? ` Pra ti, ${S.hab.gestao * 5}% de desconto.` : ''}</div></div>
+      <h4>Ingredientes</h4>
+      ${Object.entries(PACOTES).map(([k, p]) => `<div class="compra"><div>${p.nome}<small>${p.qtd} ${p.un} por ${brl(pp(k))} · tens ${S.estoque[k]}${k === 'massa' ? ` · precisa ~${nec.pao}` : ` · precisa ~${k === 'grao' ? nec.grao : nec.leite}`}</small></div><div class="qtd"><button class="bt" data-k="${k}" data-d="-1" aria-label="menos">−</button><b>${q[k]}</b><button class="bt" data-k="${k}" data-d="1" aria-label="mais">+</button></div><b>${brl(q[k] * pp(k))}</b></div>`).join('')}
+      <h4>Melhorias usadas</h4>
+      ${disp.length ? disp.map(m => `<div class="compra"><div>${m.nome}<small>${m.desc}</small></div><button class="bt ${ups.has(m.id) ? 'verde' : ''}" data-up="${m.id}">${ups.has(m.id) ? 'no carrinho' : 'quero'}</button><b>${brl(m.preco)}</b></div>`).join('') : '<p>Tu já comprou tudo o que ele tinha.</p>'}
+      <table class="contas" style="margin-top:10px"><tr class="total"><td>Total (caixa ${brl(S.caixa)})</td><td class="${total() > S.caixa ? 'neg' : ''}">${brl(total())}</td></tr></table>
+      <div class="rodape"><button class="bt" id="bVolta">Voltar sem comprar</button><button class="bt ouro" id="bCompra" ${total() > S.caixa || total() === 0 ? 'disabled' : ''}>Comprar (gasta 1h)</button></div>`, m => {
+      m.querySelectorAll('[data-k]').forEach(b => { b.onclick = () => { q[b.dataset.k] = Math.max(0, q[b.dataset.k] + +b.dataset.d); draw(); }; });
+      m.querySelectorAll('[data-up]').forEach(b => { b.onclick = () => { const id = b.dataset.up; if (ups.has(id)) ups.delete(id); else ups.add(id); draw(); }; });
+      m.querySelector('#bVolta').onclick = () => { trava = false; fechaModal(); mostraLocal(); };
+      m.querySelector('#bCompra').onclick = () => {
+        const tt = total(); S.caixa -= tt; S.compras += tt;
+        for (const k in q) S.estoque[k] += q[k] * PACOTES[k].qtd;
+        const nomes = []; ups.forEach(id => { const mm = MELHORIAS.find(x => x.id === id); mm.ef(S); nomes.push(mm.nome); });
+        if (nomes.length) diario('Comprei: ' + nomes.join(', ') + '.');
+        S.horas -= 1; trava = false; fechaModal(); mostraLocal(nomes.length ? 'Instalado: ' + nomes.join(', ') + '.' : 'Compras feitas.');
+      };
     });
   };
-  render();
+  draw();
 }
-
-function abrirCafe() {
-  trava = false;
-  fechaCartao();
-  S.fase = 'expediente';
-  S.diaCompras = S.diaCompras || 0;
-  iniciarExpediente();
-  atualizaTopo(); renderPainel();
-}
-
-function fimExpediente() {
-  R.rodando = false; R.gestao = false; R.pausa = false; $('#barraGestao').hidden = true;
+function proximoEvento(depois) {
+  const id = fila.shift();
+  if (!id) { trava = false; return depois(); }
   trava = true;
-  S.fase = 'pos'; normaliza(); atualizaTopo(); renderPainel();
+  const e = EV.find(x => x.id === id); S.vistos[id] = true;
+  if (e.pre) e.pre(S);
+  const tx = e.texto(S), ops = e.escolhas(S);
+  const falas = (tx.falas || []).map(([q, f]) => `<div class="fala"><img class="retrato" src="${retrato(q)}" alt=""><div><div class="quem">${esc(PERS[q].nome)}</div>${esc(f)}</div></div>`).join('');
+  modal(`<div class="sobre">Dia ${S.dia} · ${S.fase === 'manha' ? 'manhã' : 'fim do expediente'}</div><h2>${esc(tx.titulo)}</h2>
+    ${(tx.corpo || []).map(p => `<p>${esc(p)}</p>`).join('')}${falas}
+    ${tx.contexto ? `<p class="contexto">${esc(tx.contexto)}</p>` : ''}
+    <div class="escolhas">${ops.map((c, i) => { const rq = c.req ? c.req(S) : { ok: true }; return `<button class="escolha" data-i="${i}" ${rq.ok ? '' : 'disabled'}><b>${esc(c.t)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}${c.tags ? `<span class="tags">${esc(c.tags)}</span>` : ''}${rq.ok ? '' : `<span class="req">${esc(rq.motivo)}</span>`}</button>`; }).join('')}</div>`, m => m.querySelectorAll('.escolha').forEach(b => { b.onclick = () => {
+    const res = ops[+b.dataset.i].ef(S); normaliza(); hudSig = '';
+    modal(`<div class="sobre">Consequência</div><h2>${esc(tx.titulo)}</h2><div class="fala"><img class="retrato" src="${retrato(e.quem || 'voce')}" alt=""><div>${esc(res)}</div></div><p style="color:var(--suave);font-size:14px">Registrado no diário. Algumas escolhas voltam dias depois.</p><div class="rodape"><span></span><button class="bt ouro" id="bOk">Continuar</button></div>`, m2 => { m2.querySelector('#bOk').onclick = () => proximoEvento(depois); });
+  }; }));
+}
+
+/* ================= FLUXO ================= */
+function salvar() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { /* sem armazenamento */ } }
+function mostraTitulo() {
+  S.fase = 'titulo'; trava = false; R = null; hudSig = '';
+  $('#trabalho').innerHTML = ''; $('#dica').hidden = true; hotspots();
+  let salvo = null; try { salvo = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { salvo = null; }
+  modal(`<div class="sobre">Protótipo jogável · 5 dias</div><div class="titulo-jogo">CAFÉ<br>CANTINHO</div>
+    <div class="fala"><img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div>Trinta anos atrás desse balcão. Agora é tua vez. Amanhã eu fico contigo e te mostro tudo. Depois disso, o café é teu.</div></div>
+    <p>Tu comprou o café da Dona Cida com quase tudo o que tinha. Sobraram R$ 300 e cinco dias para provar que dá certo, sem perder a própria vida no processo.</p>
+    <div class="rodape">${salvo && salvo.dia ? `<button class="bt" id="bCont">Continuar do dia ${salvo.dia}</button>` : '<span></span>'}<button class="bt ouro" id="bNovo">Começar</button></div>`, m => {
+    m.querySelector('#bNovo').onclick = () => { S = novoEstado(); iniciarDia(); };
+    const bc = m.querySelector('#bCont'); if (bc) bc.onclick = () => { S = Object.assign(novoEstado(), salvo); iniciarDia(true); };
+  });
+}
+function iniciarDia(continuando) {
+  fechaModal();
+  if (!continuando) { S.mods = S.amanha || {}; S.amanha = {}; }
+  if (S.dia === 5 && S.flags.showCaio) S.mods.showCaio = true;
+  if (S.dia === 5 && S.flags.caioNoRafa) S.mods.caioNoRafa = true;
+  S.fase = 'manha'; S.horas = 3; S.local = 'cafe'; ultimaMsg = null;
+  S.agenda = S.agenda.filter(a => { if (a.dia > S.dia) return true; if (a.id === 'bia_demissao' && !(biaAtiva() && S.bia.estresse >= 45)) { diario('A Bia aguentou até o fim da semana.', 'bia_aguenta'); return false; } return a.dia === S.dia; });
+  if (!continuando) salvar();
+  S.snap = { rep: S.rep, caixa: S.caixa, lucia: S.lucia.afin, caio: S.caio.afin, bia: S.bia.estresse, rafa: S.rafa.afin, an: S.animo, nd: S.diario.length };
+  S.caio.viuHoje = false; S.compras = 0; S.flags.entregouRafa = false;
+  R = null;
+  if (S.rafa.acordo) {
+    if (S.estoque.massa >= 8) { S.estoque.massa -= 8; S.horas -= 1; S.flags.entregouRafa = true; }
+    else { S.rafa.acordo = null; S.rafa.afin -= 15; diario('Faltou massa para a entrega do Rafa. Ele cancelou o acordo.', 'acordo_rafa'); }
+  }
+  fila = diretor('manha');
+  hudSig = '';
+  mostraLocal(S.flags.entregouRafa ? 'Uma hora já foi: entreguei os 8 pães do Rafa.' : null);
+  proximoEvento(() => { fechaModal(); mostraLocal(); });
+}
+function fimExpediente() {
+  R.rodando = false; S.fase = 'pos'; trava = true; normaliza(); hudSig = '';
   const st = R.stats; S.ultimo = { ...st, biaTrab: R.biaTrab };
+  S.ontem = { ...st.usou };
+  const sobra = R.vitrine;
+  if (sobra > 0) diario(`Sobraram ${sobra} pães de queijo na vitrine. Foram para o lixo.`);
   const dRep = S.rep - S.snap.rep;
-  cartao(`<div class="sobre">Dia ${S.dia} · 17h</div><h2>Placa virada</h2>
+  $('#dica').hidden = true;
+  modal(`<div class="sobre">Dia ${S.dia} · 17h</div><h2>Placa virada</h2>
     <table class="contas">
       <tr><td>Clientes atendidos</td><td>${st.atendidos}</td></tr>
       <tr><td>Foram embora irritados</td><td class="${st.irritados ? 'neg' : ''}">${st.irritados}</td></tr>
-      <tr><td>Desistiram (fila cheia)</td><td class="${st.recusados ? 'neg' : ''}">${st.recusados}</td></tr>
+      <tr><td>Desistiram na porta</td><td class="${st.recusados ? 'neg' : ''}">${st.recusados}</td></tr>
       <tr><td>Vendas</td><td class="pos">${brl(st.receita)}</td></tr>
       <tr><td>Gorjetas</td><td class="pos">${brl(st.gorjeta)}</td></tr>
-      <tr class="total"><td>Reputação</td><td class="${dRep >= 0 ? 'pos' : 'neg'}">${Math.round(S.rep)} (${dRep >= 0 ? '+' : ''}${dRep.toFixed(1)})</td></tr>
+      ${sobra ? `<tr><td>Pães que sobraram</td><td class="neg">${sobra}</td></tr>` : ''}
+      <tr class="total"><td>Fama</td><td class="${dRep >= 0 ? 'pos' : 'neg'}">${Math.round(S.rep)} (${dRep >= 0 ? '+' : ''}${dRep.toFixed(1)})</td></tr>
     </table>
-    ${st.clube ? `<p class="dica" style="margin-top:10px">O grupo de crochê: ${st.clube} de 5 atendidas.</p>` : ''}
-    <div class="rodape-cartao"><span class="dica">Teu estresse: ${Math.round(S.me.estresse)}</span><button class="btn primario" id="bOk">Continuar</button></div>`, c => c.querySelector('#bOk').onclick = () => {
-    filaEventos = diretor('pos');
-    proximoEvento(() => { S.horas = 3; mostraNoite(); });
-  });
+    ${S.dia === 1 ? `<div class="fala"><img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div>Primeiro dia é assim mesmo. Toma a chave. Amanhã é contigo.</div></div>` : ''}
+    <div class="rodape"><span style="color:var(--suave)">Energia ${Math.round(S.energia)} · Ânimo ${Math.round(S.animo)}</span><button class="bt ouro" id="bOk">Continuar</button></div>`, m => { m.querySelector('#bOk').onclick = () => {
+    if (S.dia === 1) diario('A Dona Cida me passou a chave do café.');
+    fila = diretor('pos');
+    proximoEvento(() => { fechaModal(); S.fase = 'noite'; S.horas = 4; S.local = 'casa'; R = null; ultimaMsg = null; hudSig = ''; mostraLocal(); });
+  }; });
 }
-
-const ACOES_NOITE = [
-  { id: 'descansar', h: 1, t: 'Descansar em casa', sub: 'Estresse −15.', ef: () => { S.me.estresse -= 15; S.me.padrao.descanso++; return 'Banho, sofá, nada.'; } },
-  { id: 'bar', h: 2, t: 'Bar do Seu Jorge com o Caio', sub: 'Estresse −18. Amizade com o Caio sobe.', ef: () => { S.me.estresse -= 18; S.caio.afin += 12; S.caio.viuHoje = true; S.me.padrao.social++; if (S.flags.promessaCaio) { S.flags.promessaCaio = false; diario('Cumpri a promessa e fui ver o Caio.', 'promessa_caio'); return 'O Caio abre os braços quando tu entra. "Achei que tu ia furar."'; } return S.caio.afin >= 55 ? 'Vocês ficam até o Seu Jorge apagar a luz.' : 'O Caio conta da banda nova. Tu esquece do café por duas horas.'; } },
-  { id: 'estudar', h: 1, t: 'Estudar gestão', sub: 'Gestão +1: compras mais baratas e novas opções em negociações.', req: () => ({ ok: S.me.gestao < 2, motivo: 'Nível máximo no protótipo' }), ef: () => { S.me.gestao++; S.me.estresse += 3; S.me.padrao.gestao++; return `Planilha, café requentado e um vídeo sobre margem. Gestão agora é nível ${S.me.gestao}.`; } },
-  { id: 'organizar', h: 1, t: 'Organizar a cozinha', sub: 'Amanhã tudo fica 8% mais rápido. Cansa.', ef: () => { S.amanha.organizado = true; S.me.estresse += 5; S.me.padrao.gestao++; return 'Etiquetas, potes no lugar, bancada limpa. Amanhã rende.'; } },
-  { id: 'espiar', h: 1, t: 'Passar pelo Grão Nobre', sub: 'Ver como o Rafa trabalha.', req: () => ({ ok: !S.flags.espiou, motivo: 'Tu já foi lá esta semana' }), ef: () => { S.flags.espiou = true; S.me.padrao.gestao++; diario('Fui ver o Grão Nobre. Fila de estudantes, espresso a R$ 8, ninguém conversa com ninguém.'); return 'Espresso a R$ 8, fila de estudantes com fone de ouvido. Rápido, mas ninguém sabe o nome de ninguém.'; } },
-];
-function mostraNoite(msg) {
-  trava = false;
-  S.fase = 'noite'; atualizaTopo(); renderPainel();
-  cartao(`<div class="sobre">Dia ${S.dia} · ${NOME_DIA[S.dia - 1]} · noite</div>
-    <h2>Depois do expediente</h2>
-    ${msg ? `<div class="fala"><span class="quem">→</span><span>${esc(msg)}</span></div>` : ''}
-    ${S.flags.promessaCaio ? '<p class="dica" style="color:var(--aviso)">Tu prometeu ao Caio que ia aparecer hoje.</p>' : ''}
-    ${pips()}
-    <div class="grade-acoes" style="margin-top:10px">${ACOES_NOITE.map(botaoAcao).join('')}</div>
-    <div class="rodape-cartao"><span class="dica">Estresse: ${Math.round(S.me.estresse)}. Uma noite de sono tira 10.</span><button class="btn primario" id="bDormir">Dormir</button></div>`, c => {
-    c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { const a = ACOES_NOITE.find(x => x.id === b.dataset.a); S.horas -= a.h; const r = a.ef(); normaliza(); mostraNoite(r); });
-    c.querySelector('#bDormir').onclick = fechamento;
-  });
-}
-
-function fechamento() {
-  trava = true;
-  S.fase = 'fechamento';
-  // relações que dependem de presença
+function dormir() {
+  trava = true; S.fase = 'fechamento'; $('#hots').innerHTML = ''; $('#dica').hidden = true;
+  const sobraH = S.horas;
   if (S.caio.viuHoje) S.caio.semVer = 0; else { S.caio.semVer++; S.caio.afin -= 3; }
   if (S.flags.promessaCaio === S.dia) { S.flags.promessaCaio = false; S.caio.afin -= 20; S.flags.caioNoRafa = true; lembra('promessa_quebrada', 'tu prometeu ao Caio e não apareceu'); diario('Prometi ao Caio que ia aparecer e não fui. Ele aceitou tocar no Grão Nobre na sexta.', 'promessa_caio'); }
-  // contas
   const sal = S.ultimo && S.ultimo.biaTrab ? salarioBia() : 0;
   const rafa = S.rafa.acordo && S.flags.entregouRafa ? S.rafa.valor : 0;
   S.caixa -= ALUGUEL + sal; S.caixa += rafa;
-  // corpo
-  S.me.estresse -= 10;
-  if (biaAtiva()) { if (S.mods.biaFolga) S.bia.estresse -= 35; else S.bia.estresse += S.bia.regime === 'integral' ? 16 : 8; }
+  S.energia += 50 + 8 * sobraH;
+  if (biaAtiva()) { if (S.mods.biaFolga) S.bia.estresse -= 35; else if (S.ultimo && S.ultimo.biaTrab) S.bia.estresse += S.bia.regime === 'integral' ? 16 : 8; }
   S.tensao = Math.max(0, S.tensao - 1);
-  normaliza();
-  const st = S.ultimo || { receita: 0, gorjeta: 0 };
-  S.hist.push({ dia: S.dia, receita: st.receita, caixa: S.caixa, rep: S.rep });
-  const sn = S.snap;
-  const delta = (a, b, inv) => { const d = Math.round(a - b); if (!d) return '<span class="dica">igual</span>'; const bom = inv ? d < 0 : d > 0; return `<span class="${bom ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${d}</span>`; };
+  normaliza(); hudSig = '';
+  const st = S.ultimo || { receita: 0, gorjeta: 0 }, sn = S.snap;
+  const dl = (a, b) => { const d = Math.round(a - b); return d ? `<span class="${d > 0 ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${d}</span>` : '<span style="color:var(--suave)">=</span>'; };
   const hoje = S.diario.slice(sn.nd);
-  const amanha = [];
-  if (S.amanha.critico) amanha.push('A blogueira vem em algum momento do dia.');
-  if (S.amanha.clube) amanha.push('O grupo de crochê chega à tarde.');
-  if (S.amanha.biaFolga) amanha.push('A Bia está de folga.');
-  if (S.amanha.semPao) amanha.push('Sem pão de queijo no cardápio.');
-  if (S.amanha.organizado) amanha.push('Cozinha organizada: 8% mais rápida.');
-  if (S.dia === 4 && S.flags.showCaio) amanha.push('Sexta tem show do Caio. Vai lotar.');
-  if (S.rafa.acordo) amanha.push('Entrega de 8 pães para o Rafa (8 massas, 1 hora).');
-  if (S.me.estresse >= 85) amanha.push('Teu estresse está no limite.');
-  const falido = S.caixa < 0;
-  const ultimo = S.dia >= DIAS;
-  cartao(`<div class="sobre">Dia ${S.dia} · fechamento</div><h2>${falido ? 'O caixa não fechou' : 'As contas do dia'}</h2>
+  const falido = S.caixa < 0, ultimo = S.dia >= DIAS;
+  modal(`<div class="sobre">Dia ${S.dia} · fechamento</div><h2>${falido ? 'O caixa não fechou' : 'As contas do dia'}</h2>
     <table class="contas">
-      <tr><td>Compras de manhã</td><td class="${S.diaCompras ? 'neg' : ''}">${S.diaCompras ? '−' + brl(S.diaCompras) : brl(0)}</td></tr>
+      <tr><td>Compras e melhorias</td><td class="${S.compras ? 'neg' : ''}">${S.compras ? '−' + brl(S.compras) : brl(0)}</td></tr>
       <tr><td>Vendas e gorjetas</td><td class="pos">+${brl(st.receita + st.gorjeta)}</td></tr>
       <tr><td>Aluguel</td><td class="neg">−${brl(ALUGUEL)}</td></tr>
       ${sal ? `<tr><td>Salário da Bia</td><td class="neg">−${brl(sal)}</td></tr>` : ''}
       ${rafa ? `<tr><td>Pães para o Grão Nobre</td><td class="pos">+${brl(rafa)}</td></tr>` : ''}
-      <tr class="total"><td>Caixa agora</td><td class="${S.caixa < 0 ? 'neg' : ''}">${brl(S.caixa)} (${delta(S.caixa, sn.caixa)})</td></tr>
+      <tr class="total"><td>Caixa agora</td><td class="${S.caixa < 0 ? 'neg' : ''}">${brl(S.caixa)} ${dl(S.caixa, sn.caixa)}</td></tr>
     </table>
-    <h4>O que mudou</h4>
+    <h4>O que mudou hoje</h4>
     <table class="contas">
-      <tr><td>Reputação</td><td>${Math.round(S.rep)} ${delta(S.rep, sn.rep)}</td></tr>
-      <tr><td>Teu estresse</td><td>${Math.round(S.me.estresse)} ${delta(S.me.estresse, sn.est, true)}</td></tr>
-      ${S.flags.luciaAtendida ? `<tr><td>Dona Lúcia</td><td>${relacao(S.lucia.afin)} ${delta(S.lucia.afin, sn.lucia)}</td></tr>` : ''}
-      <tr><td>Caio</td><td>${relacao(S.caio.afin)} ${delta(S.caio.afin, sn.caio)}</td></tr>
-      ${biaAtiva() ? `<tr><td>Estresse da Bia</td><td>${Math.round(S.bia.estresse)} ${delta(S.bia.estresse, sn.bia, true)}</td></tr>` : ''}
-      <tr><td>Rafa</td><td>${relacao(S.rafa.afin)} ${delta(S.rafa.afin, sn.rafa)}</td></tr>
+      <tr><td>Fama</td><td>${Math.round(S.rep)} ${dl(S.rep, sn.rep)}</td></tr>
+      <tr><td>Ânimo</td><td>${Math.round(S.animo)} ${dl(S.animo, sn.an)}</td></tr>
+      <tr><td>Energia depois de dormir</td><td>${Math.round(S.energia)}</td></tr>
+      ${S.flags.luciaAtendida ? `<tr><td>Dona Lúcia</td><td>${relacao(S.lucia.afin)} ${dl(S.lucia.afin, sn.lucia)}</td></tr>` : ''}
+      <tr><td>Caio</td><td>${relacao(S.caio.afin)} ${dl(S.caio.afin, sn.caio)}</td></tr>
+      ${biaAtiva() ? `<tr><td>Cansaço da Bia</td><td>${Math.round(S.bia.estresse)} ${dl(S.bia.estresse, sn.bia)}</td></tr>` : ''}
+      <tr><td>Rafa</td><td>${relacao(S.rafa.afin)} ${dl(S.rafa.afin, sn.rafa)}</td></tr>
     </table>
     ${hoje.length ? `<h4>Diário de hoje</h4>${listaDiario(hoje)}` : ''}
-    ${amanha.length && !ultimo && !falido ? `<h4>Amanhã</h4><ul class="diario">${amanha.map(a => `<li>${esc(a)}</li>`).join('')}</ul>` : ''}
-    <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">${falido ? 'Ver o que acontece' : ultimo ? 'Ver como a semana terminou' : `Começar ${NOME_DIA[S.dia]}`}</button></div>`, c => c.querySelector('#bOk').onclick = () => {
-    S.diaCompras = 0;
+    <div class="rodape"><span></span><button class="bt ouro" id="bOk">${falido ? 'Ver o que acontece' : ultimo ? 'Ver como a semana terminou' : 'Dormir até ' + NOME_DIA[S.dia]}</button></div>`, m => { m.querySelector('#bOk').onclick = () => {
     if (falido) return epilogo(true);
     if (ultimo) return epilogo(false);
     S.dia++; iniciarDia();
-  });
+  }; });
 }
-function listaDiario(arr) {
-  return `<ul class="diario">${arr.map(d => `<li><span class="dia">dia ${d.dia}</span>${esc(d.txt)}${d.causa ? `<span class="causa">${esc(d.causa)}</span>` : ''}</li>`).join('')}</ul>`;
-}
-function mostraDiario() {
-  const fasePrev = S.fase;
-  cartao(`<div class="sobre">Diário de causas</div><h2>O que aconteceu até aqui</h2>
-    ${S.diario.length ? listaDiario(S.diario.slice().reverse()) : '<p class="dica">Nada registrado ainda. As decisões marcantes aparecem aqui, e quando uma delas volta, o diário mostra de onde veio.</p>'}
-    <div class="rodape-cartao"><span></span><button class="btn primario" id="bOk">Fechar</button></div>`, c => c.querySelector('#bOk').onclick = () => {
-    if (fasePrev === 'manha') return mostraManha();
-    if (fasePrev === 'noite') return mostraNoite();
-    if (fasePrev === 'titulo') return mostraTitulo();
-    fechaCartao();
-  });
-}
-
 function epilogo(falencia) {
-  trava = true;
-  S.fase = 'fim'; atualizaTopo();
+  trava = true; S.fase = 'fim'; hudSig = ''; $('#trabalho').innerHTML = ''; $('#dica').hidden = true; hotspots();
   try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ok */ }
-  const P = S.me.padrao;
-  const ident = Object.entries(P).sort((a, b) => b[1] - a[1])[0];
-  const textoId = ident[1] === 0 ? 'Tu passou a semana inteira atrás do balcão. Ainda não sabe quem é fora dele.'
-    : { cozinha: 'Tu virou alguém que resolve tudo na bancada. O café tem a tua mão.', social: 'Tu conhece o bairro pelo nome. O café virou ponto de encontro antes de virar negócio.', gestao: 'Tu pensa o café como empresa: margem, processo, concorrência. Falta saber se ele ainda é teu.', descanso: 'Tu aprendeu a parar antes de quebrar. O café cresce devagar, e tu junto.' }[ident[0]];
-  const linhas = [];
-  if (falencia) linhas.push(`O caixa fechou em ${brl(S.caixa)}. O dono do imóvel não esperou. Tu entrega as chaves numa ${NOME_DIA[S.dia - 1].toLowerCase()} de manhã.`);
-  else linhas.push(`O café termina a semana com ${brl(S.caixa)} em caixa e reputação ${Math.round(S.rep)}: ${S.rep >= 60 ? 'virou assunto no bairro' : S.rep >= 40 ? 'já tem gente que volta' : 'ainda é um segredo da rua'}.`);
-  if (S.bia.foiRafa || (S.mem.bia_recusada && !S.bia.contratada)) linhas.push('A Bia serve café do outro lado da rua, no Grão Nobre. Às vezes vocês se cruzam na padaria.');
-  else if (biaAtiva()) linhas.push(S.bia.moral >= 55 ? 'A Bia já fala em "nosso café". Pergunta se dá para pensar em ficar com o turno da tarde sozinha.' : 'A Bia continua, mas conta as horas. Uma proposta melhor e ela vai.');
-  if (S.flags.luciaSumiu) linhas.push('A Dona Lúcia agora toma café na padaria nova. Passa pela tua porta sem olhar.');
-  else if (S.flags.luciaAtendida) linhas.push(S.lucia.afin >= 45 ? 'A Dona Lúcia tem cadeira cativa perto da janela e fala de ti para meio bairro.' : 'A Dona Lúcia ainda aparece, mas não demora mais no balcão.');
-  if (S.flags.showCaio) linhas.push('O show do Caio na sexta lotou o café. Alguém filmou e o vídeo rodou no grupo do bairro.');
-  else if (S.flags.caioNoRafa) linhas.push('O Caio tocou sexta no Grão Nobre. Tu ouviu da calçada.');
-  else linhas.push(S.caio.afin >= 50 ? 'O Caio continua sendo a pessoa para quem tu liga quando o dia dá errado.' : 'O Caio e tu se falam menos. Ninguém decidiu isso.');
-  if (S.rafa.acordo) linhas.push('O Rafa virou cliente e concorrente ao mesmo tempo. O teu pão de queijo é o mais vendido do Grão Nobre.');
-  cartao(`<div class="sobre">${falencia ? 'Fim, por enquanto' : 'Fim da semana'}</div>
-    <h2>${falencia ? 'O café fechou' : 'Sexta, 21h. A semana acabou.'}</h2>
-    ${linhas.map(l => `<p>${esc(l)}</p>`).join('')}
-    <p><b>${esc(textoId)}</b></p>
-    ${falencia ? '<p class="dica">No jogo completo, falir não encerra a história: abre o capítulo "Recomeçar", talvez trabalhando para o Rafa.</p>' : ''}
-    <h4>Teu diário completo</h4>
-    ${S.diario.length ? listaDiario(S.diario) : '<p class="dica">Nenhuma decisão marcante registrada.</p>'}
-    <h4>Para o teste</h4>
-    <p class="dica">Duas pessoas jogando devem contar histórias diferentes. Anota: em que momento tu quis abrir o café de novo? O que te irritou? Qual escolha pesou?</p>
-    <div class="rodape-cartao"><span></span><button class="btn primario" id="bDeNovo">Jogar de novo</button></div>`, c => c.querySelector('#bDeNovo').onclick = () => { S = novoEstado(); R = novoRuntime(); iniciarDia(); });
+  const id = Object.entries(S.padrao).sort((a, b) => b[1] - a[1])[0];
+  const txtId = id[1] === 0 ? 'Tu passou a semana inteira atrás do balcão. Ainda não sabe quem é fora dele.' : { cozinha: 'Tu virou alguém que resolve tudo na bancada. O café tem a tua mão.', social: 'Tu conhece o bairro pelo nome. O café virou ponto de encontro antes de virar negócio.', gestao: 'Tu pensa o café como empresa: margem, processo, concorrência. Falta saber se ele ainda é teu.', descanso: 'Tu aprendeu a parar antes de quebrar. O café cresce devagar, e tu junto.' }[id[0]];
+  const L = [];
+  L.push(falencia ? `O caixa fechou em ${brl(S.caixa)}. O dono do imóvel não esperou. Tu devolve a chave que a Dona Cida te deu.` : `O café termina a semana com ${brl(S.caixa)} e fama ${Math.round(S.rep)}: ${S.rep >= 60 ? 'virou assunto no bairro' : S.rep >= 40 ? 'já tem gente que volta' : 'ainda é um segredo da rua'}.`);
+  if (S.bia.foiRafa || (S.mem.bia_recusada && !S.bia.contratada)) L.push('A Bia serve café do outro lado da rua, no Grão Nobre.');
+  else if (biaAtiva()) L.push(S.bia.moral >= 55 ? 'A Bia já fala em "nosso café".' : 'A Bia continua, mas conta as horas.');
+  if (S.flags.luciaSumiu) L.push('A Dona Lúcia agora toma café na padaria nova. Passa pela tua porta sem olhar.');
+  else if (S.flags.luciaAtendida) L.push(S.lucia.afin >= 45 ? 'A Dona Lúcia tem cadeira cativa perto da janela e fala de ti para meio bairro.' : 'A Dona Lúcia ainda aparece, mas não demora mais no balcão.');
+  if (S.flags.showCaio) L.push('O show do Caio lotou o café. Alguém filmou e o vídeo rodou no grupo do bairro.');
+  else if (S.flags.caioNoRafa) L.push('O Caio tocou sexta no Grão Nobre. Tu ouviu da calçada.');
+  else L.push(S.caio.afin >= 50 ? 'O Caio continua sendo quem tu chama quando o dia dá errado.' : 'O Caio e tu se falam menos. Ninguém decidiu isso.');
+  if (S.rafa.acordo) L.push('O Rafa virou cliente e concorrente ao mesmo tempo.');
+  const up = []; if (S.up.slots > 2) up.push(`${S.up.slots} espaços de preparo`); if (S.up.maquina > 1) up.push('máquina de dois grupos'); if (S.up.moedor) up.push('moedor elétrico'); if (S.up.bandeja > 4) up.push('bandeja grande'); if (S.up.forno > 4) up.push('forno grande');
+  if (up.length) L.push('A cozinha mudou: ' + up.join(', ') + '.');
+  modal(`<div class="sobre">${falencia ? 'Fim, por enquanto' : 'Fim da semana'}</div><h2>${falencia ? 'O café fechou' : 'Sexta, 22h'}</h2>
+    ${L.map(l => `<p>${esc(l)}</p>`).join('')}<p><b>${esc(txtId)}</b></p>
+    ${falencia ? '<p style="color:var(--suave)">No jogo completo, falir abre o capítulo "Recomeçar", talvez trabalhando para o Rafa.</p>' : ''}
+    <h4>Teu diário</h4>${S.diario.length ? listaDiario(S.diario) : '<p>Nada registrado.</p>'}
+    <h4>Para o teste</h4><p style="color:var(--suave)">Em que momento tu quis abrir o café de novo? O que travou? Qual escolha pesou?</p>
+    <div class="rodape"><span></span><button class="bt ouro" id="bDeNovo">Jogar de novo</button></div>`, m => { m.querySelector('#bDeNovo').onclick = () => { S = novoEstado(); iniciarDia(); }; });
 }
 
-/* ---------- Laço ---------- */
-let ult = performance.now(), acPainel = 0;
+/* ================= LAÇO ================= */
+let ult = performance.now();
 function laco(t) {
   const dt = Math.min(0.05, (t - ult) / 1000); ult = t;
   atualizar(dt);
-  desenhar();
-  atualizaTopo();
-  if (R.rodando) { acPainel += dt; if (acPainel > 0.3) { acPainel = 0; renderPainel(); } }
+  const ts = t / 1000;
+  if (S.fase === 'expediente' && R) { cenaCafe(ts); renderExpediente(); }
+  else if (S.fase === 'pos' || S.fase === 'fechamento') cenaCafe(ts);
+  else cenaRua(ts);
+  hud();
   requestAnimationFrame(laco);
 }
+mostraTitulo();
 requestAnimationFrame(laco);
-
-// reaproveita o estado se a página for atualizada com o jogo aberto
-const hot = window.claude && window.claude.hot;
-if (hot && hot.snapshot) hot.snapshot(() => (S.fase === 'manha' || S.fase === 'noite' ? { S } : {}));
-const boot = data => {
-  if (data && data.S && data.S.fase) { S = Object.assign(novoEstado(), data.S); R = novoRuntime(); if (S.fase === 'noite') mostraNoite(); else mostraManha(); return; }
-  mostraTitulo();
-};
-if (hot && hot.ready) hot.ready(boot); else boot(hot && hot.data);
 })();
 </script>
