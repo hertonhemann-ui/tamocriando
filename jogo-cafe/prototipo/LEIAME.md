@@ -10,9 +10,9 @@ Arquivo único (`index.html`), roda no navegador. Link jogável: https://claude.
 - Salvamento automático no começo de cada manhã e de cada noite. Durante o expediente o menu pausa o jogo, mas não salva o meio do dia.
 
 **Motivo pra continuar jogando**
-- **Objetivo da semana:** pagar a parcela de R$ 300 à Dona Cida na sexta. O topo da tela mostra quanto falta. Cada compra de melhoria disputa esse dinheiro.
+- **Objetivo da semana:** pagar a parcela de R$ 400 à Dona Cida na sexta. O topo da tela mostra quanto falta. Cada compra de melhoria disputa esse dinheiro.
 - **Metas do dia:** três por dia, cada uma com bônus em dinheiro e uma estrela. O fim do dia mostra de 0 a 3 estrelas.
-- **Combo:** clientes atendidos a tempo, em sequência, multiplicam a gorjeta (x1,5 no 3, x2 no 6, x3 no 10). Um cliente irritado zera.
+- **Combo:** clientes atendidos a tempo, em sequência, multiplicam a gorjeta (x1,25 no 3, x1,5 no 6, x2 no 10). Um cliente irritado zera.
 - **Ponto perfeito:** nas etapas de mão (moer, chocolate, vaporizar), tocar de novo quando o cursor passa pela faixa verde deixa o item perfeito (★). Item perfeito rende gorjeta extra.
 - **Clientes com traço:** apressado (espera pouco, paga mais), exigente (só aceita bebida perfeita) e generoso (gorjeta em dobro).
 - **Especialidades:** ao subir Cozinha ou Atendimento para o nível 1 ou 2, tu escolhe uma entre duas especialidades.

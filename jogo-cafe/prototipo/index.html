@@ -218,7 +218,7 @@ table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
     <div class="hstat"><img class="ico p" id="icoRel" alt=""><div><small>Hora</small><b id="hHora">—</b></div></div>
     <div class="hstat"><img class="ico p" id="icoMoeda" alt=""><div><small>Caixa</small><b id="hCaixa">—</b></div></div>
     <div class="hstat"><img class="ico p" id="icoEstrela" alt=""><div><small>Fama</small><b id="hRep">—</b></div></div>
-    <div class="hstat" title="A parcela do café vence na sexta"><div><small>Parcela · sexta</small><b id="hParcela">R$ 300</b></div></div>
+    <div class="hstat" title="A parcela do café vence na sexta"><div><small>Parcela · sexta</small><b id="hParcela">R$ 400</b></div></div>
     <div class="barra-rot"><img class="ico p" id="icoRaio" alt="">Energia<div class="barra"><i id="bEnergia"></i></div></div>
     <div class="barra-rot"><img class="ico p" id="icoCor" alt="">Ânimo<div class="barra"><i id="bAnimo"></i></div></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -304,7 +304,7 @@ function sfx(tipo, extra = 0) {
 }
 
 /* ================= DADOS ================= */
-const DAY_LEN = 180, GRACE = 25, DIAS = 5, PARCELA = 300;
+const DAY_LEN = 180, GRACE = 25, DIAS = 5, PARCELA = 400;
 const NOME_DIA = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 const RECEITAS = {
   espresso: { nome: 'Espresso', usa: { grao: 1 }, passos: [{ id: 'moer', nome: 'Moer', tipo: 'mao', t: 1.3 }, { id: 'extrair', nome: 'Extrair', tipo: 'maq', t: 3 }] },
@@ -447,7 +447,7 @@ function concluiMeta(m) {
 /* ================= EVENTOS ================= */
 const EV = [
   { id: 'bia_emprego', quando: 'pos', forcado: true, peso: 'pesado', quem: 'bia', cond: s => s.dia === 1,
-    texto: s => ({ titulo: 'Alguém bate no vidro', corpo: [`Tu vira a placa. Hoje foram ${s.ultimo.atendidos} atendidos e ${s.ultimo.irritados} foram embora sem atendimento. Uma moça que passou a tarde olhando a fila bate no vidro.`], falas: [['bia', 'Sou a Bia. Trabalhei dois anos numa padaria. A Dona Cida disse que tu ia ficar sozinho aqui. Precisa de ajuda?']], contexto: 'Com a Bia, uma tarefa fica automática: forno, moer ou entregar. Ela custa todo dia que trabalhar. Lembra da parcela de R$ 300 na sexta. Caixa hoje: ' + brl(s.caixa) + '.' }),
+    texto: s => ({ titulo: 'Alguém bate no vidro', corpo: [`Tu vira a placa. Hoje foram ${s.ultimo.atendidos} atendidos e ${s.ultimo.irritados} foram embora sem atendimento. Uma moça que passou a tarde olhando a fila bate no vidro.`], falas: [['bia', 'Sou a Bia. Trabalhei dois anos numa padaria. A Dona Cida disse que tu ia ficar sozinho aqui. Precisa de ajuda?']], contexto: 'Com a Bia, uma tarefa fica automática: forno, moer ou entregar. Ela custa todo dia que trabalhar. Lembra da parcela de R$ 400 na sexta. Caixa hoje: ' + brl(s.caixa) + '.' }),
     escolhas: () => [
       { t: 'Contratar em tempo integral', sub: 'Ela fica o expediente todo.', tags: 'Caixa −R$ 35/dia · uma tarefa automática', ef: s => { s.bia.contratada = true; s.bia.regime = 'integral'; lembra('bia_contratada', 'tu contratou a Bia'); diario('Contratei a Bia em tempo integral.'); return 'A Bia começa amanhã. No Café, de manhã, tu escolhe o que ela faz.'; } },
       { t: 'Contratar meio período', sub: 'Só na primeira metade do expediente.', tags: 'Caixa −R$ 20/dia', ef: s => { s.bia.contratada = true; s.bia.regime = 'meio'; lembra('bia_contratada', 'tu contratou a Bia'); diario('Contratei a Bia em meio período.'); return '"Meio período já ajuda. Se precisar de mais, me fala."'; } },
@@ -901,9 +901,9 @@ function pagar(c) {
   const frac = c.pacMax > 900 ? 1 : c.pac / c.pacMax;
   const bom = frac > 0.35;
   if (bom) { R.combo++; R.maxCombo = Math.max(R.maxCombo, R.combo); progMeta('combo', R.combo, true); } else R.combo = 0;
-  const mult = R.combo >= 10 ? 3 : R.combo >= 6 ? 2 : R.combo >= 3 ? 1.5 : 1;
+  const mult = multCombo(R.combo);
   const nPerf = c.ped.filter((it, k) => it !== 'pao' && c.perf[k]).length;
-  let gorj = frac > 0.6 ? Math.round(rnd(1, 3)) : 0;
+  let gorj = frac > 0.6 ? Math.round(rnd(0, 2)) : 0;
   gorj += nPerf * (tem('caprichoso') ? 2 : 1);
   if (gorj > 0 && tem('sorriso')) gorj += 1;
   if (c.traco === 'generoso') gorj = Math.max(2, gorj * 2);
@@ -926,6 +926,7 @@ function pagar(c) {
   if (c.tipo === 'clube') { S.lucia.afin += 2; R.stats.clube++; }
   sair(c);
 }
+function multCombo(n) { return n >= 10 ? 2 : n >= 6 ? 1.5 : n >= 3 ? 1.25 : 1; }
 function sair(c) { c.estado = 'saindo'; c.tx = 410; c.vaga = -1; reposiciona(); }
 function atualizar(dt) {
   if (!R || !R.rodando || R.pausa) return;
@@ -983,8 +984,8 @@ const TUT = [
   { fala: 'Foi pra <b>bandeja</b>. Viu a estrela? Saiu no ponto. Agora toca no <b>pedido do Seu Jair</b>, lá em cima, pra entregar.', alvo: '.ticket[data-id]', ok: () => R.stats.atendidos >= 1 },
   { fala: 'A Marina quer <b>cappuccino</b>: espresso com <b>leite vaporizado</b>. Mesmo começo, uma etapa de mão a mais. Tenta acertar o ponto nas duas.', entra: () => spawn({ tipo: 'tut', nome: 'Marina', ped: ['cappuccino'] }, true), alvo: '[data-ac="iniciar"][data-rec="cappuccino"]', ok: () => R.stats.atendidos >= 2 },
   { fala: 'O Tonho quer <b>pão de queijo</b>. Sai do <b>forno</b>, 4 de uma vez. Toca em <b>Assar</b>, espera e entrega.', entra: () => spawn({ tipo: 'tut', nome: 'Tonho', ped: ['pao'] }, true), alvo: '[data-ac="assar"]', ok: () => R.stats.atendidos >= 3 },
-  { fala: 'Cada cliente atendido rápido aumenta o <b>combo</b>. Combo alto multiplica as gorjetas: x1,5 no 3, x2 no 6, x3 no 10. Se alguém for embora irritado, zera. E olha ali em cima: <b>três metas do dia</b>, cada uma paga um bônus.', botao: 'Entendi' },
-  { fala: 'Último truque: são <b>2 espaços de preparo</b>. Enquanto a máquina extrai um, tu já mói o outro. A parcela do café é <b>R$ 300 na sexta</b>. Agora vou abrir a porta de verdade.', botao: 'Bora abrir' },
+  { fala: 'Cada cliente atendido rápido aumenta o <b>combo</b>. Combo alto multiplica as gorjetas: x1,25 no 3, x1,5 no 6, x2 no 10. Se alguém for embora irritado, zera. E olha ali em cima: <b>três metas do dia</b>, cada uma paga um bônus.', botao: 'Entendi' },
+  { fala: 'Último truque: são <b>2 espaços de preparo</b>. Enquanto a máquina extrai um, tu já mói o outro. A parcela do café é <b>R$ 400 na sexta</b>. Agora vou abrir a porta de verdade.', botao: 'Bora abrir' },
 ];
 function tutEntra() { const p = TUT[R.tut]; if (p && p.entra) p.entra(); render(); }
 function tutChecar() { const p = TUT[R.tut]; if (p && p.ok && p.ok()) { R.tut++; if (R.tut >= TUT.length) tutFim(); else tutEntra(); } }
@@ -1047,7 +1048,7 @@ function renderExpediente() {
     const recs = ['espresso', 'cappuccino'].concat(S.flags.mocha ? ['mocha'] : []);
     const quente = R.combo >= 6;
     let h = `<div class="trab"><div class="topo-exp"><div class="metas">${S.metas.map(m => `<div class="meta ${m.ok ? 'ok' : ''}">${m.ok ? '★' : '☆'} ${esc(m.txt)} <b>${m.fim ? (m.ok ? '✓' : '…') : Math.min(m.prog, m.alvo) + '/' + m.alvo}</b></div>`).join('')}</div>
-      <div class="combo ${quente ? 'quente' : ''}">${img('fogo')}<div><b>x${R.combo}</b><br><small>combo · gorjeta ${R.combo >= 10 ? 'x3' : R.combo >= 6 ? 'x2' : R.combo >= 3 ? 'x1,5' : 'x1'}</small></div></div></div>`;
+      <div class="combo ${quente ? 'quente' : ''}">${img('fogo')}<div><b>x${R.combo}</b><br><small>combo · gorjeta x${String(multCombo(R.combo)).replace('.', ',')}</small></div></div></div>`;
     h += `<div><div class="rotulo"><span>Pedidos no balcão · toque para entregar</span><span class="${extra > 2 ? 'neg' : ''}">${extra > 0 ? `+${extra} na fila` : ''}</span></div><div class="tickets">`;
     for (let i = 0; i < 5; i++) {
       const c = tk[i];
@@ -1211,7 +1212,7 @@ function mostraLocal(m) {
 function dicaMapa() {
   const d = $('#dica');
   let fala = null;
-  if (S.dia === 1 && S.fase === 'manha') fala = 'Bom dia! Hoje eu fico contigo, amanhã o café é teu. Já fiz as compras. A primeira parcela do café é <b>R$ 300 na sexta</b>, então cada real conta. Quando estiver pronto, toca em <b>Abrir o café</b> lá em cima.';
+  if (S.dia === 1 && S.fase === 'manha') fala = 'Bom dia! Hoje eu fico contigo, amanhã o café é teu. Já fiz as compras. A primeira parcela do café é <b>R$ 400 na sexta</b>, então cada real conta. Quando estiver pronto, toca em <b>Abrir o café</b> lá em cima.';
   else if (S.dia === 1 && S.fase === 'noite') fala = 'De noite a vida é tua. Toca nos lugares da rua: cada coisa gasta horas e mexe nas tuas barras. <b>Energia</b> volta dormindo. <b>Ânimo</b> só volta se tu cuidar dele. Quando cansar, toca em <b>Dormir</b>.';
   else if (S.dia === 2 && S.fase === 'manha') fala = 'Bilhete da Dona Cida: "O <b>Fornecedor</b> agora é contigo. Olha no quadro quanto tu vai precisar antes de comprar. O Seu Dimas tem melhorias usadas, mas lembra da parcela."';
   else if (S.dia === 3 && S.fase === 'manha') fala = 'Bilhete da Dona Cida: "No <b>Café</b> dá pra mexer nos <b>preços</b>. E usa meu caderno de receitas. Cuidado com os clientes antigos."';
@@ -1388,7 +1389,7 @@ function mostraTitulo() {
 }
 function introNovo() {
   modal(`<div class="sobre">Novo jogo</div><h2>A chave do café</h2>
-    <div class="fala"><img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div>Trinta anos atrás desse balcão. Agora é tua vez. Tu me pagou a entrada, e a primeira parcela de <b style="color:var(--ouro)">R$ 300</b> fica pra sexta. Amanhã eu fico contigo e te mostro tudo.</div></div>
+    <div class="fala"><img class="retrato" src="${retrato('cida')}" alt=""><div><div class="quem">Dona Cida</div>Trinta anos atrás desse balcão. Agora é tua vez. Tu me pagou a entrada, e a primeira parcela de <b style="color:var(--ouro)">R$ 400</b> fica pra sexta. Amanhã eu fico contigo e te mostro tudo.</div></div>
     <p>Tu comprou o café da Dona Cida com quase tudo o que tinha. Sobraram R$ 300. Cinco dias para pagar a parcela, conquistar o bairro e não perder a própria vida no processo.</p>
     <div class="rodape"><button class="bt" id="iVolta">Voltar</button><button class="bt ouro grande" id="iBora">Começar</button></div>`, m => {
     m.querySelector('#iVolta').onclick = mostraTitulo;
