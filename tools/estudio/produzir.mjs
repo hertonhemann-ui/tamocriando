@@ -97,7 +97,7 @@ async function main() {
   sintetizar({ dur: spec.dur, bpm: spec.bpm, ev, dest: path.join(dir, 'som.wav') });
   const final = path.join(dir, ate ? 'previa.mp4' : 'final.mp4');
   const vf = 'scale=1080:1920:flags=lanczos,unsharp=5:5:0.7:5:5:0,noise=alls=6:allf=t,eq=contrast=1.05:saturation=1.06,vignette=PI/5';
-  r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, 'f_%05d.jpg'), '-i', path.join(dir, 'som.wav'), '-vf', vf, '-af', 'loudnorm=I=-14:TP=-1.2:LRA=9', '-t', String(spec.dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-maxrate', '8M', '-bufsize', '16M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', final], { stdio: 'inherit' });
+  r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, 'f_%05d.jpg'), '-i', path.join(dir, 'som.wav'), '-vf', vf, '-af', 'loudnorm=I=-14:TP=-1.2:LRA=9', '-t', String(spec.dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-maxrate', '8M', '-bufsize', '16M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', final], { stdio: 'inherit' });
   if (r.status) throw new Error('ffmpeg falhou');
   fs.rmSync(frames, { recursive: true, force: true });
   if (ate) fs.rmSync(specArq, { force: true });
