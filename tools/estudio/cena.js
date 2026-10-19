@@ -82,10 +82,12 @@
   P.porta = function (x, S, t, hi) { rr(x, S * .28, S * .1, S * .44, S * .8, 14, C.crust); var o = EASE.io(cl(t / 1.2, 0, 1)); x.fillStyle = 'rgba(242,162,124,' + (.25 + o * .6) + ')'; x.fillRect(S * .31, S * .13, S * .38 * (.1 + o * .9), S * .74); };
   P.olho = function (x, S, t, hi) { x.save(); x.translate(S / 2, S / 2); x.beginPath(); x.moveTo(-S * .42, 0); x.quadraticCurveTo(0, -S * .38, S * .42, 0); x.quadraticCurveTo(0, S * .38, -S * .42, 0); x.fillStyle = C.paper; x.fill(); var m = Math.sin(t * 1.3) * S * .07; circ(x, m, 0, S * .15, hi ? C.ember : C.ink); circ(x, m + S * .04, -S * .04, S * .04, C.paper); x.restore(); };
 
-  function propTex(name, S, t, hi) {
-    var key = 'p|' + name + '|' + S, e = cache[key];
+  function propTex(name, S, t, hi, sombra) {
+    var key = 'p|' + name + '|' + S + (sombra ? '|s' : ''), e = cache[key];
     if (!e) { var c = c2d(S + PAD * 2, S + PAD * 2); e = cache[key] = { c: c, x: c.getContext('2d'), tex: null, w: c.width, h: c.height }; }
-    e.x.setTransform(1, 0, 0, 1, 0, 0); e.x.clearRect(0, 0, e.w, e.h); e.x.translate(PAD, PAD); P[name](e.x, S, t, hi);
+    e.x.setTransform(1, 0, 0, 1, 0, 0); e.x.clearRect(0, 0, e.w, e.h); e.x.translate(PAD, PAD);
+    if (sombra) { e.x.shadowColor = 'rgba(0,0,0,.55)'; e.x.shadowBlur = S * .03; e.x.shadowOffsetX = S * .012; e.x.shadowOffsetY = S * .02; } else { e.x.shadowColor = 'transparent'; }
+    P[name](e.x, S, t, hi);
     if (!e.tex) e.tex = mkTex(e.c); else { gl.bindTexture(gl.TEXTURE_2D, e.tex); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, e.c); }
     return e;
   }
@@ -111,7 +113,16 @@
     fbo.scene = mkFbo(); fbo.acc = mkFbo(); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     return document.fonts.load('100px "TC Display"').then(function () { return document.fonts.load('100px "TC Sans"'); });
   };
-  window.cenaLoad = function (s) { spec = s; seed = 11; };
+  var imgs = {};
+  window.cenaLoad = function (s) {
+    spec = s; seed = 11;
+    var srcs = {}; s.shots.forEach(function (sh) { (sh.planes || []).forEach(function (p) { if (p.k === 'imagem') srcs[p.src] = 1; }); });
+    return Promise.all(Object.keys(srcs).map(function (src) {
+      if (imgs[src]) return null;
+      return new Promise(function (ok) { var im = new Image(); im.onload = function () { imgs[src] = { tex: mkTex(im) }; ok(); }; im.onerror = function () { ok(); }; im.src = src; });
+    })).then(function () { return Object.keys(imgs).length; });
+  };
+  window.cenaGL = function () { var d = gl.getExtension('WEBGL_debug_renderer_info'); return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); };
 
   function draw(tex, M, op, rad, color) {
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -134,13 +145,13 @@
     return { VP: mul(persp(fov, W / H, 50, 12000), V), base: base, focalPx: (H / 2) / Math.tan(fov / 2) };
   }
 
-  function drawPlane(P0, G, vp, cam, tex, w, h, x, y, z, rxv, ryv, rzv, s, op, color) {
+  function drawPlane(P0, G, vp, cam, tex, w, h, x, y, z, rxv, ryv, rzv, s, op, color, extra) {
     var M = mul(G, mul(tr(x, y, z), mul(rz(rzv * D2R), mul(ry(ryv * D2R), mul(rx(rxv * D2R), sc(w * s, h * s, 1))))));
     // distância ao plano da câmera (profundidade), pro desfoque de foco
     var wx = M[12], wy = M[13], wz = M[14];
     var dx = wx - cam.pos[0], dy = wy - cam.pos[1], dz = wz - (vp.base + cam.pos[2]);
     var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    var coc = Math.min(H * .022, cam.ap * Math.abs(dist - cam.focus) / Math.max(dist, 1) * H * .06);
+    var coc = Math.min(H * .022, cam.ap * Math.abs(dist - cam.focus) / Math.max(dist, 1) * H * .06) + (extra || 0) * H / 1920;
     var sizePx = Math.max(8, Math.abs(w * s) * vp.focalPx / Math.max(dist, 1));
     var rad = coc < 0.6 ? [0, 0] : [coc / sizePx, coc / (sizePx * h / w)];
     draw(tex, mul(vp.VP, M), op, rad, color);
@@ -174,12 +185,26 @@
           else if (a === 'zoom') { os = 1 + (1 - bk) * 1.8; oz = (1 - e) * 200; }
           else if (a === 'slide') { ox = (1 - e) * (i % 2 ? 700 : -700); ory = (1 - e) * 40; }
           else if (a === 'tilt') { ory = (1 - e) * 70; oz = (1 - e) * 250; ox = (1 - e) * 200; }
+          var bl = 0; if (a === 'revela') { oy = (1 - e) * -26; bl = (1 - e) * 46; }
+          if (w.hi && p.esquenta) {
+            var k = EASE.io(cl((tl - (p.t0 || 0) - (p.words.length * (p.stagger || .09)) - (p.dw || .4) - .15) / .7, 0, 1));
+            var ta = wordTex(w.t, p.size, C.ash, '"TC Display"'), te = wordTex(w.t, p.size, C.ember, '"TC Display"'), gl2 = texGlow();
+            if (k > 0) drawPlane(0, Gb, vp, cam, gl2.tex, 1, 1, w.x, w.y, w.z - 30, 0, 0, 0, te.tw * 1.6, op * k * .45, hex(C.glow));
+            drawPlane(0, Gb, vp, cam, ta.tex, ta.w, ta.h, w.x + ox, w.y + oy, w.z + oz, orx, ory, 0, os, op * e * (1 - k), null, bl);
+            drawPlane(0, Gb, vp, cam, te.tex, te.w, te.h, w.x + ox, w.y + oy, w.z + oz, orx, ory, 0, os, op * e * k, null, bl);
+            return;
+          }
           var wt = wordTex(w.t, p.size, w.hi ? C.ember : (p.color || C.paper), w.hi ? '"TC Display"' : (p.font || '"TC Display"'));
-          drawPlane(0, Gb, vp, cam, wt.tex, wt.w, wt.h, w.x + ox, w.y + oy, w.z + oz, orx, ory, 0, os * (w.hi ? 1 + .04 * Math.sin(tl * 5) : 1), op * e, null);
+          drawPlane(0, Gb, vp, cam, wt.tex, wt.w, wt.h, w.x + ox, w.y + oy, w.z + oz, orx, ory, 0, os * (w.hi ? 1 + .04 * Math.sin(tl * 5) : 1), op * e, null, bl);
         });
       } else if (p.k === 'prop') {
-        var S = p.S || 700, e = propTex(p.n, S, tl - (p.t0 || 0), !!p.hi);
-        drawPlane(0, G, vp, cam, e.tex, e.w, e.h, gx, gy, gz, grx, gry, grz, gs, op, null);
+        var tp = tl - (p.t0 || 0), jx = 0, jy = 0, jr = 0;
+        if (p.stop) { var st12 = Math.floor(tp * 12); tp = st12 / 12; var hs = Math.sin(st12 * 12.9898 + (shot.i || 0) * 78.233) * 43758.5453; hs -= Math.floor(hs); jx = (hs - .5) * 7; jy = (((hs * 7.31) % 1) - .5) * 7; jr = (((hs * 3.17) % 1) - .5) * 1.2; }
+        var S = p.S || 700, e = propTex(p.n, S, tp, !!p.hi, !!p.stop);
+        drawPlane(0, G, vp, cam, e.tex, e.w, e.h, gx + jx, gy + jy, gz, grx, gry, grz + jr, gs, op, null);
+      } else if (p.k === 'imagem') {
+        var im = imgs[p.src]; if (!im) return;
+        drawPlane(0, G, vp, cam, im.tex, p.w, p.h, gx, gy, gz, grx, gry, grz, gs, op, null, p.blur || 0);
       } else if (p.k === 'chao') {
         var g = texGrid(); drawPlane(0, G, vp, cam, g.tex, 9000, 9000, gx, gy, gz, p.rx === undefined ? 90 : grx, gry, grz, gs, op, null);
       } else if (p.k === 'forma') {
@@ -192,9 +217,9 @@
     if (shot.particulas !== false) {
       var gt2 = texGlow(), n = shot.particulas || 46, sdm = seed; seed = 5 + (shot.i || 0) * 13;
       for (var i = 0; i < n; i++) {
-        var px = (rnd() - .5) * 2600, py0 = (rnd() - .5) * 4200, pz = -900 + rnd() * 1900, spd = 25 + rnd() * 90, sz = 14 + rnd() * 46, ember = rnd() < .4, ph = rnd() * 6;
+        var px = (rnd() - .5) * 2600, py0 = (rnd() - .5) * 4200, pz = -900 + rnd() * 1900, spd = 25 + rnd() * 90, sz = 14 + rnd() * 46, ember = !shot.poeira && rnd() < .4, ph = rnd() * 6;
         var py = ((py0 + tl * spd + 2100) % 4200) - 2100, pxx = px + Math.sin(tl * .6 + ph) * 40;
-        drawPlane(0, G, vp, cam, gt2.tex, 1, 1, pxx, py, pz, 0, 0, 0, sz * 4, (ember ? .55 : .22) * fade, hex(ember ? C.glow : C.ash));
+        drawPlane(0, G, vp, cam, gt2.tex, 1, 1, pxx, py, pz, 0, 0, 0, sz * 4, (ember ? .55 : (shot.poeira ? .12 : .22)) * fade, hex(ember ? C.glow : C.ash));
       }
       seed = sdm;
     }

@@ -23,15 +23,21 @@ const srv = http.createServer((req, res) => {
 });
 await new Promise((r) => srv.listen(0, '127.0.0.1', r));
 const { chromium } = await import('playwright');
-const ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
-let next = a, done = 0; const t0 = Date.now();
+// Sem flag: SwiftShader (CPU, funciona em qualquer máquina, lento).
+// --gpu: Chromium com janela (headful), que usa a placa de vídeo de verdade. --chrome: o Google Chrome instalado.
+const GPU = rest.includes('--gpu') || rest.includes('--chrome');
+const ARGS = GPU ? ['--ignore-gpu-blocklist', '--enable-gpu-rasterization', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows']
+  : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+const LAUNCH = { args: ARGS, headless: !GPU, ...(rest.includes('--chrome') ? { channel: 'chrome' } : {}) };
+let next = a, done = 0, glInfo = ''; const t0 = Date.now();
 async function worker() {
-  const browser = await chromium.launch({ args: ARGS });
+  const browser = await chromium.launch(LAUNCH);
   const page = await browser.newPage();
   page.on('pageerror', (e) => console.error('[página]', e.message));
   await page.goto(`http://127.0.0.1:${srv.address().port}/tools/estudio/cena.html`);
   await page.evaluate(({ W, H }) => window.cenaInit(W, H), { W, H });
-  await page.evaluate((s) => window.cenaLoad(s), spec);
+  const nImg = await page.evaluate((s) => window.cenaLoad(s), spec);
+  if (!glInfo) { glInfo = await page.evaluate(() => window.cenaGL()); console.log(`placa: ${glInfo} · imagens do acervo: ${nImg}`); if (GPU && /swiftshader|llvmpipe|software/i.test(glInfo)) console.log('AVISO: pediu --gpu mas o navegador caiu no render por software. Atualiza o driver de vídeo ou tenta --chrome.'); }
   for (;;) {
     const i = next++; if (i > b) break;
     const dest = path.join(outDir, `f_${String(i).padStart(5, '0')}.jpg`);

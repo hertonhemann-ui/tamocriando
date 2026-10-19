@@ -8,6 +8,7 @@ Tu é o diretor. Quem decide o que dizer é tu; o que se resolve com regra é `t
 ## Fluxo
 
 1. **Lê `estudio/estrategia.json`** (público, pilares, voz, o que nunca inventar) e `estudio/memoria.json` se existir (o que já funcionou). Nada de número, depoimento ou caso inventado: se faltar prova real, o short não usa prova.
+1b. **Direção:** antes do roteiro, roda a skill `diretores` (brief do DN, rota e receita do DC). O padrão do short é a receita `recorte-revelado` (R2).
 2. **Pauta:** `node tools/estudio.mjs pauta` dá os slots da semana (pilar, funil, horário). Se o Herton deu um tema, ele vence.
 3. **Roteiro** em `estudio/producoes/<id>/roteiro.json` (modelo: `estudio/producoes/o-cara-lotado/`). Regras:
    - abre com cena ou pergunta que a pessoa já viveu, nunca com conceito abstrato; texto na tela em até 0,5 s;

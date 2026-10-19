@@ -17,11 +17,27 @@ const cl = (x, a, b) => Math.max(a, Math.min(b, x));
 let sd = 1; const rnd = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296);
 
 // ---------- o diretor
+// Receitas do Diretor Criativo (estudio/direcao-de-arte/SISTEMA.md). O roteiro escolhe uma em "receita".
+const RECEITAS = {
+  'recorte-revelado': { chao: false, fantasma: false, brilho: false, particulas: 12, poeira: true, anim: 'revela', esquenta: true, amp: 0.6, stop: true, fundos: true },
+  cinetico: { chao: true, fantasma: true, brilho: true, particulas: 52, poeira: false, anim: null, esquenta: false, amp: 1, stop: false, fundos: false }
+};
+// fundos do acervo (imagens do ChatGPT em estudio/acervo/), por ato
+const FUNDOS = { tinta: ['fundo-tinta-01', 'fundo-tinta-02', 'vela-apagada', 'cinza-neutro'], papel: ['fundo-papel-01', 'fundo-papel-02', 'mesa-escrita'], pagamento: ['brasa-macro', 'cinza-sopro'], fecho: ['fosforo', 'papel-queimando'] };
+function fundoPara(f, i) {
+  const lista = f.ato === 'fecho' ? FUNDOS.fecho : f.ato === 'pagamento' ? FUNDOS.pagamento : f.tema === 'papel' ? FUNDOS.papel : FUNDOS.tinta;
+  return '/estudio/acervo/' + lista[i % lista.length] + '.jpg';
+}
 const PLANOS = ['empurra', 'orbita', 'diagonal', 'guindaste', 'foco', 'puxa'];
 const ANIM = ['flip', 'tilt', 'rise', 'zoom', 'slide'];
 const NOMES = { empurra: 'travelling pra dentro', orbita: 'órbita lateral', diagonal: 'câmera torta (holandês) + avanço', guindaste: 'guindaste (sobe com tilt)', foco: 'puxada de foco entre planos', puxa: 'recuo revelando' };
 
-function camera(tipo, d, lado) {
+function camera(tipo, d, lado, amp = 1) {
+  const c = cameraBase(tipo, d, lado);
+  for (const k of ['x', 'y', 'rx', 'ry', 'rz']) if (Array.isArray(c[k])) c[k] = c[k].map(([t, v, e]) => [t, v * amp, e]);
+  return c;
+}
+function cameraBase(tipo, d, lado) {
   const e = 'io', sh = [[0, 1.15], [0.34, 0.5], [d - OV, 0.5], [d, 1.0]];
   const base = { sh, fov: [[0, 42], [d, 38]], focus: 2640, ap: 0.7 };
   const whip = [[0, lado * 330, 'out'], [0.36, 0, 'out']];
@@ -35,10 +51,12 @@ function camera(tipo, d, lado) {
   }
 }
 
-const PROP_POS = [{ x: 300, y: 280, ry: -16 }, { x: -300, y: -330, ry: 15 }, { x: 260, y: -360, ry: -12 }, { x: -280, y: 330, ry: 13 }];
+// adereço acima ou abaixo da fala, nunca atrás dela (a frase é a heroína)
+const PROP_POS = [{ x: 170, y: 620, ry: -14 }, { x: -160, y: -600, ry: 13 }, { x: -180, y: 640, ry: 12 }, { x: 150, y: -620, ry: -12 }];
 
 export function dirigir(rot) {
-  const BEAT = 60 / (rot.bpm || 92);
+  const BEAT = 60 / (rot.bpm || 92), R = RECEITAS[rot.receita || 'recorte-revelado'];
+  if (!R) throw new Error('receita desconhecida: ' + rot.receita + ' (' + Object.keys(RECEITAS).join(', ') + ')');
   const shots = [], ev = [], deco = [];
   let t = 0, prev = '', atoPrev = '';
   rot.falas.forEach((f, i) => {
@@ -50,16 +68,20 @@ export function dirigir(rot) {
     const size = n <= 3 ? 220 : n <= 5 ? 180 : n <= 7 ? 150 : 128, flat = pal.map((w, j) => ({ t: w.replace(/,/g, ''), hi: j === hiIdx }));
     const color = papel ? '#1A1714' : '#EFE9DF', anim = ANIM[(i * 3 + 1) % ANIM.length];
     const heroi = f.cena && i % 2 === 1, planes = [];
-    if (i % 3 !== 2) planes.push({ k: 'chao', y: -1000, z: -300, op: papel ? 0.22 : 0.38 });
-    if (hiIdx >= 0) planes.push({ k: 'bloco', size: 560, flat: [{ t: pal[hiIdx].replace(/[.,!?]/g, ''), hi: false }], maxw: 5000, color: papel ? '#1A1714' : '#EFE9DF', anim: 'slide', stagger: 0, dw: 0.9, x: lado * -60, y: [[0, 300 * lado], [d, -300 * lado, 'io']], z: -700, rz: [[0, lado * -9], [d, lado * -5, 'io']], op: papel ? 0.09 : 0.1 });
+    if (R.fundos) {
+      planes.push({ k: 'imagem', src: fundoPara(f, i), w: 2600, h: 3900, z: -1600, y: [[0, -60], [d, 60, 'io']], s: [[0, 1], [d, 1.06, 'io']] });
+      planes.push({ k: 'forma', c: papel ? '#EFE9DF' : '#1A1714', w: 4200, h: 6400, z: -1500, op: papel ? 0.22 : 0.42 });
+    }
+    if (R.chao && i % 3 !== 2) planes.push({ k: 'chao', y: -1000, z: -300, op: papel ? 0.22 : 0.38 });
+    if (R.fantasma && hiIdx >= 0) planes.push({ k: 'bloco', size: 560, flat: [{ t: pal[hiIdx].replace(/[.,!?]/g, ''), hi: false }], maxw: 5000, color: papel ? '#1A1714' : '#EFE9DF', anim: 'slide', stagger: 0, dw: 0.9, x: lado * -60, y: [[0, 300 * lado], [d, -300 * lado, 'io']], z: -700, rz: [[0, lado * -9], [d, lado * -5, 'io']], op: papel ? 0.09 : 0.1 });
     if (f.cena) {
       const pp = PROP_POS[i % PROP_POS.length];
-      planes.push({ k: 'prop', n: f.cena, S: heroi ? 1050 : 780, hi: true, x: heroi ? 0 : pp.x, y: heroi ? 150 : pp.y, z: heroi ? -420 : -330, ry: [[0, pp.ry], [d, -pp.ry, 'io']], rz: [[0, -2], [d, 2, 'io']], op: [[0, 0], [0.35, 1, 'out']] });
+      planes.push({ k: 'prop', n: f.cena, S: heroi ? 900 : 560, hi: true, stop: R.stop, x: heroi ? 0 : pp.x, y: heroi ? -330 : pp.y, z: heroi ? -420 : -330, ry: [[0, pp.ry], [d, -pp.ry, 'io']], rz: [[0, -2], [d, 2, 'io']], op: [[0, 0], [0.35, 1, 'out']] });
     }
-    planes.push({ k: 'brilho', w: 1300, c: '#C8502A', x: lado * 40, y: -40, z: -250, op: papel ? 0.25 : 0.5, s: [[0, .8], [d, 1.25, 'io']] });
-    planes.push({ k: 'bloco', size, flat, maxw: 700, color, anim, stagger: 0.085, dw: 0.42, x: 0, y: heroi ? 470 : ((i % 3) - 1) * 90, z: 0, rz: [[0, lado * 1.5], [d, -lado * 1.5, 'io']], ry: [[0, 3], [d, -3, 'io']], s: heroi ? 0.78 : 1 });
+    if (R.brilho) planes.push({ k: 'brilho', w: 1300, c: '#C8502A', x: lado * 40, y: -40, z: -250, op: papel ? 0.25 : 0.5, s: [[0, .8], [d, 1.25, 'io']] });
+    planes.push({ k: 'bloco', size, flat, maxw: 700, color, anim: R.anim || anim, esquenta: R.esquenta, stagger: 0.085, dw: 0.42, x: 0, y: heroi ? 470 : ((i % 3) - 1) * 90, z: 0, rz: [[0, lado * 1.5], [d, -lado * 1.5, 'io']], ry: [[0, 3], [d, -3, 'io']], s: heroi ? 0.78 : 1 });
     const flash = mudaAto ? { a: [[0, 0.95], [0.16, 0, 'out']], c: papel ? '#1A1714' : '#EFE9DF' } : f.impacto ? { a: [[0, 0.5], [0.12, 0, 'out']], c: '#C8502A' } : undefined;
-    shots.push({ i, t0: +t.toFixed(3), dur: +d.toFixed(3), bg: papel ? 'papel' : 'tinta', particulas: papel ? 26 : 52, cam: camera(tipo, d, lado), planes, flash, op: [[0, 0], [OV * .9, 1, 'out'], [Math.max(OV, d - OV), 1], [d, last ? 1 : 0, 'in']] });
+    shots.push({ i, t0: +t.toFixed(3), dur: +d.toFixed(3), bg: papel ? 'papel' : 'tinta', particulas: Math.round(R.particulas * (papel ? 0.5 : 1)), poeira: R.poeira, cam: camera(tipo, d, lado, R.amp), planes, flash, op: [[0, 0], [OV * .9, 1, 'out'], [Math.max(OV, d - OV), 1], [d, last ? 1 : 0, 'in']] });
     deco.push({ i, t: t, beats, tipo, cena: f.cena || '-', ato: f.ato || '', texto: f.texto, papel, flash: !!flash });
     ev.push({ t: +t.toFixed(3), tipo: 'whoosh', lado });
     pal.forEach((w, k) => ev.push({ t: +(t + 0.085 * k + 0.12).toFixed(3), tipo: k === hiIdx ? 'shine' : 'tick', k }));
@@ -88,12 +110,13 @@ async function main() {
   if (rest.includes('--so-diretor')) return;
   const scale = flag('--scale', '0.5'), frames = path.join(dir, 'frames');
   if (!rest.includes('--retomar')) fs.rmSync(frames, { recursive: true, force: true });
-  let r = spawnSync('node', [path.join(ROOT, 'tools/estudio/render-cenas.mjs'), path.join(dir, 'cenas.json'), frames, '--scale', scale, '--workers', flag('--workers', '4')], { stdio: 'inherit' });
+  const gpu = rest.includes('--gpu') ? ['--gpu'] : rest.includes('--chrome') ? ['--chrome'] : [];
+  let r = spawnSync('node', [path.join(ROOT, 'tools/estudio/render-cenas.mjs'), path.join(dir, 'cenas.json'), frames, '--scale', scale, '--workers', flag('--workers', gpu.length ? '2' : '4'), ...gpu], { stdio: 'inherit' });
   if (r.status) throw new Error('render falhou');
   sintetizar({ dur: spec.dur, bpm: spec.bpm, ev, dest: path.join(dir, 'som.wav') });
   const final = path.join(dir, ate ? 'previa.mp4' : 'final.mp4');
   const vf = 'scale=1080:1920:flags=lanczos,unsharp=5:5:0.7:5:5:0,noise=alls=6:allf=t,eq=contrast=1.05:saturation=1.06,vignette=PI/5';
-  r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, 'f_%05d.jpg'), '-i', path.join(dir, 'som.wav'), '-vf', vf, '-af', 'loudnorm=I=-14:TP=-1.2:LRA=9', '-t', String(spec.dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-maxrate', '8M', '-bufsize', '16M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', final], { stdio: 'inherit' });
+  r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, 'f_%05d.jpg'), '-i', path.join(dir, 'som.wav'), '-vf', vf, '-af', 'loudnorm=I=-14:TP=-1.2:LRA=9', '-t', String(spec.dur), ...(rest.includes('--nvenc') ? ['-c:v', 'h264_nvenc', '-preset', 'p6', '-cq', '21'] : ['-c:v', 'libx264', '-preset', 'medium', '-crf', '22']), '-maxrate', '8M', '-bufsize', '16M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', final], { stdio: 'inherit' });
   if (r.status) throw new Error('ffmpeg falhou');
   fs.rmSync(frames, { recursive: true, force: true });
   console.log('pronto:', path.relative(ROOT, final));
