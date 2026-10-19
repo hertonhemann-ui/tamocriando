@@ -15,7 +15,7 @@ const J = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 
 if (cmd === 'pacote') {
   const dir = path.resolve(alvo), rot = J(path.join(dir, 'roteiro.json')), est = J(path.join(ROOT, 'estudio/estrategia.json'));
-  const bad = est.regras.nuncaNoVideo.filter((w) => JSON.stringify(rot.beats).toLowerCase().includes(w));
+  const txt = JSON.stringify(rot.beats).toLowerCase(); const bad = est.regras.nuncaNoVideo.filter((w) => new RegExp('(^|[^a-zà-ú])' + w + '([^a-zà-ú]|$)').test(txt));
   if (bad.length) { console.error('o vídeo pede ação (' + bad.join(', ') + '): tira do roteiro'); process.exit(1); }
   const leg = rot.legenda || {};
   const post = {
