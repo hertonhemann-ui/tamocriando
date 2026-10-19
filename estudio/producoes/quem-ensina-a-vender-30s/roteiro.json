@@ -1,0 +1,82 @@
+{
+ "versao": 2,
+ "id": "quem-ensina-a-vender-30s",
+ "titulo": "tu desconfia de quem ensina a vender (corte 30s)",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "lupa",
+   "impacto": true,
+   "destaque": "desconfia",
+   "texto": "tu desconfia de quem ensina a vender?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "certo",
+   "texto": "tá certo em desconfiar."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "também",
+   "texto": "eu também desconfio."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "inteligência",
+   "texto": "desconfiar é inteligência."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "parar",
+   "texto": "o erro é parar de procurar."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "venda",
+   "texto": "porque o problema não é de venda."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "olho",
+   "impacto": true,
+   "destaque": "leitura.",
+   "texto": "é de leitura."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "cena": "porta",
+   "destaque": "escolher",
+   "texto": "o que muda na vida dele se não te escolher?"
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "teu",
+   "texto": "desconfia. e começa pelo que é teu."
+  }
+ ],
+ "pilar": "legivel",
+ "funil": "meio",
+ "legenda": {
+  "texto": "desconfiar de quem ensina a vender é inteligência. o erro é parar de procurar. o vídeo completo está no canal.",
+  "hashtags": [
+   "profissionalliberal",
+   "posicionamento",
+   "comunicacao"
+  ],
+  "comentarioFixado": "o vídeo completo está no canal.",
+  "horario": "19:30"
+ },
+ "corteDe": "quem-ensina-a-vender"
+}

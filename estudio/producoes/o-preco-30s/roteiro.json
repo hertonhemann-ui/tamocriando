@@ -1,0 +1,75 @@
+{
+ "versao": 2,
+ "id": "o-preco-30s",
+ "titulo": "o preço fala antes de ti (corte 30s)",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "prato",
+   "impacto": true,
+   "destaque": "caro",
+   "texto": "por que tu paga caro num restaurante?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "comida",
+   "texto": "e não é pela comida."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "arroz",
+   "texto": "o arroz é arroz em qualquer lugar."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "etiqueta",
+   "destaque": "barato",
+   "texto": "agora pensa em quem cobra barato."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "etiqueta",
+   "impacto": true,
+   "destaque": "lê",
+   "texto": "preço é a primeira coisa que o cliente lê."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "boca",
+   "texto": "antes de tu abrir a boca."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "pergunta",
+   "texto": "quando fica claro, o preço deixa de ser a pergunta."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "lido",
+   "texto": "preço é o que sobra de um valor bem lido."
+  }
+ ],
+ "pilar": "commodity",
+ "funil": "topo",
+ "legenda": {
+  "texto": "preço é a primeira coisa que o cliente lê. antes do teu diploma, antes do teu cuidado. o vídeo completo está no canal.",
+  "hashtags": [
+   "precificacao",
+   "profissionalliberal",
+   "posicionamento"
+  ],
+  "comentarioFixado": "manda pra quem cobrou barato e ficou triste.",
+  "horario": "21:00"
+ },
+ "corteDe": "o-preco"
+}

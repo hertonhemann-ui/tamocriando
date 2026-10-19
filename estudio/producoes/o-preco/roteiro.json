@@ -144,5 +144,17 @@
    "destaque": "lido",
    "texto": "preço é o que sobra de um valor bem lido."
   }
- ]
+ ],
+ "pilar": "commodity",
+ "funil": "topo",
+ "legenda": {
+  "texto": "preço é a primeira coisa que o cliente lê. antes do teu diploma, antes do teu cuidado. o vídeo completo está no canal.",
+  "hashtags": [
+   "precificacao",
+   "profissionalliberal",
+   "posicionamento"
+  ],
+  "comentarioFixado": "manda pra quem cobrou barato e ficou triste.",
+  "horario": "21:00"
+ }
 }

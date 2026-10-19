@@ -81,14 +81,16 @@ function decupagem(rot, deco, dur) {
 async function main() {
   const rot = JSON.parse(fs.readFileSync(arq, 'utf8')), dir = path.dirname(path.resolve(arq));
   const { spec, ev, deco, dur } = dirigir(rot);
-  const ate = Number(flag('--ate', 0)); if (ate) { spec.dur = ate; spec.shots = spec.shots.filter((s) => s.t0 < ate); }
   fs.writeFileSync(path.join(dir, 'cenas.json'), JSON.stringify(spec));
+  // a prévia renderiza de um arquivo à parte, pra não estragar o cenas.json completo
+  const ate = Number(flag('--ate', 0)), specArq = path.join(dir, ate ? 'cenas-previa.json' : 'cenas.json');
+  if (ate) { spec.dur = ate; spec.shots = spec.shots.filter((s) => s.t0 < ate); fs.writeFileSync(specArq, JSON.stringify(spec)); }
   fs.writeFileSync(path.join(dir, 'decupagem.md'), decupagem(rot, deco, dur));
   console.log(`decupagem: ${deco.length} planos, ${dur.toFixed(1)} s`);
   if (rest.includes('--so-diretor')) return;
   const scale = flag('--scale', '0.5'), frames = path.join(dir, 'frames');
   fs.rmSync(frames, { recursive: true, force: true });
-  let r = spawnSync('node', [path.join(ROOT, 'tools/estudio/render-cenas.mjs'), path.join(dir, 'cenas.json'), frames, '--scale', scale, '--workers', flag('--workers', '4')], { stdio: 'inherit' });
+  let r = spawnSync('node', [path.join(ROOT, 'tools/estudio/render-cenas.mjs'), specArq, frames, '--scale', scale, '--workers', flag('--workers', '4')], { stdio: 'inherit' });
   if (r.status) throw new Error('render falhou');
   sintetizar({ dur: spec.dur, bpm: spec.bpm, ev, dest: path.join(dir, 'som.wav') });
   const final = path.join(dir, ate ? 'previa.mp4' : 'final.mp4');
@@ -96,6 +98,7 @@ async function main() {
   r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, 'f_%05d.jpg'), '-i', path.join(dir, 'som.wav'), '-vf', vf, '-af', 'loudnorm=I=-14:TP=-1.2:LRA=9', '-t', String(spec.dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-maxrate', '8M', '-bufsize', '16M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', final], { stdio: 'inherit' });
   if (r.status) throw new Error('ffmpeg falhou');
   fs.rmSync(frames, { recursive: true, force: true });
+  if (ate) fs.rmSync(specArq, { force: true });
   console.log('pronto:', path.relative(ROOT, final));
 }
 if (process.argv[1] && process.argv[1].endsWith('produzir.mjs')) main().catch((e) => { console.error(e.message || e); process.exit(1); });

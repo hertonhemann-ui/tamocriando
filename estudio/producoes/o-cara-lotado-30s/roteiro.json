@@ -1,0 +1,75 @@
+{
+ "versao": 2,
+ "id": "o-cara-lotado-30s",
+ "titulo": "o cara que entrega menos e tá lotado (corte 30s)",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "fila",
+   "impacto": true,
+   "destaque": "lotado",
+   "texto": "por que o cara que entrega menos que tu tá lotado?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "melhor",
+   "texto": "ele não é melhor."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "ler",
+   "texto": "ele é só mais fácil de ler."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "impacto": true,
+   "destaque": "melhor",
+   "texto": "o cliente não escolhe quem é melhor."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "olho",
+   "destaque": "ler",
+   "texto": "ele escolhe quem ele consegue ler."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "aí",
+   "texto": "tua técnica já tá aí."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "tradução",
+   "texto": "o que falta é tradução."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "lido",
+   "texto": "valor tu já tem. agora ele precisa ser lido."
+  }
+ ],
+ "pilar": "legivel",
+ "funil": "topo",
+ "legenda": {
+  "texto": "o cliente não escolhe quem é melhor. escolhe quem consegue ler. o vídeo completo está no canal.",
+  "hashtags": [
+   "posicionamento",
+   "profissionalliberal",
+   "comunicacao"
+  ],
+  "comentarioFixado": "manda pra quem atende bem e cobra pouco.",
+  "horario": "12:15"
+ },
+ "corteDe": "o-cara-lotado"
+}

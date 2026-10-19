@@ -1,0 +1,84 @@
+{
+ "versao": 2,
+ "id": "o-cliente-emprestado-30s",
+ "titulo": "o cliente que não é teu (corte 30s)",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "porta",
+   "impacto": true,
+   "destaque": "teu",
+   "texto": "de quem é o teu cliente?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "indicação",
+   "texto": "se a agenda vive de plataforma, convênio ou indicação..."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "teu",
+   "texto": "o cliente não é teu."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "emprestado",
+   "texto": "é emprestado."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "fila",
+   "destaque": "some",
+   "texto": "e some quando a plataforma muda a regra."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "olho",
+   "impacto": true,
+   "destaque": "reconhece",
+   "texto": "cliente teu é o que te reconhece."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "lupa",
+   "destaque": "problema",
+   "texto": "pelo jeito que tu fala o problema dele."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "porta",
+   "destaque": "desligar",
+   "texto": "isso ninguém consegue desligar."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "emprestada",
+   "texto": "aos poucos a agenda deixa de ser emprestada."
+  }
+ ],
+ "pilar": "legivel",
+ "funil": "meio",
+ "legenda": {
+  "texto": "se a agenda vive de plataforma, convênio ou indicação, o cliente é emprestado. o vídeo completo está no canal.",
+  "hashtags": [
+   "profissionalliberal",
+   "posicionamento",
+   "comunicacao"
+  ],
+  "comentarioFixado": "o vídeo completo está no canal.",
+  "horario": "12:15"
+ },
+ "corteDe": "o-cliente-emprestado"
+}

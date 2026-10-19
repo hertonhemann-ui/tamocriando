@@ -1,0 +1,83 @@
+{
+ "versao": 2,
+ "id": "o-contrato-30s",
+ "titulo": "o contrato que tu assinou sem ler (corte 30s)",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "contrato",
+   "impacto": true,
+   "destaque": "esforça",
+   "texto": "te disseram que quem se esforça chega lá."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "esforçou",
+   "texto": "tu te esforçou."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "chegou",
+   "texto": "tu não chegou."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "contrato",
+   "impacto": true,
+   "destaque": "contrato",
+   "texto": "lá atrás tu assinou um contrato."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "contrato",
+   "destaque": "esforça",
+   "texto": "a cláusula mais forte: se esforça que dá certo."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "nunca",
+   "texto": "o problema é que o outro lado nunca assinou."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "falta",
+   "texto": "teu valor não tá em falta."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "ilegível.",
+   "texto": "tá ilegível."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "construir",
+   "texto": "e o esforço começa a construir alguma coisa."
+  }
+ ],
+ "pilar": "esforco",
+ "funil": "topo",
+ "legenda": {
+  "texto": "tu cumpriu a tua parte do contrato. o problema é que o outro lado nunca assinou. o vídeo completo está no canal.",
+  "hashtags": [
+   "posicionamento",
+   "profissionalliberal",
+   "comunicacao"
+  ],
+  "comentarioFixado": "manda pra quem atende bem e cobra pouco.",
+  "horario": "19:30"
+ },
+ "corteDe": "o-contrato"
+}
