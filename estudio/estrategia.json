@@ -1,0 +1,34 @@
+{
+  "versao": 1,
+  "nota": "Montada a partir dos teus estudos (Norte dos Formatos, Roteiros Brasa) e do repo. O que está em 'confirmar' é hipótese minha. Corrige aqui e o estúdio obedece.",
+  "autonomia": { "modo": "rascunho", "porque": "Conta pessoal de profissional que fala de ética de psicólogo, advogado e nutri. Até 10 posts aprovados por ti, tudo sai como rascunho. Depois troca para 'auto'." },
+  "marca": { "nome": "herton hemann", "tese": "Teu valor não está em falta, está ilegível.", "crenca": "disciplina forçada é o que sobra quando a devoção foi embora", "formaDeFalar": ["tu", "minúsculas no texto da tela", "cena antes de conceito", "observa, não manda"] },
+  "publico": {
+    "quem": "profissionais liberais que fizeram tudo certo e a agenda não enche: advogados, psicólogos, dentistas, arquitetos, nutricionistas",
+    "dores": ["tenho 2 pós e sinto que não significa nada", "cobrei barato e estou triste", "o cara que entrega menos está lotado", "zero clientes por mês", "convênio e plataforma me esgotam"],
+    "desconfia": ["mentoria que ensina a vender", "curso que promete 20k por mês"],
+    "origem": "Norte dos Formatos (comentários reais do YouTube e Reddit)"
+  },
+  "funil": { "papel": "O short é a porta. Ele existe pra levar ao vídeo longo (porta C, ensaio A, sala B). O pedido vive na legenda, nunca no vídeo.", "mix": { "topo": 0.7, "meio": 0.3 } },
+  "pilares": [
+    { "id": "esforco", "nome": "o esforço que não vira valor", "ancora": "contrato do esforço, Sísifo, o cara pior e lotado" },
+    { "id": "legivel", "nome": "melhor x legível", "ancora": "camiseta do Inter, o cliente escolhe quem consegue ler" },
+    { "id": "commodity", "nome": "preço e commodity", "ancora": "cobrei barato, o arroz, R$150 no restaurante" },
+    { "id": "devocao", "nome": "devoção x disciplina", "ancora": "da cinza à brasa" }
+  ],
+  "cadencia": { "porSemana": 4, "janelas": ["12:15", "19:30", "21:00"], "nota": "Ponto de partida. A memória ajusta com os teus números." },
+  "regras": {
+    "duracaoSeg": [15, 35],
+    "gancho": "texto na tela até 0,5 s, máximo 12 palavras, abre com cena ou pergunta, nunca com conceito abstrato",
+    "chamativasPorMinuto": 8,
+    "nuncaNoVideo": ["segue", "salva", "comenta", "link na bio"],
+    "nuncaInventar": ["número", "depoimento", "caso de cliente", "resultado financeiro"],
+    "evitar": ["ame o que faz no título (afasta na porta)", "depressão e ansiedade como isca", "promessa de resultado", "depoimento (psicólogo e nutri não podem usar)"]
+  },
+  "cta": { "topo": "manda pra quem atende bem e cobra pouco", "meio": "o vídeo completo está no canal" },
+  "provas": [],
+  "canais": {
+    "shorts": { "plataformas": ["instagram", "tiktok", "youtube-shorts"], "formato": "9:16" },
+    "comandante-imaterial": { "status": "confirmar", "nota": "Citado no teu texto como canal de documentário narrado. Estratégia dele fica em estudio/canais/comandante-imaterial.json quando me disseres o nicho." }
+  }
+}
