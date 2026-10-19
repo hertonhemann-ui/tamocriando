@@ -4,3 +4,5 @@ dist/
 .DS_Store
 Thumbs.db
 estudio/producoes/*/frames/
+estudio/producoes/*/som.wav
+estudio/producoes/*/cenas.json

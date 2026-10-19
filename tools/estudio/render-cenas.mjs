@@ -34,8 +34,10 @@ async function worker() {
   await page.evaluate((s) => window.cenaLoad(s), spec);
   for (;;) {
     const i = next++; if (i > b) break;
+    const dest = path.join(outDir, `f_${String(i).padStart(5, '0')}.jpg`);
+    if (fs.existsSync(dest) && fs.statSync(dest).size > 2000) { done++; continue; } // retoma de onde parou
     const url = await page.evaluate(({ t, n }) => window.cenaFrame(t, n), { t: i / spec.fps, n: sub });
-    fs.writeFileSync(path.join(outDir, `f_${String(i).padStart(5, '0')}.jpg`), Buffer.from(url.split(',')[1], 'base64'));
+    fs.writeFileSync(dest + '.tmp', Buffer.from(url.split(',')[1], 'base64')); fs.renameSync(dest + '.tmp', dest);
     if (++done % 60 === 0) process.stdout.write(`${done}/${b - a + 1} (${((Date.now() - t0) / 1000).toFixed(0)}s) `);
   }
   await browser.close();

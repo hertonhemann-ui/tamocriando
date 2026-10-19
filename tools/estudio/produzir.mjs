@@ -87,7 +87,7 @@ async function main() {
   console.log(`decupagem: ${deco.length} planos, ${dur.toFixed(1)} s`);
   if (rest.includes('--so-diretor')) return;
   const scale = flag('--scale', '0.5'), frames = path.join(dir, 'frames');
-  fs.rmSync(frames, { recursive: true, force: true });
+  if (!rest.includes('--retomar')) fs.rmSync(frames, { recursive: true, force: true });
   let r = spawnSync('node', [path.join(ROOT, 'tools/estudio/render-cenas.mjs'), path.join(dir, 'cenas.json'), frames, '--scale', scale, '--workers', flag('--workers', '4')], { stdio: 'inherit' });
   if (r.status) throw new Error('render falhou');
   sintetizar({ dur: spec.dur, bpm: spec.bpm, ev, dest: path.join(dir, 'som.wav') });
