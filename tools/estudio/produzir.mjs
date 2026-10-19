@@ -28,7 +28,8 @@ function camera(tipo, d, lado) {
   switch (tipo) {
     case 'empurra': return { ...base, x: [...whip, [d, -40, e]], z: [[0, 380], [d, -160, e]], ry: [[0, lado * 4], [d, -lado * 3, e]] };
     case 'puxa': return { ...base, x: [...whip, [d, 50, e]], z: [[0, -260], [d, 300, e]], fov: [[0, 36], [d, 44]] };
-    case 'orbita': return { ...base, x: [[0, lado * 260], [d, -lado * 260, e]], ry: [[0, lado * 11], [d, -lado * 11, e]], z: [[0, 120], [d, -60, e]] };
+    // órbita curta: com 260 px o texto saía pela borda no começo e no fim do plano
+    case 'orbita': return { ...base, x: [[0, lado * 90], [d, -lado * 90, e]], ry: [[0, lado * 7], [d, -lado * 7, e]], z: [[0, 120], [d, -60, e]] };
     case 'guindaste': return { ...base, x: whip, y: [[0, -260], [d, 240, e]], rx: [[0, -6], [d, 5, e]], z: [[0, 100], [d, 40, e]] };
     case 'diagonal': return { ...base, x: [...whip, [d, -lado * 70, e]], rz: [[0, lado * -5], [d, lado * 4, e]], z: [[0, 260], [d, -140, e]], ry: [[0, 3], [d, -6, e]] };
     case 'foco': return { ...base, x: [...whip, [d, lado * 40, e]], ap: 1.25, focus: [[0, 2350], [d * 0.55, 2350], [d, 3350, 'io']], z: [[0, 160], [d, -60, e]], ry: [[0, 6 * lado], [d, -4 * lado, e]] };
@@ -47,7 +48,7 @@ export function dirigir(rot) {
     const beats = cl(Math.ceil((n * 0.34 + 1.1 + (f.extra || 0)) / BEAT), 4, 11), adv = beats * BEAT, last = i === rot.falas.length - 1, d = adv + (last ? 1.2 : OV);
     let tipo = PLANOS[(i * 5 + (f.ato ? f.ato.length : 0)) % PLANOS.length]; if (tipo === prev) tipo = PLANOS[(PLANOS.indexOf(tipo) + 1) % PLANOS.length]; prev = tipo;
     const lado = i % 2 ? 1 : -1, papel = f.tema === 'papel', mudaAto = f.ato && f.ato !== atoPrev; atoPrev = f.ato || atoPrev;
-    const size = n <= 3 ? 220 : n <= 5 ? 180 : n <= 7 ? 150 : 128, flat = pal.map((w, j) => ({ t: w.replace(/,/g, ''), hi: j === hiIdx }));
+    const longa = Math.max(...pal.map((w) => w.length)), size = Math.min(n <= 3 ? 220 : n <= 5 ? 180 : n <= 7 ? 150 : 128, Math.floor(560 / (0.47 * longa))), flat = pal.map((w, j) => ({ t: w.replace(/,/g, ''), hi: j === hiIdx }));
     const color = papel ? '#1A1714' : '#EFE9DF', anim = ANIM[(i * 3 + 1) % ANIM.length];
     const heroi = f.cena && i % 2 === 1, planes = [];
     if (i % 3 !== 2) planes.push({ k: 'chao', y: -1000, z: -300, op: papel ? 0.22 : 0.38 });
@@ -57,7 +58,8 @@ export function dirigir(rot) {
       planes.push({ k: 'prop', n: f.cena, S: heroi ? 1050 : 780, hi: true, x: heroi ? 0 : pp.x, y: heroi ? 150 : pp.y, z: heroi ? -420 : -330, ry: [[0, pp.ry], [d, -pp.ry, 'io']], rz: [[0, -2], [d, 2, 'io']], op: [[0, 0], [0.35, 1, 'out']] });
     }
     planes.push({ k: 'brilho', w: 1300, c: '#C8502A', x: lado * 40, y: -40, z: -250, op: papel ? 0.25 : 0.5, s: [[0, .8], [d, 1.25, 'io']] });
-    planes.push({ k: 'bloco', size, flat, maxw: 780, color, anim, stagger: 0.085, dw: 0.42, x: 0, y: heroi ? 700 : ((i % 3) - 1) * 120, z: 0, rz: [[0, lado * 1.5], [d, -lado * 1.5, 'io']], ry: [[0, 3], [d, -3, 'io']], s: heroi ? 0.82 : 1 });
+    // herói abaixo da faixa de 12% do topo, que o app cobre com a interface
+    planes.push({ k: 'bloco', size, flat, maxw: 620, color, anim, stagger: 0.085, dw: 0.42, x: 0, y: heroi ? 430 : ((i % 3) - 1) * 120, z: 0, rz: [[0, lado * 1.5], [d, -lado * 1.5, 'io']], ry: [[0, 3], [d, -3, 'io']], s: heroi ? 0.82 : 1 });
     const flash = mudaAto ? { a: [[0, 0.95], [0.16, 0, 'out']], c: papel ? '#1A1714' : '#EFE9DF' } : f.impacto ? { a: [[0, 0.5], [0.12, 0, 'out']], c: '#C8502A' } : undefined;
     shots.push({ i, t0: +t.toFixed(3), dur: +d.toFixed(3), bg: papel ? 'papel' : 'tinta', particulas: papel ? 26 : 52, cam: camera(tipo, d, lado), planes, flash, op: [[0, 0], [OV * .9, 1, 'out'], [Math.max(OV, d - OV), 1], [d, last ? 1 : 0, 'in']] });
     deco.push({ i, t: t, beats, tipo, cena: f.cena || '-', ato: f.ato || '', texto: f.texto, papel, flash: !!flash });
