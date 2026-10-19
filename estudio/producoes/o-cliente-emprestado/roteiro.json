@@ -1,0 +1,148 @@
+{
+ "versao": 2,
+ "id": "o-cliente-emprestado",
+ "titulo": "o cliente que não é teu",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "porta",
+   "impacto": true,
+   "destaque": "teu",
+   "texto": "de quem é o teu cliente?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "indicação",
+   "texto": "se a agenda vive de plataforma, convênio ou indicação..."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "teu",
+   "texto": "o cliente não é teu."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "emprestado",
+   "texto": "é emprestado."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "bem",
+   "texto": "tu atende bem."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "gosta",
+   "texto": "ele gosta de ti."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "fila",
+   "destaque": "some",
+   "texto": "e some quando a plataforma muda a regra."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "para",
+   "texto": "ou quando a indicação para."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "agenda",
+   "impacto": true,
+   "destaque": "zero",
+   "texto": "e tu volta pro zero."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "cansa",
+   "texto": "cansa, né?"
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "impacto": true,
+   "destaque": "reputação",
+   "texto": "tu construiu a reputação de outro."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "etiqueta",
+   "destaque": "plataforma",
+   "texto": "o nome que aparece é o da plataforma."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "olho",
+   "impacto": true,
+   "destaque": "reconhece",
+   "texto": "cliente teu é o que te reconhece."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "página",
+   "texto": "antes de abrir qualquer página."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "lupa",
+   "destaque": "problema",
+   "texto": "pelo jeito que tu fala o problema dele."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "porta",
+   "destaque": "desligar",
+   "texto": "isso ninguém consegue desligar."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "pequeno",
+   "texto": "começa pequeno."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "cena": "contrato",
+   "destaque": "palavras",
+   "texto": "escreve o problema do teu cliente com as palavras dele."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "tuas",
+   "texto": "não com as tuas."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "semana",
+   "texto": "e diz isso em voz alta, toda semana."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "emprestada",
+   "texto": "aos poucos a agenda deixa de ser emprestada."
+  }
+ ]
+}

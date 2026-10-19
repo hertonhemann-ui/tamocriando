@@ -1,0 +1,160 @@
+{
+ "versao": 2,
+ "id": "o-cara-lotado",
+ "titulo": "o cara que entrega menos e tá lotado",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "fila",
+   "impacto": true,
+   "destaque": "lotado",
+   "texto": "por que o cara que entrega menos que tu tá lotado?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "melhor",
+   "texto": "ele não é melhor."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "ler",
+   "texto": "ele é só mais fácil de ler."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "diplomas",
+   "destaque": "melhor",
+   "texto": "tu passa anos ficando melhor."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "capricho",
+   "texto": "mais técnica, mais curso, mais capricho."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "comparação",
+   "texto": "só que melhor é uma comparação."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "regua",
+   "destaque": "quem",
+   "texto": "melhor do que quem? melhor pra quem?"
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "regua",
+   "destaque": "régua",
+   "texto": "tu compete numa régua que o cliente nem enxerga."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "impacto": true,
+   "destaque": "melhor",
+   "texto": "o cliente não escolhe quem é melhor."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "olho",
+   "destaque": "ler",
+   "texto": "ele escolhe quem ele consegue ler."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "camiseta",
+   "destaque": "camiseta",
+   "texto": "pensa numa camiseta de time."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "estádio",
+   "texto": "dentro do estádio ela faz sentido."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "multidao",
+   "destaque": "ninguém",
+   "texto": "no meio da rua ninguém dá bola."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "mesma",
+   "texto": "a camiseta é a mesma."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "impacto": true,
+   "destaque": "lendo",
+   "texto": "mudou quem tá lendo."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "melhor",
+   "texto": "o cara lotado não é melhor que tu."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "legível.",
+   "texto": "ele só é legível."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "aí",
+   "texto": "tua técnica já tá aí."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "tradução",
+   "texto": "o que falta é tradução."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "depende",
+   "texto": "e traduzir não depende do mercado."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "cena": "lupa",
+   "destaque": "cliente",
+   "texto": "começa pela palavra que o teu cliente usa."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "tuas",
+   "texto": "não pelas tuas."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "lido",
+   "texto": "valor tu já tem. agora ele precisa ser lido."
+  }
+ ]
+}

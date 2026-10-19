@@ -1,0 +1,145 @@
+{
+ "versao": 2,
+ "id": "quem-ensina-a-vender",
+ "titulo": "tu desconfia de quem ensina a vender",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "lupa",
+   "impacto": true,
+   "destaque": "desconfia",
+   "texto": "tu desconfia de quem ensina a vender?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "certo",
+   "texto": "tá certo em desconfiar."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "também",
+   "texto": "eu também desconfio."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "mentoria",
+   "texto": "tem mentoria que só vende mentoria."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "etapas",
+   "texto": "empacota em trocentas etapas."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "prometer",
+   "texto": "promete o que ninguém pode prometer."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "pagou",
+   "texto": "e tu já pagou por isso uma vez."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "colega",
+   "texto": "ou viu um colega pagar."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "tudo",
+   "texto": "aí fecha o olho pra tudo."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "impacto": true,
+   "destaque": "continua",
+   "texto": "só que o problema continua lá."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "agenda",
+   "destaque": "buraco",
+   "texto": "agenda com buraco."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "fila",
+   "destaque": "indicação",
+   "texto": "cliente que só chega por indicação."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "inteligência",
+   "texto": "desconfiar é inteligência."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "parar",
+   "texto": "o erro é parar de procurar."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "venda",
+   "texto": "porque o problema não é de venda."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "olho",
+   "impacto": true,
+   "destaque": "leitura.",
+   "texto": "é de leitura."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "método",
+   "texto": "antes de qualquer método, uma pergunta."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "cena": "porta",
+   "destaque": "escolher",
+   "texto": "o que muda na vida dele se não te escolher?"
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "método",
+   "texto": "se tu não sabe responder, método nenhum ajuda."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "começar",
+   "texto": "se sabe, tu já tem por onde começar."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "teu",
+   "texto": "desconfia. e começa pelo que é teu."
+  }
+ ]
+}

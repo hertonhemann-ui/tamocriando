@@ -1,0 +1,148 @@
+{
+ "versao": 2,
+ "id": "o-preco",
+ "titulo": "o preço fala antes de ti",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "prato",
+   "impacto": true,
+   "destaque": "caro",
+   "texto": "por que tu paga caro num restaurante?"
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "comida",
+   "texto": "e não é pela comida."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "arroz",
+   "texto": "o arroz é arroz em qualquer lugar."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "etiqueta",
+   "destaque": "barato",
+   "texto": "agora pensa em quem cobra barato."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "triste",
+   "texto": "cobrou barato e ficou triste."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "agenda",
+   "texto": "achou que o preço baixo ia encher a agenda."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "multidao",
+   "destaque": "regateia",
+   "texto": "encheu de gente que regateia."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "etiqueta",
+   "impacto": true,
+   "destaque": "falou",
+   "texto": "e o preço baixo falou antes de tu."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "etiqueta",
+   "impacto": true,
+   "destaque": "lê",
+   "texto": "preço é a primeira coisa que o cliente lê."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "diplomas",
+   "destaque": "diploma",
+   "texto": "antes do teu diploma."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "cuidado",
+   "texto": "antes do teu cuidado."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "boca",
+   "texto": "antes de tu abrir a boca."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "prato",
+   "impacto": true,
+   "destaque": "comida",
+   "texto": "o restaurante não vende comida."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "sentir",
+   "texto": "vende o que dá pra sentir antes."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "também",
+   "texto": "tu também vende isso."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "cena": "olho",
+   "destaque": "mostra",
+   "texto": "só que tu entrega e não mostra."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "gritar",
+   "texto": "mostrar não é gritar."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "cena": "porta",
+   "destaque": "muda",
+   "texto": "é deixar claro o que muda na vida dele."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "pergunta",
+   "texto": "quando fica claro, o preço deixa de ser a pergunta."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "consequência",
+   "texto": "vira consequência."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "lido",
+   "texto": "preço é o que sobra de um valor bem lido."
+  }
+ ]
+}

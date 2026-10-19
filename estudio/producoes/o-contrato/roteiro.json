@@ -1,0 +1,167 @@
+{
+ "versao": 2,
+ "id": "o-contrato",
+ "titulo": "o contrato que tu assinou sem ler",
+ "bpm": 92,
+ "falas": [
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "cena": "contrato",
+   "impacto": true,
+   "destaque": "esforça",
+   "texto": "te disseram que quem se esforça chega lá."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "destaque": "esforçou",
+   "texto": "tu te esforçou."
+  },
+  {
+   "ato": "gancho",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "chegou",
+   "texto": "tu não chegou."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "esforço",
+   "texto": "e não foi por falta de esforço."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "",
+   "texto": "deixa eu ver se eu acerto."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "olho",
+   "destaque": "bom",
+   "texto": "tu é bom no que faz. bom de verdade."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "multidao",
+   "destaque": "voltam",
+   "texto": "teus clientes voltam, indicam, agradecem."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "diplomas",
+   "destaque": "estudou",
+   "texto": "tu estudou. faculdade, curso, outro curso."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "agenda",
+   "destaque": "buraco",
+   "texto": "e mesmo assim a agenda tem buraco."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "",
+   "texto": "aí tu olha pro lado."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "fila",
+   "destaque": "menos",
+   "texto": "tem aquele cara que entrega menos que tu."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "cena": "fila",
+   "impacto": true,
+   "destaque": "lotado",
+   "texto": "e ele tá lotado."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "mais",
+   "texto": "tu faz o que te ensinaram: mais um curso, mais um post."
+  },
+  {
+   "ato": "inferno",
+   "tema": "tinta",
+   "destaque": "muda",
+   "texto": "e nada muda."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "contrato",
+   "impacto": true,
+   "destaque": "contrato",
+   "texto": "lá atrás tu assinou um contrato."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "assinou",
+   "texto": "ninguém te mostrou, mas tu assinou."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "cena": "contrato",
+   "destaque": "esforça",
+   "texto": "a cláusula mais forte: se esforça que dá certo."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "cumpriu",
+   "texto": "tu cumpriu a tua parte."
+  },
+  {
+   "ato": "virada",
+   "tema": "papel",
+   "destaque": "nunca",
+   "texto": "o problema é que o outro lado nunca assinou."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "existe",
+   "texto": "o mercado não sabe que esse contrato existe."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "destaque": "falta",
+   "texto": "teu valor não tá em falta."
+  },
+  {
+   "ato": "pagamento",
+   "tema": "tinta",
+   "impacto": true,
+   "destaque": "ilegível.",
+   "texto": "tá ilegível."
+  },
+  {
+   "ato": "purgatorio",
+   "tema": "papel",
+   "destaque": "controle",
+   "texto": "e legibilidade tá no teu controle."
+  },
+  {
+   "ato": "fecho",
+   "tema": "tinta",
+   "cena": "chama",
+   "destaque": "construir",
+   "texto": "e o esforço começa a construir alguma coisa."
+  }
+ ]
+}
