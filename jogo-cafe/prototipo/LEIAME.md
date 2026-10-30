@@ -1,49 +1,90 @@
-# Protótipo dos 5 dias (v3)
+# Protótipo dos 5 dias (v4)
 
-Arquivo único (`index.html`), roda no navegador. Link jogável: https://claude.ai/artifact/SSGaFWTBBeJBKVcKaKTJtr
+Link jogável: https://claude.ai/artifact/SSGaFWTBBeJBKVcKaKTJtr
 
-## O que mudou na v3
+## Como o código está organizado
 
-**Estrutura**
-- Menu principal: Continuar, Novo jogo, Carregar, Som e Fechar.
-- Menu dentro do jogo (botão Menu ou `Esc`): voltar, salvar em 3 espaços, carregar, som, sair para o menu principal e fechar.
-- Salvamento automático no começo de cada manhã e de cada noite. Durante o expediente o menu pausa o jogo, mas não salva o meio do dia.
+O jogo é um arquivo único (`index.html`), mas ele é **montado** a partir de partes em `src/`:
 
-**Motivo pra continuar jogando**
-- **Objetivo da semana:** pagar a parcela de R$ 400 à Dona Cida na sexta. O topo da tela mostra quanto falta. Cada compra de melhoria disputa esse dinheiro.
-- **Metas do dia:** três por dia, cada uma com bônus em dinheiro e uma estrela. O fim do dia mostra de 0 a 3 estrelas.
-- **Combo:** clientes atendidos a tempo, em sequência, multiplicam a gorjeta (x1,25 no 3, x1,5 no 6, x2 no 10). Um cliente irritado zera.
-- **Ponto perfeito:** nas etapas de mão (moer, chocolate, vaporizar), tocar de novo quando o cursor passa pela faixa verde deixa o item perfeito (★). Item perfeito rende gorjeta extra.
-- **Clientes com traço:** apressado (espera pouco, paga mais), exigente (só aceita bebida perfeita) e generoso (gorjeta em dobro).
-- **Especialidades:** ao subir Cozinha ou Atendimento para o nível 1 ou 2, tu escolhe uma entre duas especialidades.
-- **Receita nova no meio da semana:** o Mocha, achado no caderno da Dona Cida na quarta. Tem 4 etapas e custa R$ 12.
+```
+./build.sh        # junta src/* (ordem alfabética) em index.html
+```
 
-**Visual e som**
-- Cena com mais resolução, luz das luminárias, luz da janela mudando com a hora, sombras, vinheta e degradês com dithering.
-- Personagens maiores, com sombreado e expressão (sorriem atendidos, franzem a testa quando a paciência acaba).
-- Ícones pixel dos itens nos pedidos, na bandeja, nos botões e nos balões acima dos clientes.
-- Textos corridos numa fonte de alta legibilidade. A fonte pixel fica só para títulos e números.
-- Efeitos sonoros (moedor, vapor, caixa, combo, meta, erro) e textos flutuantes de dinheiro, combo e "PERFEITO!". A tela treme quando alguém vai embora irritado.
+Edite sempre os arquivos de `src/` e rode `./build.sh`. Os números mostram a ordem:
+
+| Faixa | Conteúdo |
+|---|---|
+| `00` | CSS, HTML e abertura do script |
+| `10`–`16` | ícones, som, dados (receitas, móveis, estilos), estado, metas, eventos, ações |
+| `20`–`25` | sprites, efeitos, **isométrico**, **sala estática**, rua, **cena do café** |
+| `30`–`32` | expediente: clientes e mesas, atores e tarefas, laço |
+| `40`–`45` | painel de trabalho, mapa, modais, menu e salvamento, fluxo do dia, **loja de móveis** |
+| `50` | laço principal |
+
+Para depurar no navegador, abra o `index.html` com `#debug` na URL e use `__cafe("S.caixa")` no console.
+
+## O que mudou na v4
+
+**Visual 2.5D.** O café agora é desenhado em projeção isométrica 2:1 (tile 32×16), com profundidade de verdade:
+- caixas com três faces sombreadas (luz vem do alto à esquerda), sombras no chão deslocadas para longe da luz;
+- ordenação por profundidade: quem está atrás do balcão aparece escondido por ele, quem está na frente aparece sobre ele;
+- janelas projetam luz no chão, lâmpadas pendentes brilham, o céu da janela muda ao longo do expediente, vinheta nas bordas;
+- polígonos desenhados linha a linha, sem suavização, pra manter o pixel nítido.
+
+**Personagem que anda (vibe Overcooked).**
+- Cada tarefa leva o personagem fisicamente até o lugar: moedor, forno, balcão, mesa.
+- Dá pra clicar nos objetos da cena (moedor, forno, mesa, cliente) ou nos botões do painel. Os dois fazem a mesma coisa.
+- Tu pode **enfileirar** até 5 tarefas; ele faz na ordem. Cada uma na fila tem um × pra cancelar.
+- O ponto perfeito só começa quando ele chega na estação.
+- Depois de entregar, o balcão e a cozinha têm um corredor: quem vai à mesa passa pela abertura do lado direito.
+
+**Mesas e clientes sentados.**
+- Cliente de balcão: chega, pede na hora, espera de pé, paga ao receber. O pedido só aparece **depois que ele chega** (antes dava pra entregar com ele ainda entrando).
+- Cliente de mesa: chega, senta, **tu anota o pedido**, prepara, **serve na mesa**, ele come, paga, e a mesa fica **suja**. Ninguém senta numa mesa suja até alguém limpar.
+- Quem senta pede mais (1 a 3 itens), espera mais e deixa mais gorjeta. Mas custa três idas ao salão.
+- As mesas abrem no dia 2. Dia 1 continua só com balcão, pra aprender.
+
+**Móveis & Cia (Dona Nair)**, aberta na noite do dia 2:
+- 6 posições de mesa. Cada uma tem **mesa** e **cadeira**, escolhidas separadamente.
+- 7 modelos de mesa e 7 de cadeira, cada um com atributos: **Conforto** (clientes esperam mais e dão gorjeta), **Aconchego** (ficam mais e às vezes pedem sobremesa), **Charme** (rende mais fama) e **Giro** (comem rápido e liberam a mesa).
+- Decoração: pintura da parede, piso, quadro e planta.
+- Trocar uma peça devolve 50% do valor da antiga.
+
+**Estilo do café (a marca).** Toda peça tem um estilo (Rústico, Moderno, Vintage ou Verde). Quando um estilo domina (pelo menos 50% e 4 peças), o café ganha uma identidade com bônus:
+
+| Estilo | Efeito |
+|---|---|
+| Rústico | Clientes esperam 15% mais; mesas dão R$ 1 a mais de gorjeta |
+| Moderno | 10% mais clientes; quem senta come 15% mais rápido |
+| Vintage | Fama por cliente sobe 30% |
+| Verde | Clientes esperam 10% mais; tu dorme com +6 de ânimo |
+| Eclético | Sem identidade: só 5% mais clientes curiosos |
+
+O estilo aparece na ficha ao lado, no epílogo e na fala da Dona Nair. Equipamentos também contam: moedor elétrico e máquina de dois grupos puxam pro Moderno; o coador artesanal puxa pro Rústico.
+
+**Outras coisas.**
+- Coador artesanal (R$ 45 no Fornecedor) libera o **Café coado**: mais lento, mas artesanal e rende fama extra.
+- A Bia ganhou um quarto papel: **salão** (anota, serve e limpa as mesas). Ela agora também anda pelo café.
+- Metas novas quando há mesas: "servir clientes sentados" e "limpar mesas".
+- A Dona Lúcia adota uma poltrona se tiver uma.
 
 ## Atalhos
 
-`Q` espresso · `W` cappuccino · `E` mocha · `1`–`4` etapa de mão no preparo · `espaço` acertar o ponto · `F` assar · `Z X C V B` entregar · `Esc` menu
+`Q` espresso · `W` cappuccino · `E` mocha · `T` coado · `1`–`4` etapa de mão no preparo · `espaço` acertar o ponto · `F` assar · `Z X C V B` agir sobre os cartões · `Esc` menu
 
-## O que a pesquisa disse (e onde entrou)
+## Referências usadas
 
-| Fonte | Ideia | No jogo |
+| Fonte | Ideia | Onde entrou |
 |---|---|---|
-| Estudos de *game feel* e *juice* | Toda ação precisa de resposta audiovisual, mas em cima de um núcleo que já funciona | Sons, textos flutuantes, tremida, animação na bandeja |
-| Cook, Serve, Delicious | O vício vem da sequência de pedidos perfeitos e do som de cada etapa | Combo, ponto perfeito, dia com 3 estrelas |
-| Coffee Talk | Cortar o que não é essencial; a história avança pelo jeito de servir | Clientes exigentes, Dona Lúcia reage a como foi atendida |
-| Guias de onboarding | Os primeiros minutos precisam de propósito claro e de uma escolha cedo | Parcela de sexta desde a primeira fala, metas visíveis, escolha da Bia no fim do dia 1 |
-| Críticas ao Punch Club | O risco do gênero é virar uma rotina de grind | Metas variam todo dia, receita nova na quarta, eventos com consequência |
-| Técnicas de pixel art 16 bits | Uma direção de luz, sombras em tons frios, dithering nos degradês | Luminárias âmbar, sombras roxas, céu e parede com dithering |
+| Guias de renderização isométrica | Projeção 2:1 e ordenação por profundidade com sprites em pé | Cena do café, balcão em segmentos para ordenar com clientes |
+| Análise de jogos de atendimento (Treanor e Nelson) | O núcleo é entregar o serviço antes do contador de espera acabar | Pedido, espera, entrega e limpeza como ciclo |
+| Análises do Overcooked | Mover o personagem custa tempo, e isso faz o layout importar | Personagem que anda, fila de tarefas, corredor atrás do balcão |
+| Two Point Hospital | Itens decorativos mudam atributos da sala | Atributos das peças e estilo do café |
 
 ## Como testar
 
-1. O tutorial deixou claro o que fazer? Acertou o ponto perfeito?
-2. Em que momento tu quis jogar mais um dia?
-3. A parcela de sexta mudou o jeito de gastar?
-4. Combo e metas deram vontade de jogar melhor?
-5. Me conta tua semana.
+1. O tutorial deixou claro que o personagem anda e que dá pra clicar nas coisas?
+2. Tu enfileirou tarefas? Deu pra planejar?
+3. Valeu a pena ter cliente sentado? Em que momento virou bagunça?
+4. Qual estilo tu escolheu? Por quê?
+5. Dava vontade de jogar mais um dia?
