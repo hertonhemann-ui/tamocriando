@@ -95,7 +95,7 @@ const CADEIRAS = {
 };
 const DECOR = {
   parede: { nome: 'Pintura da parede', opc: {
-    padrao: { nome: 'Lilás escuro (original)', preco: 0, estilo: null, attr: {}, d: '#6e4a5e', e: '#5a3b4e', f: '#4a2a42', tr: '#8a6078' },
+    padrao: { nome: 'Lilás escuro (original)', preco: 0, estilo: null, attr: {}, d: '#80566e', e: '#6a4660', f: '#4e2e46', tr: '#9c7088' },
     tijolo: { nome: 'Tijolo aparente', preco: 50, estilo: 'rustico', attr: { aconchego: 1, charme: 1 }, d: '#a8553a', e: '#8e4630', f: '#5a3a22', tr: '#c9a06a', tijolo: true },
     salvia: { nome: 'Verde-sálvia', preco: 40, estilo: 'verde', attr: { conforto: 1, aconchego: 1 }, d: '#86ad8f', e: '#6f9778', f: '#4a6a52', tr: '#d8e8d0' },
     petroleo: { nome: 'Azul petróleo', preco: 45, estilo: 'moderno', attr: { charme: 2 }, d: '#3a6b80', e: '#2f5a6c', f: '#1f3f4c', tr: '#8fb8c8' },

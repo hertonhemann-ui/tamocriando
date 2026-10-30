@@ -26,6 +26,7 @@ function sfx(tipo, extra = 0) {
   else if (tipo === 'nivel') { [392, 523, 659, 784, 1047].forEach((f, i) => tom(f, 0.1, 'triangle', 0.06, i * 0.07)); }
   else if (tipo === 'limpa') { tom(300, 0.12, 'sawtooth', 0.025, 0, 600); tom(500, 0.12, 'sawtooth', 0.025, 0.12, 250); }
   else if (tipo === 'anota') { tom(1200, 0.04, 'square', 0.03); tom(1500, 0.05, 'square', 0.03, 0.06); }
+  else if (tipo === 'miau') { tom(700, 0.18, 'triangle', 0.04, 0, 1100); tom(1000, 0.2, 'triangle', 0.03, 0.14, 600); }
   else if (tipo === 'sentar') tom(260, 0.09, 'triangle', 0.04, 0, 180);
   else if (tipo === 'porta') tom(1200, 0.25, 'triangle', 0.03, 0, 1000);
 }

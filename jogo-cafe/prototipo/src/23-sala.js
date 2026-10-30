@@ -20,20 +20,32 @@ function parede(plano, u0, u1, z0, z1, col) { // retângulo sobre a parede (plan
 }
 function linhaParede(plano, u0, z0, u1, z1, col) { const f = plano === 'R' ? RW : LW, a = f(u0, z0), b = f(u1, z1); lin(a[0], a[1], b[0], b[1], col); }
 
+function fioPontos() { const out = []; for (let k = 0; k <= 40; k++) { const u = 0.6 + k * 0.26, sag = Math.sin((k % 8) / 8 * Math.PI) * 3; out.push(RW(u, 49 - sag)); } return out; }
 function desenhaSala(bucket) {
   const pint = DECOR.parede.opc[S.salao.decor.parede], pisoId = S.salao.decor.piso;
-  r(0, 0, CW, CH, '#0e0a1c');
-  // ---- piso ----
+  { const g = cx.createRadialGradient(CW / 2, CH / 2, 20, CW / 2, CH / 2, CW * 0.6); g.addColorStop(0, '#241a3e'); g.addColorStop(1, '#0a0716'); cx.fillStyle = g; cx.fillRect(0, 0, CW, CH); }
+  // ---- piso (com textura) ----
   for (let gy = 0; gy < ROWS; gy++) for (let gx = 0; gx < COLS; gx++) {
-    let c;
-    if (gy < 3) c = (gx + gy) % 2 ? '#c8ccd6' : '#aeb4c2';                       // cozinha: azulejo cinza
-    else if (pisoId === 'xadrez') c = (gx + gy) % 2 ? '#ece4d8' : '#2a2430';
-    else if (pisoId === 'concreto') c = ((gx * 7 + gy * 3) % 5 === 0) ? '#6c6c78' : '#7a7a86';
-    else if (pisoId === 'ladrilho') c = (gx + gy) % 2 ? '#5f9a6a' : '#4a8456';
-    else c = gy % 2 ? '#6c4830' : '#7a5238';                                       // tábua corrida
+    let c; const v = Math.round((rh(gx, gy) - 0.5) * 12);
+    if (gy < 3) c = (gx + gy) % 2 ? '#d8dce2' : '#bcc3ce';
+    else if (pisoId === 'xadrez') c = (gx + gy) % 2 ? '#efe8dc' : '#2e2834';
+    else if (pisoId === 'concreto') c = tom('#7e7e8a', v);
+    else if (pisoId === 'ladrilho') c = (gx + gy) % 2 ? '#66a472' : '#4e8a5c';
+    else c = tom(gy % 2 ? '#8c5c38' : '#9c6a44', v);
     poly([PT(gx, gy), PT(gx + 1, gy), PT(gx + 1, gy + 1), PT(gx, gy + 1)], c);
-    if (gy >= 3 && pisoId === 'padrao') { const a = PT(gx, gy), b = PT(gx, gy + 1); lin(a[0], a[1], b[0], b[1], 'rgba(30,14,8,.35)'); }
+    if (gy < 3) { granula(gx, gy, c, 6, 10, -12); const a = PT(gx, gy), b = PT(gx + 1, gy), d = PT(gx, gy + 1); lin(a[0], a[1], b[0], b[1], 'rgba(60,70,90,.35)'); lin(a[0], a[1], d[0], d[1], 'rgba(60,70,90,.35)'); }
+    else if (pisoId === 'padrao') {
+      granula(gx, gy, c, 16, 16, -20);
+      for (let k = 0; k < 2; k++) { const u = 0.1 + rh(gx, gy, 90 + k) * 0.4, w = 0.15 + rh(gx, gy, 95 + k) * 0.35, vv = 0.2 + rh(gx, gy, 99 + k) * 0.6, a = PT(gx + u, gy + vv), b = PT(gx + u + w, gy + vv); lin(a[0], a[1], b[0], b[1], tom(c, -26)); }
+      const a = PT(gx, gy), d = PT(gx, gy + 1); lin(a[0], a[1], d[0], d[1], 'rgba(40,18,8,.45)');
+    } else if (pisoId === 'concreto') { granula(gx, gy, c, 22, 12, -14); if (rh(gx, gy, 7) > 0.8) { const a = PT(gx + 0.2, gy + 0.3), b = PT(gx + 0.7, gy + 0.6); lin(a[0], a[1], b[0], b[1], tom(c, -34)); } }
+    else { granula(gx, gy, c, 8, 12, -14); const a = PT(gx, gy), b = PT(gx + 1, gy), d = PT(gx, gy + 1); lin(a[0], a[1], b[0], b[1], tom(c, -30)); lin(a[0], a[1], d[0], d[1], tom(c, -30)); }
   }
+  // capacho junto da porta
+  poly([PT(0.1, 6.0), PT(1.05, 6.0), PT(1.05, 7.2), PT(0.1, 7.2)], '#7a2a30'); poly([PT(0.2, 6.1), PT(0.95, 6.1), PT(0.95, 7.1), PT(0.2, 7.1)], '#a8403e');
+  for (let k = 0; k < 4; k++) { const a = PT(0.2, 6.25 + k * 0.22), b = PT(0.95, 6.25 + k * 0.22); lin(a[0], a[1], b[0], b[1], '#6a2428'); }
+  // sombras projetadas dos objetos fixos
+  comSombras(() => { sombraVolume(0.45, 1.5, 0.55, 0.55, 9); sombraVolume(0.5, 2.15, 0.55, 0.55, 9); if (S.salao.decor.planta !== 'nenhuma') sombraVolume(0.55, 7.9, 0.7, 0.7, 24); }, 0.4);
   // oclusão ambiente junto às paredes
   for (let gx = 0; gx < COLS; gx++) poly([PT(gx, 0), PT(gx + 1, 0), PT(gx + 1, 0.7), PT(gx, 0.7)], 'rgba(10,5,25,.20)');
   for (let gy = 0; gy < ROWS; gy++) poly([PT(0, gy), PT(0.7, gy), PT(0.7, gy + 1), PT(0, gy + 1)], 'rgba(10,5,25,.20)');
@@ -44,6 +56,9 @@ function desenhaSala(bucket) {
   } else {
     ['R', 'L'].forEach(pl => { const n = pl === 'R' ? COLS : ROWS; for (let u = 0.5; u < n; u += 1) linhaParede(pl, u, 20, u, WH, 'rgba(255,255,255,.05)'); });
   }
+  for (let k = 0; k < 420; k++) { const u = rh(k, 3) * COLS, z = 18 + rh(k, 4) * (WH - 19), p = RW(u, z); cx.fillStyle = rh(k, 5) > 0.5 ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.10)'; cx.fillRect(p[0], p[1], 1, 1); }
+  for (let k = 0; k < 360; k++) { const v = rh(k, 6) * ROWS, z = 18 + rh(k, 7) * (WH - 19), p = LW(v, z); cx.fillStyle = rh(k, 8) > 0.5 ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.12)'; cx.fillRect(p[0], p[1], 1, 1); }
+  parede('R', 0, COLS, 44, WH, 'rgba(0,0,0,.12)'); parede('L', 0, ROWS, 44, WH, 'rgba(0,0,0,.14)');
   parede('R', 0, COLS, 0, 18, pint.f); parede('L', 0, ROWS, 0, 18, tom(pint.f, -14));
   linhaParede('R', 0, 18, COLS, 18, pint.tr); linhaParede('L', 0, 18, ROWS, 18, tom(pint.tr, -25));
   linhaParede('R', 0, WH - 1, COLS, WH - 1, tom(pint.tr, -20)); linhaParede('L', 0, WH - 1, ROWS, WH - 1, tom(pint.tr, -35));
@@ -96,6 +111,10 @@ function desenhaSala(bucket) {
   // forno
   caixa(8.35, 0.1, 1.9, 1.0, 20, 14, { t: '#60606e', l: '#44444e', r: '#2e2e36' });
   { const a = PT(8.55, 1.1, 30), b = PT(10.0, 1.1, 30), c = PT(10.0, 1.1, 18), d = PT(8.55, 1.1, 18); poly([a, b, c, d], '#1c1c24'); const a2 = PT(8.65, 1.1, 28), b2 = PT(9.9, 1.1, 28), c2 = PT(9.9, 1.1, 20), d2 = PT(8.65, 1.1, 20); poly([a2, b2, c2, d2], '#3a2a2a'); }
+  // sacos de café (juta) no canto da cozinha
+  [[0.45, 1.5], [0.5, 2.15]].forEach(([x, y], k) => { caixa(x, y, 0.55, 0.55, 9, 0, { t: '#e0c080', l: '#bc985c', r: '#8e6e3c' }); const p = PT(x + 0.27, y + 0.27, 9); r(p[0] - 2, p[1] - 2, 4, 2, '#8e6e3c'); r(p[0] - 1, p[1] - 3, 2, 1, '#6a5028'); if (k === 0) r(p[0] + 3, p[1] + 2, 3, 2, '#2f6a3a'); });
+  // fio de luzinhas na parede da direita
+  { const pts = fioPontos(); for (let i = 1; i < pts.length; i++) lin(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1], '#2a1a14'); pts.forEach((p, i) => { if (i % 3 === 0) { r(p[0] - 1, p[1] + 1, 3, 3, '#ffe9a0'); r(p[0], p[1] + 1, 1, 1, '#ffffff'); } }); }
   // plantas do canto
   const pl = S.salao.decor.planta;
   if (pl !== 'nenhuma') {

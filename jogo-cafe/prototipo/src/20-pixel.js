@@ -22,30 +22,36 @@ function luz(x, y, raio, cor, forca = 0.35) {
 }
 function sombra(x, y, w, a = 0.35) { r(x - w / 2 + 1, y, w - 2, 1, `rgba(10,5,25,${a})`); r(x - w / 2, y + 1, w, 1, `rgba(10,5,25,${a * 0.7})`); }
 function spriteBase(x, y, p, o = {}) {
-  // 12x24, (x,y) = pés no centro
-  const bob = o.bob ? Math.round(Math.sin(o.bob) * 0.7) : 0;
-  const X = Math.round(x) - 6, Y = Math.round(y) - 24 + bob;
-  const roupa = p.roupa, rS = tom(roupa, -45), rL = tom(roupa, 30), pele = p.pele, pS = tom(pele, -35), ol = '#120a1e';
+  // 12x24; (x,y) = pés. Contorno colorido (tom escuro da própria cor), ciclo de caminhada e braços que balançam.
+  const ph = o.bob || 0, and = !!o.andando;
+  const sw = and ? Math.round(Math.sin(ph)) : 0;
+  const up = and ? (Math.abs(Math.sin(ph)) > 0.75 ? 1 : 0) : (o.bob ? Math.round(Math.sin(ph) * 0.6) : 0);
+  const X = Math.round(x) - 6, Y = Math.round(y) - 24 - up;
+  const pele = p.pele, peS = tom(pele, -34), peO = tom(pele, -100), ro = tom(p.roupa, -90), rL = tom(p.roupa, 34), rS = tom(p.roupa, -44);
   if (!o.semPernas) {
-    sombra(x, Math.round(y), 14);
-    r(X + 3, Y + 18, 3, 6 - bob, '#2a2340'); r(X + 6, Y + 18, 3, 6 - bob, '#211b34');
-    r(X + 2, Y + 23 - bob, 4, 1, ol); r(X + 6, Y + 23 - bob, 4, 1, ol);
+    r(X + 2, Math.round(y) - 1, 9, 1, 'rgba(8,4,22,.30)');
+    const calca = p.calca || '#3a3458', calcaS = tom(calca, -30);
+    r(X + 3 + sw, Y + 18 + up, 3, 6 - up, calca); r(X + 6 - sw, Y + 18 + up, 3, 6 - up, calcaS);
+    r(X + 2 + sw, Y + 23, 4, 1, '#1a1226'); r(X + 6 - sw, Y + 23, 4, 1, '#1a1226');
   }
-  r(X + 1, Y + 9, 10, 10, ol); r(X + 2, Y + 10, 8, 9, roupa); r(X + 2, Y + 10, 3, 9, rL); r(X + 8, Y + 10, 2, 9, rS);
-  if (o.avental) { r(X + 4, Y + 12, 4, 7, o.avental); r(X + 7, Y + 12, 1, 7, tom(o.avental, -40)); }
-  r(X, Y + 11, 2, 6, roupa); r(X, Y + 11, 1, 6, rS); r(X + 10, Y + 11, 2, 6, rS);
-  r(X, Y + 17, 2, 2, pele); r(X + 10, Y + 17, 2, 2, pS);
-  r(X + 2, Y + 1, 8, 9, ol); r(X + 3, Y + 2, 6, 7, pele); r(X + 8, Y + 2, 1, 7, pS); r(X + 4, Y + 9, 4, 1, pS);
-  const c = p.cabelo, cS = tom(c, -35);
-  if (p.estilo === 'coque') { r(X + 2, Y, 8, 3, c); r(X + 4, Y - 3, 4, 3, c); r(X + 5, Y - 3, 2, 1, tom(c, 25)); r(X + 2, Y + 3, 1, 4, cS); r(X + 9, Y + 3, 1, 4, cS); }
-  else if (p.estilo === 'rabo') { r(X + 2, Y, 8, 3, c); r(X + 9, Y + 2, 3, 6, cS); r(X + 3, Y, 4, 1, tom(c, 30)); }
+  r(X + 1, Y + 9, 10, 10, ro); r(X + 2, Y + 10, 8, 9, p.roupa); r(X + 2, Y + 10, 3, 9, rL); r(X + 8, Y + 10, 2, 9, rS);
+  r(X + 2, Y + 16, 8, 1, tom(p.roupa, -62));
+  if (o.avental) { r(X + 4, Y + 12, 4, 7, o.avental); r(X + 7, Y + 12, 1, 7, tom(o.avental, -42)); r(X + 4, Y + 18, 4, 1, tom(o.avental, -28)); r(X + 5, Y + 14, 2, 1, tom(o.avental, -50)); }
+  const a1 = and ? -sw : 0, a2 = and ? sw : 0;
+  r(X, Y + 11 + a1, 2, 6, p.roupa); r(X, Y + 11 + a1, 1, 6, ro); r(X + 10, Y + 11 + a2, 2, 6, rS); r(X + 11, Y + 11 + a2, 1, 6, ro);
+  r(X, Y + 17 + a1, 2, 2, pele); r(X + 10, Y + 17 + a2, 2, 2, peS);
+  r(X + 2, Y + 1, 8, 9, peO); r(X + 3, Y + 2, 6, 7, pele); r(X + 8, Y + 2, 1, 7, peS); r(X + 4, Y + 9, 4, 1, peS);
+  const c = p.cabelo, cS = tom(c, -38), cO = tom(c, -80);
+  if (p.estilo === 'coque') { r(X + 2, Y, 8, 3, cO); r(X + 3, Y, 6, 3, c); r(X + 4, Y - 3, 4, 3, c); r(X + 5, Y - 3, 2, 1, tom(c, 25)); r(X + 2, Y + 3, 1, 4, cS); r(X + 9, Y + 3, 1, 4, cS); }
+  else if (p.estilo === 'rabo') { r(X + 2, Y, 8, 3, cO); r(X + 3, Y, 6, 3, c); r(X + 9, Y + 2, 3, 6, cS); r(X + 3, Y, 4, 1, tom(c, 30)); }
   else if (p.estilo === 'bone') { r(X + 1, Y, 10, 3, '#d23b3b'); r(X + 8, Y + 2, 4, 1, '#a82828'); r(X + 2, Y, 4, 1, '#ff6a5a'); }
-  else if (p.estilo === 'topete') { r(X + 2, Y - 1, 8, 3, c); r(X + 6, Y - 2, 4, 1, c); r(X + 3, Y - 1, 3, 1, tom(c, 40)); }
-  else if (p.estilo === 'longo') { r(X + 1, Y, 10, 3, c); r(X + 1, Y + 3, 2, 8, c); r(X + 9, Y + 3, 2, 8, cS); r(X + 3, Y, 4, 1, tom(c, 35)); }
+  else if (p.estilo === 'topete') { r(X + 2, Y - 1, 8, 4, cO); r(X + 3, Y - 1, 6, 3, c); r(X + 6, Y - 2, 4, 1, c); r(X + 3, Y - 1, 3, 1, tom(c, 40)); }
+  else if (p.estilo === 'longo') { r(X + 1, Y, 10, 3, cO); r(X + 2, Y, 8, 3, c); r(X + 1, Y + 3, 2, 8, c); r(X + 9, Y + 3, 2, 8, cS); r(X + 3, Y, 4, 1, tom(c, 35)); }
   else if (p.estilo === 'careca') { r(X + 2, Y + 3, 1, 3, c); r(X + 9, Y + 3, 1, 3, c); r(X + 4, Y + 2, 2, 1, tom(pele, 30)); }
-  else { r(X + 2, Y, 8, 3, c); r(X + 2, Y + 3, 1, 2, cS); r(X + 3, Y, 3, 1, tom(c, 35)); }
-  r(X + 4, Y + 5, 1, 2, ol); r(X + 7, Y + 5, 1, 2, ol);
-  if (o.feliz) r(X + 5, Y + 8, 2, 1, '#7a3a3a'); else if (o.bravo) { r(X + 4, Y + 4, 2, 1, ol); r(X + 6, Y + 4, 2, 1, ol); }
+  else { r(X + 2, Y, 8, 3, cO); r(X + 3, Y, 6, 3, c); r(X + 2, Y + 3, 1, 2, cS); r(X + 3, Y, 3, 1, tom(c, 35)); }
+  r(X + 4, Y + 5, 1, 2, '#241418'); r(X + 7, Y + 5, 1, 2, '#241418');
+  r(X + 3, Y + 7, 1, 1, '#e89a8a'); r(X + 8, Y + 7, 1, 1, '#d48878');
+  if (o.feliz) { r(X + 5, Y + 8, 2, 1, '#7a3a3a'); } else if (o.bravo) { r(X + 4, Y + 4, 2, 1, '#241418'); r(X + 6, Y + 4, 2, 1, '#241418'); }
   if (p.oculos) { r(X + 3, Y + 5, 3, 1, '#333'); r(X + 6, Y + 5, 3, 1, '#333'); }
 }
 const retCache = {};

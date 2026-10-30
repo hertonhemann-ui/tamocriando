@@ -120,3 +120,39 @@ function desenhaCadeira(cad, gx, gy, lado) {
     caixa(gx - 0.32, gy + bk, 0.64, 0.1, 8, 8, esc);
   }
 }
+
+/* ---- sombras projetadas (borda dura, como em Sea of Stars) e textura ---- */
+const LUZ_DIR = [1.3, 0.65]; // deslocamento da sombra no chão por pixel de altura (luz vem da esquerda)
+function casco(pts) { // envoltória convexa (monotone chain)
+  const P = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (P.length < 3) return P;
+  const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = []; for (const p of P) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+  const up = []; for (let i = P.length - 1; i >= 0; i--) { const p = P[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+  lo.pop(); up.pop(); return lo.concat(up);
+}
+function sombraVolume(gx, gy, w, d, h, z0 = 0) { // objeto sólido: do pé até o topo
+  const pts = [];
+  for (const [x, y] of [[gx, gy], [gx + w, gy], [gx + w, gy + d], [gx, gy + d]]) { const p = PT(x, y, z0); pts.push(p, [p[0] + (h + z0) * LUZ_DIR[0], p[1] + (h + z0) * LUZ_DIR[1]]); }
+  poly(casco(pts), '#000');
+}
+function sombraLaje(gx, gy, w, d, z) { // tampo sem pés: só o topo projetado
+  const pts = [[gx, gy], [gx + w, gy], [gx + w, gy + d], [gx, gy + d]].map(([x, y]) => { const p = PT(x, y, 0); return [p[0] + z * LUZ_DIR[0], p[1] + z * LUZ_DIR[1]]; });
+  poly(pts, '#000');
+}
+function sombraPessoa(gx, gy, h = 20) { sombraVolume2(gx, gy, 0.26, h); }
+function sombraVolume2(gx, gy, r2, h) { sombraVolume(gx - r2, gy - r2, r2 * 2, r2 * 2, h * 0.9); }
+let shCv = null;
+function comSombras(desenha, alpha = 0.36) { // desenha todas as sombras opacas num canvas à parte e aplica uma vez só (sem escurecer duas vezes)
+  if (!shCv) { shCv = document.createElement('canvas'); shCv.width = CW; shCv.height = CH; }
+  const prev = cx; cx = shCv.getContext('2d'); cx.clearRect(0, 0, CW, CH);
+  try { desenha(); } finally { cx = prev; }
+  cx.save(); cx.globalAlpha = alpha; cx.globalCompositeOperation = 'source-over'; cx.drawImage(shCv, 0, 0); cx.restore();
+}
+/* ruído determinístico para texturizar o chão e as paredes */
+function rh(a, b, c = 0) { let h = (a * 374761393 + b * 668265263 + c * 2147483647) | 0; h = (h ^ (h >> 13)) * 1274126177 | 0; return ((h ^ (h >> 16)) >>> 0) / 4294967296; }
+function granula(gx, gy, c, n, claro = 14, escuro = -16) { // pontinhos de variação dentro de um tile
+  for (let k = 0; k < n; k++) {
+    const u = rh(gx, gy, k * 2 + 1), v = rh(gx, gy, k * 2 + 2); const p = PT(gx + u, gy + v);
+    cx.fillStyle = tom(c, rh(gx, gy, k + 50) > 0.5 ? claro : escuro); cx.fillRect(p[0], p[1], 1, 1);
+  }
+}

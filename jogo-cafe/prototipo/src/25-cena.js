@@ -30,7 +30,7 @@ function desenhaCliente(c, t) {
   let alpha = 1; if (c.idade < 0.35) alpha = c.idade / 0.35; if (c.estado === 'saindo') alpha = clamp(Math.hypot(c.gx - PORTA.x, c.gy - PORTA.y) / 1.0, 0, 1);
   const k2 = c.pacMax > 900 ? 1 : clamp(c.pac / c.pacMax, 0, 1);
   const andando = c.estado === 'andando' || c.estado === 'saindo';
-  sprite(x, y, p, { bob: andando ? t * 10 : 0, semPernas: sentado, feliz: (c.estado === 'saindo' && c.feliz) || c.estado === 'comendo', bravo: !andando && c.estado !== 'comendo' && k2 < 0.3, flip: c.dir < 0, alpha });
+  sprite(x, y, p, { andando, bob: andando ? t * 12 : t * 1.6, semPernas: sentado, feliz: (c.estado === 'saindo' && c.feliz) || c.estado === 'comendo', bravo: !andando && c.estado !== 'comendo' && k2 < 0.3, flip: c.dir < 0, alpha });
   if (c.estado === 'saindo' || c.estado === 'andando') return;
   const by = y - 46;
   if (c.estado === 'sentado') { balaoPedido(x, by, [], '?'); barraPeq(x, by - 6, k2, k2 > 0.5 ? '#72e09a' : k2 > 0.25 ? '#ffcc4d' : '#ff6e6e'); }
@@ -43,7 +43,7 @@ function desenhaCliente(c, t) {
 function desenhaAtor(a, p, t, extra = {}) {
   const x = isoX(a.x, a.y), y = isoY(a.x, a.y);
   const mov = a.fase === 'indo';
-  sprite(x, y, p, Object.assign({ avental: '#f3eedc', bob: mov ? a.passo * 14 : a.fase === 'agindo' ? t * 16 : t * 2, flip: a.dir < 0 }, extra));
+  sprite(x, y, p, Object.assign({ avental: '#f3eedc', andando: mov, bob: mov ? a.passo * 13 : a.fase === 'agindo' ? t * 16 : t * 1.6, flip: a.dir < 0 }, extra));
   if (a.carga && a.carga.length) { const w = a.carga.length * 13 + 3, bx = Math.round(x - w / 2); r(bx - 1, y - 51, w + 2, 15, '#120a1e'); r(bx, y - 50, w, 13, '#fff'); a.carga.forEach((it, i) => desenhaIcone(cx, it, bx + 2 + i * 13, y - 49)); }
   if (a.fase === 'agindo' && a.timed && a.dur > 0) barraPeq(x, y - 31, a.t / a.dur, '#aaf0ff');
 }
@@ -58,6 +58,31 @@ function desenhaMesaCompleta(g, t) {
   });
   if (seatsDe(g.i).some(l => l.estado === 'sujo') && Math.floor(t * 2) % 2) { const p = PT(g.tx, g.ty, 34); r(p[0] - 2, p[1] - 6, 4, 8, '#ffa64d'); r(p[0] - 2, p[1] + 4, 4, 3, '#ffa64d'); }
 }
+let grainCv = null;
+function grao() {
+  if (grainCv) return grainCv;
+  const c = document.createElement('canvas'); c.width = 64; c.height = 64; const g = c.getContext('2d');
+  for (let i = 0; i < 64 * 64 * 0.55; i++) { g.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.12)'; g.fillRect(Math.random() * 64 | 0, Math.random() * 64 | 0, 1, 1); }
+  return (grainCv = cx.createPattern(c, 'repeat'));
+}
+const GRADE = [[0, [255, 247, 230]], [0.5, [255, 232, 196]], [0.8, [255, 196, 168]], [1, [146, 156, 222]]];
+function corGrade(k) {
+  for (let i = 1; i < GRADE.length; i++) if (k <= GRADE[i][0]) { const [k0, c0] = GRADE[i - 1], [k1, c1] = GRADE[i], f = (k - k0) / (k1 - k0); return c0.map((v, j) => Math.round(v + (c1[j] - v) * f)); }
+  return GRADE[GRADE.length - 1][1];
+}
+const GATO = { gx: 1.2, gy: 8.2 };
+function desenhaGato(t) {
+  const x = Math.round(isoX(GATO.gx, GATO.gy)), y = Math.round(isoY(GATO.gx, GATO.gy));
+  const rabo = Math.round(Math.sin(t * 2.2) * 2), pisca = (Math.floor(t * 0.7) % 5 === 0) && (t % 1.4 < 0.15);
+  const laranja = '#e8913a', escuro = '#a85a1c', claro = '#f8c070', ol = '#5a2e10';
+  r(x - 6, y - 1, 13, 1, 'rgba(8,4,22,.3)');
+  r(x - 5, y - 8, 10, 8, ol); r(x - 4, y - 7, 8, 7, laranja); r(x - 4, y - 7, 3, 7, claro); r(x + 2, y - 7, 2, 7, escuro);
+  r(x - 2, y - 5, 1, 4, escuro); r(x + 0, y - 6, 1, 5, escuro);
+  r(x + 5 + (rabo > 0 ? 1 : 0), y - 5 + rabo, 3, 2, laranja); r(x + 7 + (rabo > 0 ? 1 : 0), y - 7 + rabo, 1, 3, escuro);
+  r(x - 4, y - 13, 8, 7, ol); r(x - 3, y - 12, 6, 6, laranja); r(x - 4, y - 15, 2, 3, ol); r(x + 2, y - 15, 2, 3, ol); r(x - 3, y - 14, 1, 2, '#e89a8a'); r(x + 2, y - 14, 1, 2, '#e89a8a');
+  if (pisca) { r(x - 2, y - 9, 2, 1, ol); r(x + 1, y - 9, 2, 1, ol); } else { r(x - 2, y - 10, 1, 2, '#3a8a3a'); r(x + 1, y - 10, 1, 2, '#3a8a3a'); r(x - 2, y - 10, 1, 1, '#0a0a0a'); r(x + 1, y - 10, 1, 1, '#0a0a0a'); }
+  r(x - 1, y - 8, 2, 1, '#e08a8a');
+}
 function cenaCafe(t) {
   const emExp = S.fase === 'expediente' && R;
   const tarde = emExp ? clamp(R.t / R.len, 0, 1) : (S.fase === 'pos' ? 1 : 0.15);
@@ -68,12 +93,20 @@ function cenaCafe(t) {
   const aj = 0.13 * (1 - tarde * 0.75);
   [[1.0, 3.0], [3.7, 5.3]].forEach(([v0, v1]) => poly([PT(0, v0), PT(0, v1), PT(3.4, v1 + 1.8), PT(3.4, v0 + 1.8)], `rgba(255,236,190,${aj})`));
   cx.restore();
+  // sombras projetadas de tudo que se mexe ou fica no salão (um só passe, sem escurecer duas vezes)
+  comSombras(() => {
+    for (let j = 0; j < 8; j++) sombraVolume(BALCAO.x0 + j, BALCAO.y0, 1, BALCAO.d, BALCAO.h);
+    S.salao.mesas.forEach((m, i) => { const g = geoMesa(i); if (!g) return; sombraLaje(g.tx - g.w / 2, g.ty - g.d / 2, g.w, g.d, g.modelo === 'alta' ? 18 : 12); g.seats.forEach(s0 => sombraVolume(s0.gx - 0.32, s0.gy - 0.32, 0.64, 0.64, g.cad.tipo === 'poltrona' ? 14 : 9)); });
+    if (R) { R.clientes.forEach(c => sombraPessoa(c.gx, c.gy, c.estado === 'sentado' || c.estado === 'espera' || c.estado === 'comendo' ? 14 : 22)); sombraPessoa(R.jog.x, R.jog.y); if (R.bia) sombraPessoa(R.bia.x, R.bia.y); if (S.dia === 1 && S.fase === 'expediente') sombraPessoa(7.4, 2.1); }
+    else sombraPessoa(4.6, 2.0);
+    sombraVolume(GATO.gx - 0.25, GATO.gy - 0.25, 0.5, 0.5, 9);
+  }, 0.42);
   const ents = [];
+  ents.push({ k: GATO.gx + GATO.gy, f: () => desenhaGato(t) });
   // balcão da frente em segmentos (para ordenar com clientes e com quem fica atrás)
   for (let j = 0; j < 8; j++) {
     const gx = BALCAO.x0 + j;
     ents.push({ k: gx + 0.5 + BALCAO.y0 + BALCAO.d / 2, f: () => {
-      sombraIso(gx, BALCAO.y0, 1, BALCAO.d, BALCAO.h, 0.18);
       caixa(gx, BALCAO.y0, 1, BALCAO.d, BALCAO.h, 0, { t: '#ecdcc0', l: '#8a5734', r: '#6a4024' });
       const a = PT(gx + 0.5, BALCAO.y0 + BALCAO.d, BALCAO.h - 2), b = PT(gx + 0.5, BALCAO.y0 + BALCAO.d, 1); lin(a[0], a[1], b[0], b[1], '#5a3218');
       const top = PT(gx + 0.5, BALCAO.y0 + BALCAO.d / 2, BALCAO.h);
@@ -102,16 +135,21 @@ function cenaCafe(t) {
     if (R.slots.some(s => s.rec && s.st === 'rodando' && s.recurso === 'maq')) { const p = PT(3.8, 0.9, 30); for (let i = 0; i < 4; i++) r(p[0] - 5 + i * 3 + Math.round(Math.sin(t * 4 + i) * 1.5), p[1] - ((t * 22 + i * 5) % 20), 2, 2, 'rgba(255,255,255,.75)'); }
     if (R.forno.st === 'assando') { const p = PT(9.3, 1.1, 24); luz(p[0], p[1], 34, 'rgba(255,140,50,A)', 0.4); }
   }
-  // lâmpadas pendentes e luz
+  // correção de cor (multiplica: sombras ficam frias, luzes por cima ficam quentes)
+  { const [rr, gg, bb] = corGrade(tarde); cx.save(); cx.globalCompositeOperation = 'multiply'; cx.fillStyle = `rgb(${rr},${gg},${bb})`; cx.fillRect(0, 0, CW, CH); cx.restore(); }
+  // luzes aditivas: lâmpadas, pisca-pisca, forno
+  const forca = 0.3 + 0.55 * tarde;
   LAMPADAS.forEach(([gx, gy]) => {
     const p = PT(gx, gy, 44), top = PT(gx, gy, 62), chao = PT(gx, gy, 0);
     lin(p[0], p[1], top[0], top[1], '#1a0e18'); r(p[0] - 5, p[1], 10, 3, '#2a1424'); r(p[0] - 3, p[1] - 3, 6, 3, '#3a2034'); r(p[0] - 2, p[1] + 3, 4, 2, '#fff2b0');
-    cx.save(); cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = 0.35 + 0.25 * tarde; cx.drawImage(glowSprite(), chao[0] - 48, chao[1] - 24); cx.restore();
-    luz(p[0], p[1] + 4, 18, 'rgba(255,220,150,A)', 0.35);
+    cx.save(); cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = forca; cx.drawImage(glowSprite(), chao[0] - 48, chao[1] - 24); cx.restore();
+    luz(p[0], p[1] + 4, 22, 'rgba(255,214,140,A)', 0.30 + 0.3 * tarde);
   });
-  if (tarde > 0.5) { cx.save(); cx.globalAlpha = clamp((tarde - 0.5) * 0.3, 0, 0.16); cx.fillStyle = '#ff9a4a'; cx.fillRect(0, 0, CW, CH); cx.restore(); }
-  if (tarde > 0.85) { cx.save(); cx.globalAlpha = 0.14; cx.fillStyle = '#2a1050'; cx.fillRect(0, 0, CW, CH); cx.restore(); }
-  cx.drawImage(vinheta(), 0, 0);
+  fioPontos().forEach((p, i) => { if (i % 3 === 0) luz(p[0], p[1] + 2, 13, 'rgba(255,224,150,A)', 0.22 + 0.4 * tarde); });
+  if (R && R.forno.st === 'assando') { const p = PT(9.3, 1.1, 24); luz(p[0], p[1], 38, 'rgba(255,140,50,A)', 0.45); }
+  if (tarde > 0.85) { const p = PT(5.0, 4.0, 30); cx.save(); cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = 0.2; cx.drawImage(glowSprite(), p[0] - 48, p[1] - 24); cx.restore(); }
+  cx.save(); cx.translate(Math.floor(Math.random() * 64), Math.floor(Math.random() * 64)); cx.fillStyle = grao(); cx.globalAlpha = 0.32; cx.fillRect(-64, -64, CW + 64, CH + 64); cx.restore();
+  cx.save(); cx.globalAlpha = 0.65; cx.drawImage(vinheta(), 0, 0); cx.restore();
   if (R && R.hover) desenhaHover(R.hover, t);
 }
 function desenhaHover(h, t) {
@@ -137,7 +175,9 @@ cv.addEventListener('pointermove', e => { if (!R || !R.rodando) { cv.style.curso
 cv.addEventListener('pointerleave', () => { if (R) R.hover = null; cv.style.cursor = 'default'; });
 cv.addEventListener('pointerdown', e => {
   if (!R || !R.rodando || R.pausa) return;
-  const h = hitCena(...ptCena(e)); if (!h) return;
+  const pt = ptCena(e), gxp = isoX(GATO.gx, GATO.gy), gyp = isoY(GATO.gx, GATO.gy);
+  if (Math.abs(pt[0] - gxp) < 10 && pt[1] > gyp - 18 && pt[1] < gyp + 2) { if (!R.gatoT || performance.now() - R.gatoT > 2500) { R.gatoT = performance.now(); S.animo += 1.5; flutuaEm('♥ miau', GATO.gx, GATO.gy - 0.4, '#ff93c9'); sfx('miau'); } return; }
+  const h = hitCena(...pt); if (!h) return;
   if (h.tipo === 'cliente') { const c = cli(h.id); if (c) agirCliente(R.jog, c); }
   else if (h.tipo === 'mesa') agirMesa(R.jog, h.i);
   else agirEstacao(R.jog, h.id);

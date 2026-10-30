@@ -23,6 +23,20 @@ Edite sempre os arquivos de `src/` e rode `./build.sh`. Os números mostram a or
 
 Para depurar no navegador, abra o `index.html` com `#debug` na URL e use `__cafe("S.caixa")` no console.
 
+## Direção de arte (v4.1)
+
+Referências: Stardew Valley (mundo com textura e cores quentes), Sea of Stars (sombras de borda dura, contorno colorido) e uma cena de interior escuro (luz quente sobre ambiente azulado, grão de filme, bagunça nos cantos).
+
+| Técnica | Onde está |
+|---|---|
+| Sombras projetadas de verdade: cada objeto e pessoa vira um polígono deslocado para longe da luz, desenhado num canvas à parte e aplicado uma vez só (sem escurecer duas vezes) | `22-iso.js` (`comSombras`, `sombraVolume`), usado em `23-sala.js` e `25-cena.js` |
+| Chão e parede com ruído determinístico, veios de madeira e rejunte | `23-sala.js` |
+| Correção de cor por multiplicação (quente de dia, azulada no fim) e luzes aditivas por cima | `25-cena.js` (`corGrade`) |
+| Grão de filme animado e vinheta | `25-cena.js` (`grao`) |
+| Contorno colorido, ciclo de caminhada e braços que balançam | `20-pixel.js` |
+| Rua em vista de cima com telhados, sombras à direita, cobblestone, fumaça, aves e sombra de nuvens | `24-rua.js` |
+| Bagunça: sacos de café, pisca-pisca, capacho e um gato que dá ânimo se tu clicar | `23-sala.js`, `25-cena.js` |
+
 ## O que mudou na v4
 
 **Visual 2.5D.** O café agora é desenhado em projeção isométrica 2:1 (tile 32×16), com profundidade de verdade:
