@@ -23,6 +23,12 @@ Edite sempre os arquivos de `src/` e rode `./build.sh`. Os números mostram a or
 
 Para depurar no navegador, abra o `index.html` com `#debug` na URL e use `__cafe("S.caixa")` no console.
 
+## Layout (v4.2)
+
+Em telas com 1000px de largura ou mais, o jogo usa **duas colunas**: a cena (e a dica da Dona Cida) à esquerda, o painel de trabalho à direita, tudo visível sem rolar. A ficha lateral vira o botão **Ficha** no topo. O painel foi compactado para caber em 740px de altura no caso comum (2 espaços de preparo, 5 pedidos). Com 4 espaços o painel rola por dentro, sem mexer na cena. Em telas estreitas o jogo empilha, com a cena limitada a 46% da altura.
+
+Os números usam uma fonte legível: o 5 da fonte pixel se confundia com S e 8.
+
 ## Direção de arte (v4.1)
 
 Referências: Stardew Valley (mundo com textura e cores quentes), Sea of Stars (sombras de borda dura, contorno colorido) e uma cena de interior escuro (luz quente sobre ambiente azulado, grão de filme, bagunça nos cantos).

@@ -20,6 +20,8 @@ function hud() {
   $('#hParcela').className = S.flags.parcelaPaga || falta <= 0 ? 'pos' : S.dia >= 4 ? 'neg' : '';
   const be = $('#bEnergia'); be.style.width = S.energia + '%'; be.style.background = S.energia < 30 ? 'var(--vermelho)' : 'var(--ouro)';
   const ba = $('#bAnimo'); ba.style.width = S.animo + '%'; ba.style.background = S.animo < 25 ? 'var(--vermelho)' : 'var(--rosa)';
+  const jogo = ['manha', 'noite', 'expediente', 'pos', 'fechamento'].includes(S.fase);
+  $('#app').classList.toggle('jogo', jogo); $('#bFicha').hidden = !jogo;
   const bf = $('#bFase');
   if (S.fase === 'manha') { bf.hidden = false; bf.textContent = 'Abrir o café →'; }
   else if (S.fase === 'noite') { bf.hidden = false; bf.textContent = 'Dormir →'; }
@@ -33,7 +35,7 @@ function estiloHtml() {
   const E = ESTILOS[e.dom];
   return `<div>${tagEstilo(e.dom)} <small>${Math.round(e.pct * 100)}%</small></div><p class="dica-estilo"><b>${E.frase}.</b> ${E.efeito}</p>`;
 }
-let fichaSig = '';
+let fichaSig = '', fichaHtml = '';
 function ficha() {
   const hab = (nome, xp, por, nv, nota) => `<div class="hab"><span>${nome}</span><b>nv ${nv}</b><div class="mini"><i style="width:${nv >= 3 ? 100 : (xp % por) / por * 100}%"></i></div><small>${nota}</small></div>`;
   const pessoa = (id, txt, sub) => `<div class="pessoa"><img src="${retrato(id)}" alt=""><div>${txt}<small>${sub}</small></div></div>`;
@@ -49,6 +51,7 @@ function ficha() {
   h += pessoa('caio', 'Caio', 'amigo · ' + relacao(S.caio.afin));
   h += pessoa('rafa', 'Rafa', 'rival · ' + relacao(S.rafa.afin));
   h += `</div><div><h3>Semana</h3><div class="kv"><span>${img('estrela', 'p')} Estrelas</span><b>${S.estrelas}</b></div></div><p class="dica-geral">Energia abaixo de 30 deixa as mãos lentas. Ânimo quase zerado te derruba na manhã seguinte.</p>`;
+  fichaHtml = h;
   if (h === fichaSig) return; fichaSig = h;
   $('#ficha').innerHTML = h;
 }
@@ -70,23 +73,24 @@ function renderExpediente() {
   if (sig !== assinatura) {
     assinatura = sig;
     const fino = matchMedia('(pointer:fine)').matches;
-    const cs = cartoes(), mostra = cs.slice(0, 8), extra = cs.length - mostra.length;
+    const cs = cartoes(), mostra = cs.slice(0, 10), extra = cs.length - mostra.length;
     const recs = ['espresso', 'cappuccino'].concat(S.flags.mocha ? ['mocha'] : [], S.up.coador ? ['coado'] : []);
     const tec = { espresso: 'Q', cappuccino: 'W', mocha: 'E', coado: 'T' };
     const quente = R.combo >= 6, J = R.jog;
-    let h = `<div class="trab"><div class="topo-exp"><div class="metas">${S.metas.map(m => `<div class="meta ${m.ok ? 'ok' : ''}">${m.ok ? '★' : '☆'} ${esc(m.txt)} <b>${m.fim ? (m.ok ? '✓' : '…') : Math.min(m.prog, m.alvo) + '/' + m.alvo}</b></div>`).join('')}</div>
+    let h = `<div class="trab"><div class="topo-exp"><div class="metas">${S.metas.map(m => `<div class="meta ${m.ok ? 'ok' : ''}" title="${esc(m.txt)}">${m.ok ? '★' : '☆'} <b>${m.fim ? (m.ok ? '✓' : '…') : Math.min(m.prog, m.alvo) + '/' + m.alvo}</b> ${esc(m.txt)}</div>`).join('')}</div>
       <div class="combo ${quente ? 'quente' : ''}">${img('fogo')}<div><b>x${R.combo}</b><br><small>combo · gorjeta x${String(multCombo(R.combo)).replace('.', ',')}</small></div></div></div>`;
-    h += `<div><div class="rotulo"><span>Pedidos · toque no cartão, no cliente ou na mesa</span><span>${extra > 0 ? `+${extra} pedidos` : ''}</span></div><div class="tickets" style="grid-template-columns:repeat(4,minmax(0,1fr))">`;
-    for (let i = 0; i < 8; i++) {
+    h += `<div><div class="rotulo"><span>Pedidos · toque no cartão, no cliente ou na mesa</span><span>${extra > 0 ? `+${extra} pedidos` : ''}</span></div><div class="tickets">`;
+    const nCel = Math.max(5, Math.ceil(mostra.length / 5) * 5);
+    for (let i = 0; i < nCel; i++) {
       const c = mostra[i];
       if (!c) { h += `<div class="ticket vazio">${i === 0 && !cs.length ? 'ninguém ainda' : ''}</div>`; continue; }
       const ex = c.traco === 'exigente', tag = { lucia: 'fiel', critico: 'blog', clube: 'crochê' }[c.tipo];
       const onde = c.modo === 'mesa' ? ` · Mesa ${c.seat.mesa + 1}` : '';
       const tk = fino && i < 5 ? `<span class="tecla">${'ZXCVB'[i]}</span>` : '';
-      if (c.estado === 'sentado') h += `<button class="ticket ${c.anotando ? '' : 'pronto'}" data-ac="anotar" data-id="${c.id}">${tag ? `<span class="tag">${tag}</span>` : ''}<span class="nome">${esc(c.nome)}${onde}${tk}</span><span class="itens" style="font-family:var(--f-tit);font-size:22px;color:#c0392b">?</span><span class="traco">${c.anotando ? 'a caminho…' : 'Toque para anotar o pedido'}</span><span class="pac"><i data-pac="${c.id}"></i></span></button>`;
+      if (c.estado === 'sentado') h += `<button class="ticket ${c.anotando ? '' : 'pronto'}" data-ac="anotar" data-id="${c.id}">${tag ? `<span class="tag">${tag}</span>` : ''}<span class="nome">${esc(c.nome)}${onde}${tk}</span><span class="itens" style="font-family:var(--f-tit);font-size:22px;color:#c0392b">?</span><span class="traco">${c.anotando ? 'a caminho…' : 'Anotar pedido'}</span><span class="pac"><i data-pac="${c.id}"></i></span></button>`;
       else {
         const itens = c.ped.map((it, k) => `<span class="it ${c.ok[k] ? 'ok' : c.res[k] ? 'tem' : (it === 'pao' ? (R.vitrine > 0 ? 'tem' : '') : (itemNaBandeja(it, ex) >= 0 ? 'tem' : ''))}" title="${NOME_ITEM[it]}">${img(it)}</span>`).join('');
-        h += `<button class="ticket ${podeEntregar(c) ? 'pronto' : ''}" data-ac="entregar" data-id="${c.id}">${tag ? `<span class="tag">${tag}</span>` : ''}<span class="nome">${esc(c.nome)}${onde}${tk}</span><span class="itens">${itens}</span>${c.traco ? `<span class="traco">${TRACOS[c.traco].nome}: ${TRACOS[c.traco].desc}</span>` : ''}<span class="pac"><i data-pac="${c.id}"></i></span></button>`;
+        h += `<button class="ticket ${podeEntregar(c) ? 'pronto' : ''}" data-ac="entregar" data-id="${c.id}">${tag ? `<span class="tag">${tag}</span>` : ''}<span class="nome">${esc(c.nome)}${onde}${tk}</span><span class="itens">${itens}</span>${c.traco ? `<span class="traco" title="${TRACOS[c.traco].desc}">${TRACOS[c.traco].nome}</span>` : ''}<span class="pac"><i data-pac="${c.id}"></i></span></button>`;
       }
     }
     h += `</div></div><div class="bancada"><div><div class="rotulo"><span>Bancada · ${R.slots.length} espaços</span><span>Máquina: ${S.up.maquina} ${S.up.maquina > 1 ? 'grupos' : 'grupo'}</span></div><div class="slots">`;
@@ -114,9 +118,8 @@ function renderExpediente() {
       <div class="caixa-lado"><div class="rotulo" style="margin:0"><span>Forno</span><span>${img('pao', 'p')} vitrine: ${R.vitrine}</span></div>
         ${R.forno.st === 'assando' ? `<div class="prog"><i data-forno-prog style="background:var(--laranja)"></i></div><span class="estado">${R.forno.bia ? 'A Bia está assando' : 'Assando'} ${R.forno.qtd} pães…</span>` : `<button class="bt slotbt" data-ac="assar" ${S.estoque.massa < S.up.forno || R.forno.fila ? 'disabled' : ''}><span>${R.forno.fila ? 'Na fila…' : 'Assar ' + S.up.forno}</span><span class="tecla">${S.up.forno} massas${fino ? ' · F' : ''}</span></button>`}</div>
       <div class="caixa-lado"><div class="rotulo" style="margin:0"><span>Salão</span></div><div class="salao">${!R.lugares.length ? '<span class="estado">Fechado hoje. As mesas abrem amanhã.</span>' : S.salao.mesas.map((m, i) => { if (!m) return ''; const ss = seatsDe(i), oc = ss.filter(l => l.estado !== 'livre' && l.estado !== 'sujo').length, su = ss.filter(l => l.estado === 'sujo').length; return `<div class="mesachip ${su ? 'suja' : ''}"><span>Mesa ${i + 1} · ${oc}/${ss.length}${su ? ' · suja' : ''}</span>${su ? `<button class="bt" data-ac="limpar" data-m="${i}" ${R.mesasRT[i].limpando ? 'disabled' : ''}>${R.mesasRT[i].limpando ? 'indo…' : 'Limpar'}</button>` : ''}</div>`; }).join('')}</div></div>
-      <div class="caixa-lado"><div class="kv"><span>${img('grao', 'p')} Grão</span><b class="${S.estoque.grao < 4 ? 'neg' : ''}">${S.estoque.grao}</b></div><div class="kv"><span>${img('leite', 'p')} Leite</span><b class="${S.estoque.leite < 2 ? 'neg' : ''}">${S.estoque.leite}</b></div><div class="kv"><span>${img('massa', 'p')} Massa</span><b class="${S.estoque.massa < S.up.forno ? 'neg' : ''}">${S.estoque.massa}</b></div></div>
-    </div></div>
-    <div><div class="rotulo"><span>Bandeja do balcão · ${R.bandeja.filter(Boolean).length}/${R.bandeja.length}</span><span>★ = no ponto perfeito</span></div><div class="bandeja">`;
+</div></div>
+    <div><div class="rotulo"><span>Bandeja ${R.bandeja.filter(Boolean).length}/${R.bandeja.length} · ★ perfeito</span><span class="estoque-inline"><span>${img('grao', 'p')} <b class="${S.estoque.grao < 4 ? 'neg' : ''}">${S.estoque.grao}</b></span><span>${img('leite', 'p')} <b class="${S.estoque.leite < 2 ? 'neg' : ''}">${S.estoque.leite}</b></span><span>${img('massa', 'p')} <b class="${S.estoque.massa < S.up.forno ? 'neg' : ''}">${S.estoque.massa}</b></span></span></div><div class="bandeja">`;
     R.bandeja.forEach((it, j) => { const novo = it && !R.bandejaAntes[j]; h += it ? `<div class="cel ${novo ? 'novo' : ''}">${it.p ? '<span class="estrela">★</span>' : ''}${img(it.r)}<b>${RECEITAS[it.r].nome}</b><button class="x" data-ac="descartar" data-j="${j}" aria-label="Jogar fora">×</button></div>` : `<div class="cel vazia">vazio</div>`; });
     R.bandejaAntes = R.bandeja.slice();
     h += `</div></div>${R.msg && performance.now() < R.msg.ate ? `<div class="estado" style="color:var(--laranja);font-size:15px">${esc(R.msg.t)}</div>` : ''}</div>`;
@@ -177,3 +180,5 @@ $('#bDiario').onclick = () => { if (trava || S.fase === 'titulo') return; sfx('c
 $('#bMenu').onclick = () => { if (trava || S.fase === 'titulo') return; sfx('clique'); abreMenu(); };
 $('#bFase').onclick = () => { if (trava) return; sfx('clique'); if (S.fase === 'manha') abrirCafe(); else if (S.fase === 'noite') dormir(); };
 
+
+$('#bFicha').onclick = () => { if (trava) return; sfx('clique'); if (R && R.rodando) R.pausa = true; modal(`<div class="sobre">Personagem</div><h2>Ficha</h2><div class="ficha" style="padding:0;gap:12px">${fichaHtml}</div><div class="rodape"><span></span><button class="bt ouro" id="bOk">Fechar</button></div>`, m => { m.querySelector('#bOk').onclick = () => { fechaModal(); if (R && R.rodando) R.pausa = false; }; }); };

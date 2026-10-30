@@ -208,6 +208,50 @@ table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
 .slotsave{display:flex;flex-direction:column;gap:8px}
 .slotsave .bt{display:flex;justify-content:space-between;align-items:center;text-align:left;gap:10px}
 .slotsave small{font-family:var(--f-txt);font-size:13px;color:var(--suave);font-weight:400}
+#trabalho:empty{display:none}
+.estoque-inline{display:flex;gap:10px;align-items:center;font-size:14px}
+.estoque-inline b{font-family:var(--f-px)}
+/* Layout de jogo: cena à esquerda, painel à direita, tudo numa tela só */
+.app.jogo canvas#cena{max-height:46vh;width:auto;max-width:100%;margin:0 auto}
+.app.jogo .cena-wrap{display:flex;justify-content:center;background:#000}
+@media (min-width:1000px){
+  .app.jogo{max-width:1600px;padding-block:6px 10px}
+  .app.jogo .marca{display:none}
+  .app.jogo .hud{padding:6px 10px;gap:4px 14px}
+  .app.jogo .hstat b{font-size:17px}
+  .app.jogo .barra{width:84px}
+  .app.jogo .grade{grid-template-columns:minmax(0,1.28fr) minmax(0,1fr);align-items:start}
+  .app.jogo .coluna{position:sticky;top:6px}
+  .app.jogo .ficha{display:none}
+  .app.jogo canvas#cena{max-height:none;width:100%}
+  .app.jogo .cena-wrap{display:block}
+  .app.jogo #trabalho{max-height:calc(100vh - 62px);overflow:auto;position:sticky;top:6px}
+  .app.jogo .trab{padding:8px;gap:8px}
+  .app.jogo .topo-exp{gap:6px;align-items:flex-start}
+  .app.jogo .metas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+  .app.jogo .meta{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+  .app.jogo .lado .slotbt .tecla{display:none}
+  .app.jogo .trab{gap:6px}
+  .app.jogo .ticket .itens .it img,.app.jogo .ticket .it .ico{width:26px;height:26px}
+  .app.jogo .tickets{gap:6px}
+  .app.jogo .meta{font-size:13px;padding:2px 6px}
+  .app.jogo .combo{min-width:0;padding:0 8px;gap:4px}
+  .app.jogo .combo small{display:none}
+  .app.jogo .combo b{font-size:20px}
+  .app.jogo .rotulo{font-size:12px;margin-bottom:4px}
+  .app.jogo .ticket{min-height:78px;padding:5px;gap:3px}
+  .app.jogo .ticket .nome{font-size:13px}
+  .app.jogo .bancada{grid-template-columns:minmax(0,1fr);gap:8px}
+  .app.jogo .slots{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .app.jogo .slot{min-height:0;padding:6px;gap:5px}
+  .app.jogo .slot .rec{font-size:16px}
+  .app.jogo .receitas .bt{padding:4px 2px;font-size:13px}
+  .app.jogo .lado{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:start}
+  .app.jogo .lado .caixa-lado{padding:6px;gap:4px}
+  .app.jogo .cel{width:60px;height:46px}
+  .app.jogo .local{grid-template-columns:minmax(0,1fr);gap:8px;padding:10px}
+  .app.jogo .acao{padding:6px 8px}
+}
 /* Salão, fila de tarefas, atributos, abas e loja de móveis */
 .attr{display:inline-flex;align-items:center;gap:3px;font-size:13px;padding:1px 6px;border:2px solid var(--borda);background:var(--painel3);white-space:nowrap}
 .attr.up{color:var(--verde)} .attr.dn{color:var(--vermelho)}
@@ -232,10 +276,14 @@ table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
 .itemloja .atrs{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
 .itemloja.atual{border-color:var(--ouro)}
 .dica-estilo{font-size:14px;color:var(--suave)}
+/* Números numa fonte legível (o 5 da fonte pixel se confunde com S e 8) */
+.hstat b,.kv b,.combo b,table.contas td:last-child,.acao .hr,.qtd,.meta b,.compra b,.hab b,.estoque-inline b,.fala .quem small,.escolha .hr{font-family:var(--f-txt)!important;font-weight:700}
+.hstat b{letter-spacing:.02em}
+.app.jogo .hot{font-size:clamp(10px,1.0vw,14px);padding:2px 6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="app">
+<div class="app" id="app">
   <header class="hud px">
     <div class="marca">CAFÉ<br>CANTINHO</div>
     <div class="hstat"><div><small>Dia</small><b id="hDia">—</b></div></div>
@@ -246,6 +294,7 @@ table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
     <div class="barra-rot"><img class="ico p" id="icoRaio" alt="">Energia<div class="barra"><i id="bEnergia"></i></div></div>
     <div class="barra-rot"><img class="ico p" id="icoCor" alt="">Ânimo<div class="barra"><i id="bAnimo"></i></div></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="bt" id="bFicha" hidden>Ficha</button>
       <button class="bt" id="bDiario">Diário</button>
       <button class="bt" id="bMenu">Menu</button>
       <button class="bt ouro" id="bFase" hidden></button>
@@ -255,8 +304,8 @@ table.contas tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
     <div class="coluna">
       <div class="cena-wrap px" id="cenaWrap"><canvas id="cena" width="384" height="240" aria-label="Cena do jogo"></canvas><div id="hots"></div></div>
       <div class="dialogo px" id="dica" hidden></div>
-      <div class="px" id="trabalho"></div>
     </div>
+    <div class="px" id="trabalho"></div>
     <aside class="ficha px" id="ficha"></aside>
   </div>
 </div>
